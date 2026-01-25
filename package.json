@@ -1,9 +1,9 @@
 {
-  "name": "get-shit-done-cc",
-  "version": "1.9.13",
-  "description": "A meta-prompting, context engineering and spec-driven development system for Claude Code by TÂCHES.",
+  "name": "wxcode",
+  "version": "1.0.0",
+  "description": "WXCODE - A customized fork of GSD (Get Shit Done) for Claude Code",
   "bin": {
-    "get-shit-done-cc": "bin/install.js"
+    "wxcode": "bin/install.js"
   },
   "files": [
     "bin",
@@ -11,7 +11,8 @@
     "get-shit-done",
     "agents",
     "hooks/dist",
-    "scripts"
+    "scripts",
+    ".wxcode"
   ],
   "keywords": [
     "claude",
@@ -19,20 +20,29 @@
     "ai",
     "meta-prompting",
     "context-engineering",
-    "spec-driven-development"
+    "spec-driven-development",
+    "wxcode"
   ],
-  "author": "TÂCHES",
+  "author": "Gilberto",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/glittercowboy/get-shit-done.git"
+    "url": "git+https://github.com/GilbertoAbrao/get-shit-done.git"
   },
-  "homepage": "https://github.com/glittercowboy/get-shit-done",
+  "homepage": "https://github.com/GilbertoAbrao/get-shit-done",
   "bugs": {
-    "url": "https://github.com/glittercowboy/get-shit-done/issues"
+    "url": "https://github.com/GilbertoAbrao/get-shit-done/issues"
   },
   "engines": {
     "node": ">=16.7.0"
+  },
+  "wxcode": {
+    "upstream": {
+      "name": "get-shit-done-cc",
+      "repository": "https://github.com/glittercowboy/get-shit-done",
+      "version": "1.9.13",
+      "commit": "3d2a960"
+    }
   },
   "dependencies": {},
   "devDependencies": {
