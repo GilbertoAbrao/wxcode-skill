@@ -26,8 +26,8 @@ Default to "balanced" if not set.
 
 | Agent | quality | balanced | budget |
 |-------|---------|----------|--------|
-| gsd-executor | opus | sonnet | sonnet |
-| gsd-verifier | sonnet | sonnet | haiku |
+| wxcode-executor | opus | sonnet | sonnet |
+| wxcode-verifier | sonnet | sonnet | haiku |
 | general-purpose | — | — | — |
 
 Store resolved models for use in Task calls below.
@@ -141,7 +141,7 @@ waves = {
 }
 ```
 
-**No dependency analysis needed.** Wave numbers are pre-computed during `/gsd:plan-phase`.
+**No dependency analysis needed.** Wave numbers are pre-computed during `/wxcode:plan-phase`.
 
 Report wave structure with context:
 ```
@@ -294,7 +294,7 @@ Plans with `autonomous: false` require user interaction.
 
 1. **Spawn agent for checkpoint plan:**
    ```
-   Task(prompt="{subagent-task-prompt}", subagent_type="gsd-executor", model="{executor_model}")
+   Task(prompt="{subagent-task-prompt}", subagent_type="wxcode-executor", model="{executor_model}")
    ```
 
 2. **Agent runs until checkpoint:**
@@ -333,7 +333,7 @@ Plans with `autonomous: false` require user interaction.
    ```
    Task(
      prompt=filled_continuation_template,
-     subagent_type="gsd-executor",
+     subagent_type="wxcode-executor",
      model="{executor_model}"
    )
    ```
@@ -410,7 +410,7 @@ Phase goal: {goal from ROADMAP.md}
 
 Check must_haves against actual codebase. Create VERIFICATION.md.
 Verify what actually exists in the code.",
-  subagent_type="gsd-verifier",
+  subagent_type="wxcode-verifier",
   model="{verifier_model}"
 )
 ```
@@ -427,7 +427,7 @@ grep "^status:" "$PHASE_DIR"/*-VERIFICATION.md | cut -d: -f2 | tr -d ' '
 |--------|--------|
 | `passed` | Continue to update_roadmap |
 | `human_needed` | Present items to user, get approval or feedback |
-| `gaps_found` | Present gap summary, offer `/gsd:plan-phase {phase} --gaps` |
+| `gaps_found` | Present gap summary, offer `/wxcode:plan-phase {phase} --gaps` |
 
 **If passed:**
 
@@ -474,7 +474,7 @@ Present gaps and offer next command:
 
 **Plan gap closure** — create additional plans to complete the phase
 
-`/gsd:plan-phase {X} --gaps`
+`/wxcode:plan-phase {X} --gaps`
 
 <sub>`/clear` first → fresh context window</sub>
 
@@ -482,13 +482,13 @@ Present gaps and offer next command:
 
 **Also available:**
 - `cat {phase_dir}/{phase}-VERIFICATION.md` — see full report
-- `/gsd:verify-work {X}` — manual testing before planning
+- `/wxcode:verify-work {X}` — manual testing before planning
 ```
 
-User runs `/gsd:plan-phase {X} --gaps` which:
+User runs `/wxcode:plan-phase {X} --gaps` which:
 1. Reads VERIFICATION.md gaps
 2. Creates additional plans (04, 05, etc.) with `gap_closure: true` to close gaps
-3. User then runs `/gsd:execute-phase {X} --gaps-only`
+3. User then runs `/wxcode:execute-phase {X} --gaps-only`
 4. Execute-phase runs only gap closure plans (04-05)
 5. Verifier runs again after new plans complete
 
@@ -532,7 +532,7 @@ Present next steps based on milestone status:
 
 **Phase {X+1}: {Name}** — {Goal}
 
-`/gsd:plan-phase {X+1}`
+`/wxcode:plan-phase {X+1}`
 
 <sub>`/clear` first for fresh context</sub>
 ```
@@ -543,7 +543,7 @@ MILESTONE COMPLETE!
 
 All {N} phases executed.
 
-`/gsd:complete-milestone`
+`/wxcode:complete-milestone`
 ```
 </step>
 
@@ -583,7 +583,7 @@ No polling (Task blocks). No context bleed.
 
 If phase execution was interrupted (context limit, user exit, error):
 
-1. Run `/gsd:execute-phase {phase}` again
+1. Run `/wxcode:execute-phase {phase}` again
 2. discover_plans finds completed SUMMARYs
 3. Skips completed plans
 4. Resumes from first incomplete plan

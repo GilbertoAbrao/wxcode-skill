@@ -1,22 +1,22 @@
 # Model Profiles
 
-Model profiles control which Claude model each GSD agent uses. This allows balancing quality vs token spend.
+Model profiles control which Claude model each WXCODE agent uses. This allows balancing quality vs token spend.
 
 ## Profile Definitions
 
 | Agent | `quality` | `balanced` | `budget` |
 |-------|-----------|------------|----------|
-| gsd-planner | opus | opus | sonnet |
-| gsd-roadmapper | opus | sonnet | sonnet |
-| gsd-executor | opus | sonnet | sonnet |
-| gsd-phase-researcher | opus | sonnet | haiku |
-| gsd-project-researcher | opus | sonnet | haiku |
-| gsd-research-synthesizer | sonnet | sonnet | haiku |
-| gsd-debugger | opus | sonnet | sonnet |
-| gsd-codebase-mapper | sonnet | haiku | haiku |
-| gsd-verifier | sonnet | sonnet | haiku |
-| gsd-plan-checker | sonnet | sonnet | haiku |
-| gsd-integration-checker | sonnet | sonnet | haiku |
+| wxcode-planner | opus | opus | sonnet |
+| wxcode-roadmapper | opus | sonnet | sonnet |
+| wxcode-executor | opus | sonnet | sonnet |
+| wxcode-phase-researcher | opus | sonnet | haiku |
+| wxcode-project-researcher | opus | sonnet | haiku |
+| wxcode-research-synthesizer | sonnet | sonnet | haiku |
+| wxcode-debugger | opus | sonnet | sonnet |
+| wxcode-codebase-mapper | sonnet | haiku | haiku |
+| wxcode-verifier | sonnet | sonnet | haiku |
+| wxcode-plan-checker | sonnet | sonnet | haiku |
+| wxcode-integration-checker | sonnet | sonnet | haiku |
 
 ## Profile Philosophy
 
@@ -49,7 +49,7 @@ Orchestrators resolve model before spawning:
 
 ## Switching Profiles
 
-Runtime: `/gsd:set-profile <profile>`
+Runtime: `/wxcode:set-profile <profile>`
 
 Per-project default: Set in `.planning/config.json`:
 ```json
@@ -60,14 +60,14 @@ Per-project default: Set in `.planning/config.json`:
 
 ## Design Rationale
 
-**Why Opus for gsd-planner?**
+**Why Opus for wxcode-planner?**
 Planning involves architecture decisions, goal decomposition, and task design. This is where model quality has the highest impact.
 
-**Why Sonnet for gsd-executor?**
+**Why Sonnet for wxcode-executor?**
 Executors follow explicit PLAN.md instructions. The plan already contains the reasoning; execution is implementation.
 
 **Why Sonnet (not Haiku) for verifiers in balanced?**
 Verification requires goal-backward reasoning - checking if code *delivers* what the phase promised, not just pattern matching. Sonnet handles this well; Haiku may miss subtle gaps.
 
-**Why Haiku for gsd-codebase-mapper?**
+**Why Haiku for wxcode-codebase-mapper?**
 Read-only exploration and pattern extraction. No reasoning required, just structured output from file contents.

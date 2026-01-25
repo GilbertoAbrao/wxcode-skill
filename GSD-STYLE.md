@@ -1,12 +1,12 @@
-# GSD-STYLE.md
+# WXCODE-STYLE.md
 
 > **Comprehensive reference.** Core rules auto-load from `.claude/rules/`. This document provides deep explanations and examples for when you need the full picture.
 
-This document explains how GSD is written so future Claude instances can contribute consistently.
+This document explains how WXCODE is written so future Claude instances can contribute consistently.
 
 ## Core Philosophy
 
-GSD is a **meta-prompting system** where every file is both implementation and specification. Files teach Claude how to build software systematically. The system optimizes for:
+WXCODE is a **meta-prompting system** where every file is both implementation and specification. Files teach Claude how to build software systematically. The system optimizes for:
 
 - **Solo developer + Claude workflow** (no enterprise patterns)
 - **Context engineering** (manage Claude's context window deliberately)
@@ -20,7 +20,7 @@ GSD is a **meta-prompting system** where every file is both implementation and s
 
 ```yaml
 ---
-name: gsd:command-name
+name: wxcode:command-name
 description: One-line description
 argument-hint: "<required>" or "[optional]"
 allowed-tools: [Read, Write, Bash, Glob, Grep, AskUserQuestion]
@@ -182,7 +182,7 @@ Build authentication system
 | Type | Convention | Example |
 |------|------------|---------|
 | Files | kebab-case | `execute-phase.md` |
-| Commands | `gsd:kebab-case` | `gsd:execute-phase` |
+| Commands | `wxcode:kebab-case` | `wxcode:execute-phase` |
 | XML tags | kebab-case | `<execution_context>` |
 | Step names | snake_case | `name="load_project_state"` |
 | Bash variables | CAPS_UNDERSCORES | `PHASE_ARG`, `PLAN_START_TIME` |
@@ -378,7 +378,7 @@ Depth setting controls compression tolerance:
 
 ## Quick Mode Patterns
 
-Quick mode provides GSD guarantees for ad-hoc tasks without full planning overhead.
+Quick mode provides WXCODE guarantees for ad-hoc tasks without full planning overhead.
 
 ### When to Use Quick Mode
 
