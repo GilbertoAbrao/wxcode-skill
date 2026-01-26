@@ -42,6 +42,61 @@ npx get-shit-done-cc
 
 ---
 
+## About This Fork
+
+This is **WXCODE**, a customized fork of [GSD (Get Shit Done)](https://github.com/glittercowboy/get-shit-done) with automated sync capabilities.
+
+### Branch Structure
+
+| Branch | Tracks | Purpose |
+|--------|--------|---------|
+| `main` | `upstream/main` | Mirror of original GSD repository |
+| `main-wxcode` | `origin/main-wxcode` | WXCODE customizations (work here) |
+
+### Syncing with Upstream
+
+**Manual sync:**
+```bash
+# Update main from upstream
+git checkout main
+git pull
+
+# Merge into wxcode branch
+git checkout main-wxcode
+git merge main
+
+# Resolve conflicts if any, then push
+git push
+```
+
+**Automated sync (recommended):**
+```bash
+/wxcode:sync
+```
+
+The `/wxcode:sync` command handles the entire workflow:
+- Fetches upstream changes
+- Applies deterministic transformations (gsd → wxcode)
+- Asks for decisions on complex conflicts
+- Commits with proper attribution
+
+### Fork Management Commands
+
+| Command | Description |
+|---------|-------------|
+| `/wxcode:sync` | Synchronize with upstream GSD |
+| `/wxcode:status` | Show current sync state |
+| `/wxcode:diff` | Compare local vs upstream |
+| `/wxcode:history` | View sync and customization history |
+| `/wxcode:customize` | Customize a specific command |
+| `/wxcode:discuss` | Explore new features |
+| `/wxcode:override` | Mark files to ignore during sync |
+| `/wxcode:rollback` | Revert last sync |
+
+See [CHANGELOG-WXCODE.md](CHANGELOG-WXCODE.md) for version history.
+
+---
+
 ## Why I Built This
 
 I'm a solo developer. I don't write code — Claude Code does.
