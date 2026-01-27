@@ -22,7 +22,7 @@ npx get-shit-done-cc
 
 <br>
 
-![WXCODE Install](assets/terminal.svg)
+![GSD Install](assets/terminal.svg)
 
 <br>
 
@@ -42,68 +42,13 @@ npx get-shit-done-cc
 
 ---
 
-## About This Fork
-
-This is **WXCODE**, a customized fork of [GSD (Get Shit Done)](https://github.com/glittercowboy/get-shit-done) with automated sync capabilities.
-
-### Branch Structure
-
-| Branch | Tracks | Purpose |
-|--------|--------|---------|
-| `main` | `upstream/main` | Mirror of original GSD repository |
-| `main-wxcode` | `origin/main-wxcode` | WXCODE customizations (work here) |
-
-### Syncing with Upstream
-
-**Manual sync:**
-```bash
-# Update main from upstream
-git checkout main
-git pull
-
-# Merge into wxcode branch
-git checkout main-wxcode
-git merge main
-
-# Resolve conflicts if any, then push
-git push
-```
-
-**Automated sync (recommended):**
-```bash
-/wxcode:sync
-```
-
-The `/wxcode:sync` command handles the entire workflow:
-- Fetches upstream changes
-- Applies deterministic transformations (gsd → wxcode)
-- Asks for decisions on complex conflicts
-- Commits with proper attribution
-
-### Fork Management Commands
-
-| Command | Description |
-|---------|-------------|
-| `/wxcode:sync` | Synchronize with upstream GSD |
-| `/wxcode:status` | Show current sync state |
-| `/wxcode:diff` | Compare local vs upstream |
-| `/wxcode:history` | View sync and customization history |
-| `/wxcode:customize` | Customize a specific command |
-| `/wxcode:discuss` | Explore new features |
-| `/wxcode:override` | Mark files to ignore during sync |
-| `/wxcode:rollback` | Revert last sync |
-
-See [CHANGELOG-WXCODE.md](CHANGELOG-WXCODE.md) for version history.
-
----
-
 ## Why I Built This
 
 I'm a solo developer. I don't write code — Claude Code does.
 
 Other spec-driven development tools exist; BMAD, Speckit... But they all seem to make things way more complicated than they need to be (sprint ceremonies, story points, stakeholder syncs, retrospectives, Jira workflows) or lack real big picture understanding of what you're building. I'm not a 50-person software company. I don't want to play enterprise theater. I'm just a creative person trying to build great things that work.
 
-So I built WXCODE. The complexity is in the system, not in your workflow. Behind the scenes: context engineering, XML prompt formatting, subagent orchestration, state management. What you see: a few commands that just work.
+So I built GSD. The complexity is in the system, not in your workflow. Behind the scenes: context engineering, XML prompt formatting, subagent orchestration, state management. What you see: a few commands that just work.
 
 The system gives Claude everything it needs to do the work *and* verify it. I trust the workflow. It just does a good job.
 
@@ -115,7 +60,7 @@ That's what this is. No enterprise roleplay bullshit. Just an incredibly effecti
 
 Vibecoding has a bad reputation. You describe what you want, AI generates code, and you get inconsistent garbage that falls apart at scale.
 
-WXCODE fixes that. It's the context engineering layer that makes Claude Code reliable. Describe your idea, let the system extract everything it needs to know, and let Claude Code get to work.
+GSD fixes that. It's the context engineering layer that makes Claude Code reliable. Describe your idea, let the system extract everything it needs to know, and let Claude Code get to work.
 
 ---
 
@@ -135,11 +80,11 @@ The installer prompts you to choose:
 1. **Runtime** — Claude Code, OpenCode, or both
 2. **Location** — Global (all projects) or local (current project only)
 
-Verify with `/wxcode:help` inside your Claude Code or OpenCode interface.
+Verify with `/gsd:help` inside your Claude Code or OpenCode interface.
 
 ### Staying Updated
 
-WXCODE evolves fast. Update periodically:
+GSD evolves fast. Update periodically:
 
 ```bash
 npx get-shit-done-cc@latest
@@ -182,14 +127,14 @@ Installs to `./.claude/` for testing modifications before contributing.
 
 ### Recommended: Skip Permissions Mode
 
-WXCODE is designed for frictionless automation. Run Claude Code with:
+GSD is designed for frictionless automation. Run Claude Code with:
 
 ```bash
 claude --dangerously-skip-permissions
 ```
 
 > [!TIP]
-> This is how WXCODE is intended to be used — stopping to approve `date` and `git commit` 50 times defeats the purpose.
+> This is how GSD is intended to be used — stopping to approve `date` and `git commit` 50 times defeats the purpose.
 
 <details>
 <summary><strong>Alternative: Granular Permissions</strong></summary>
@@ -228,12 +173,12 @@ If you prefer not to use that flag, add this to your project's `.claude/settings
 
 ## How It Works
 
-> **Already have code?** Run `/wxcode:map-codebase` first. It spawns parallel agents to analyze your stack, architecture, conventions, and concerns. Then `/wxcode:new-project` knows your codebase — questions focus on what you're adding, and planning automatically loads your patterns.
+> **Already have code?** Run `/gsd:map-codebase` first. It spawns parallel agents to analyze your stack, architecture, conventions, and concerns. Then `/gsd:new-project` knows your codebase — questions focus on what you're adding, and planning automatically loads your patterns.
 
 ### 1. Initialize Project
 
 ```
-/wxcode:new-project
+/gsd:new-project
 ```
 
 One command, one flow. The system:
@@ -252,7 +197,7 @@ You approve the roadmap. Now you're ready to build.
 ### 2. Discuss Phase
 
 ```
-/wxcode:discuss-phase 1
+/gsd:discuss-phase 1
 ```
 
 **This is where you shape the implementation.**
@@ -280,7 +225,7 @@ The deeper you go here, the more the system builds what you actually want. Skip 
 ### 3. Plan Phase
 
 ```
-/wxcode:plan-phase 1
+/gsd:plan-phase 1
 ```
 
 The system:
@@ -298,7 +243,7 @@ Each plan is small enough to execute in a fresh context window. No degradation, 
 ### 4. Execute Phase
 
 ```
-/wxcode:execute-phase 1
+/gsd:execute-phase 1
 ```
 
 The system:
@@ -317,7 +262,7 @@ Walk away, come back to completed work with clean git history.
 ### 5. Verify Work
 
 ```
-/wxcode:verify-work 1
+/gsd:verify-work 1
 ```
 
 **This is where you confirm it actually works.**
@@ -331,7 +276,7 @@ The system:
 3. **Diagnoses failures automatically** — Spawns debug agents to find root causes
 4. **Creates verified fix plans** — Ready for immediate re-execution
 
-If everything passes, you move on. If something's broken, you don't manually debug — you just run `/wxcode:execute-phase` again with the fix plans it created.
+If everything passes, you move on. If something's broken, you don't manually debug — you just run `/gsd:execute-phase` again with the fix plans it created.
 
 **Creates:** `{phase}-UAT.md`, fix plans if issues found
 
@@ -340,34 +285,34 @@ If everything passes, you move on. If something's broken, you don't manually deb
 ### 6. Repeat → Complete → Next Milestone
 
 ```
-/wxcode:discuss-phase 2
-/wxcode:plan-phase 2
-/wxcode:execute-phase 2
-/wxcode:verify-work 2
+/gsd:discuss-phase 2
+/gsd:plan-phase 2
+/gsd:execute-phase 2
+/gsd:verify-work 2
 ...
-/wxcode:complete-milestone
-/wxcode:new-milestone
+/gsd:complete-milestone
+/gsd:new-milestone
 ```
 
 Loop **discuss → plan → execute → verify** until milestone complete.
 
 Each phase gets your input (discuss), proper research (plan), clean execution (execute), and human verification (verify). Context stays fresh. Quality stays high.
 
-When all phases are done, `/wxcode:complete-milestone` archives the milestone and tags the release.
+When all phases are done, `/gsd:complete-milestone` archives the milestone and tags the release.
 
-Then `/wxcode:new-milestone` starts the next version — same flow as `new-project` but for your existing codebase. You describe what you want to build next, the system researches the domain, you scope requirements, and it creates a fresh roadmap. Each milestone is a clean cycle: define → build → ship.
+Then `/gsd:new-milestone` starts the next version — same flow as `new-project` but for your existing codebase. You describe what you want to build next, the system researches the domain, you scope requirements, and it creates a fresh roadmap. Each milestone is a clean cycle: define → build → ship.
 
 ---
 
 ### Quick Mode
 
 ```
-/wxcode:quick
+/gsd:quick
 ```
 
 **For ad-hoc tasks that don't need full planning.**
 
-Quick mode gives you WXCODE guarantees (atomic commits, state tracking) with a faster path:
+Quick mode gives you GSD guarantees (atomic commits, state tracking) with a faster path:
 
 - **Same agents** — Planner + executor, same quality
 - **Skips optional steps** — No research, no plan checker, no verifier
@@ -376,7 +321,7 @@ Quick mode gives you WXCODE guarantees (atomic commits, state tracking) with a f
 Use for: bug fixes, small features, config changes, one-off tasks.
 
 ```
-/wxcode:quick
+/gsd:quick
 > What do you want to do? "Add dark mode toggle to settings"
 ```
 
@@ -390,7 +335,7 @@ Use for: bug fixes, small features, config changes, one-off tasks.
 
 Claude Code is incredibly powerful *if* you give it the context it needs. Most people don't.
 
-WXCODE handles it for you:
+GSD handles it for you:
 
 | File | What it does |
 |------|--------------|
@@ -473,57 +418,57 @@ You're never locked in. The system adapts.
 
 | Command | What it does |
 |---------|--------------|
-| `/wxcode:new-project` | Full initialization: questions → research → requirements → roadmap |
-| `/wxcode:discuss-phase [N]` | Capture implementation decisions before planning |
-| `/wxcode:plan-phase [N]` | Research + plan + verify for a phase |
-| `/wxcode:execute-phase <N>` | Execute all plans in parallel waves, verify when complete |
-| `/wxcode:verify-work [N]` | Manual user acceptance testing ¹ |
-| `/wxcode:audit-milestone` | Verify milestone achieved its definition of done |
-| `/wxcode:complete-milestone` | Archive milestone, tag release |
-| `/wxcode:new-milestone [name]` | Start next version: questions → research → requirements → roadmap |
+| `/gsd:new-project` | Full initialization: questions → research → requirements → roadmap |
+| `/gsd:discuss-phase [N]` | Capture implementation decisions before planning |
+| `/gsd:plan-phase [N]` | Research + plan + verify for a phase |
+| `/gsd:execute-phase <N>` | Execute all plans in parallel waves, verify when complete |
+| `/gsd:verify-work [N]` | Manual user acceptance testing ¹ |
+| `/gsd:audit-milestone` | Verify milestone achieved its definition of done |
+| `/gsd:complete-milestone` | Archive milestone, tag release |
+| `/gsd:new-milestone [name]` | Start next version: questions → research → requirements → roadmap |
 
 ### Navigation
 
 | Command | What it does |
 |---------|--------------|
-| `/wxcode:progress` | Where am I? What's next? |
-| `/wxcode:help` | Show all commands and usage guide |
-| `/wxcode:update` | Update WXCODE with changelog preview |
-| `/wxcode:join-discord` | Join the WXCODE Discord community |
+| `/gsd:progress` | Where am I? What's next? |
+| `/gsd:help` | Show all commands and usage guide |
+| `/gsd:update` | Update GSD with changelog preview |
+| `/gsd:join-discord` | Join the GSD Discord community |
 
 ### Brownfield
 
 | Command | What it does |
 |---------|--------------|
-| `/wxcode:map-codebase` | Analyze existing codebase before new-project |
+| `/gsd:map-codebase` | Analyze existing codebase before new-project |
 
 ### Phase Management
 
 | Command | What it does |
 |---------|--------------|
-| `/wxcode:add-phase` | Append phase to roadmap |
-| `/wxcode:insert-phase [N]` | Insert urgent work between phases |
-| `/wxcode:remove-phase [N]` | Remove future phase, renumber |
-| `/wxcode:list-phase-assumptions [N]` | See Claude's intended approach before planning |
-| `/wxcode:plan-milestone-gaps` | Create phases to close gaps from audit |
+| `/gsd:add-phase` | Append phase to roadmap |
+| `/gsd:insert-phase [N]` | Insert urgent work between phases |
+| `/gsd:remove-phase [N]` | Remove future phase, renumber |
+| `/gsd:list-phase-assumptions [N]` | See Claude's intended approach before planning |
+| `/gsd:plan-milestone-gaps` | Create phases to close gaps from audit |
 
 ### Session
 
 | Command | What it does |
 |---------|--------------|
-| `/wxcode:pause-work` | Create handoff when stopping mid-phase |
-| `/wxcode:resume-work` | Restore from last session |
+| `/gsd:pause-work` | Create handoff when stopping mid-phase |
+| `/gsd:resume-work` | Restore from last session |
 
 ### Utilities
 
 | Command | What it does |
 |---------|--------------|
-| `/wxcode:settings` | Configure model profile and workflow agents |
-| `/wxcode:set-profile <profile>` | Switch model profile (quality/balanced/budget) |
-| `/wxcode:add-todo [desc]` | Capture idea for later |
-| `/wxcode:check-todos` | List pending todos |
-| `/wxcode:debug [desc]` | Systematic debugging with persistent state |
-| `/wxcode:quick` | Execute ad-hoc task with WXCODE guarantees |
+| `/gsd:settings` | Configure model profile and workflow agents |
+| `/gsd:set-profile <profile>` | Switch model profile (quality/balanced/budget) |
+| `/gsd:add-todo [desc]` | Capture idea for later |
+| `/gsd:check-todos` | List pending todos |
+| `/gsd:debug [desc]` | Systematic debugging with persistent state |
+| `/gsd:quick` | Execute ad-hoc task with GSD guarantees |
 
 <sup>¹ Contributed by reddit user OracleGreyBeard</sup>
 
@@ -531,7 +476,7 @@ You're never locked in. The system adapts.
 
 ## Configuration
 
-WXCODE stores project settings in `.planning/config.json`. Configure during `/wxcode:new-project` or update later with `/wxcode:settings`.
+GSD stores project settings in `.planning/config.json`. Configure during `/gsd:new-project` or update later with `/gsd:settings`.
 
 ### Core Settings
 
@@ -552,10 +497,10 @@ Control which Claude model each agent uses. Balance quality vs token spend.
 
 Switch profiles:
 ```
-/wxcode:set-profile budget
+/gsd:set-profile budget
 ```
 
-Or configure via `/wxcode:settings`.
+Or configure via `/gsd:settings`.
 
 ### Workflow Agents
 
@@ -567,9 +512,9 @@ These spawn additional agents during planning/execution. They improve quality bu
 | `workflow.plan_check` | `true` | Verifies plans achieve phase goals before execution |
 | `workflow.verifier` | `true` | Confirms must-haves were delivered after execution |
 
-Use `/wxcode:settings` to toggle these, or override per-invocation:
-- `/wxcode:plan-phase --skip-research`
-- `/wxcode:plan-phase --skip-verify`
+Use `/gsd:settings` to toggle these, or override per-invocation:
+- `/gsd:plan-phase --skip-research`
+- `/gsd:plan-phase --skip-verify`
 
 ### Execution
 
@@ -587,7 +532,7 @@ Use `/wxcode:settings` to toggle these, or override per-invocation:
 - Verify files exist in `~/.claude/commands/gsd/` (global) or `./.claude/commands/gsd/` (local)
 
 **Commands not working as expected?**
-- Run `/wxcode:help` to verify installation
+- Run `/gsd:help` to verify installation
 - Re-run `npx get-shit-done-cc` to reinstall
 
 **Updating to the latest version?**
@@ -605,7 +550,7 @@ This ensures absolute paths are used instead of `~` which may not expand correct
 
 ### Uninstalling
 
-To remove WXCODE completely:
+To remove GSD completely:
 
 ```bash
 # Global installs
@@ -617,7 +562,7 @@ npx get-shit-done-cc --claude --local --uninstall
 npx get-shit-done-cc --opencode --local --uninstall
 ```
 
-This removes all WXCODE commands, agents, hooks, and settings while preserving your other configurations.
+This removes all GSD commands, agents, hooks, and settings while preserving your other configurations.
 
 ---
 
@@ -625,8 +570,8 @@ This removes all WXCODE commands, agents, hooks, and settings while preserving y
 
 | Project | Platform | Description |
 |---------|----------|-------------|
-| [wxcode-opencode](https://github.com/rokicool/wxcode-opencode) | OpenCode | WXCODE adapted for OpenCode CLI |
-| [wxcode-gemini](https://github.com/uberfuzzy/wxcode-gemini) | Gemini CLI | WXCODE adapted for Google's Gemini CLI |
+| [gsd-opencode](https://github.com/rokicool/gsd-opencode) | OpenCode | GSD adapted for OpenCode CLI |
+| [gsd-gemini](https://github.com/uberfuzzy/gsd-gemini) | Gemini CLI | GSD adapted for Google's Gemini CLI |
 
 ---
 
@@ -650,6 +595,6 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 <div align="center">
 
-**Claude Code is powerful. WXCODE makes it reliable.**
+**Claude Code is powerful. GSD makes it reliable.**
 
 </div>
