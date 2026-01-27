@@ -6,7 +6,9 @@ description: Update WXCODE to latest version with changelog display
 <objective>
 Check for WXCODE updates, install if available, and display what changed.
 
-Provides a better update experience than raw `npx get-shit-done-cc` by showing version diff and changelog entries.
+Provides a better update experience by showing version diff and changelog entries.
+
+**Note:** WXCODE is installed from GitHub (GilbertoAbrao/get-shit-done#main-wxcode), not npm.
 </objective>
 
 <process>
@@ -33,20 +35,20 @@ Proceed to install step (treat as version 0.0.0 for comparison).
 </step>
 
 <step name="check_latest_version">
-Check npm for latest version:
+Check GitHub for latest version:
 
 ```bash
-npm view get-shit-done-cc version 2>/dev/null
+curl -s "https://raw.githubusercontent.com/GilbertoAbrao/get-shit-done/main-wxcode/VERSION" 2>/dev/null
 ```
 
-**If npm check fails:**
+**If GitHub check fails:**
 ```
-Couldn't check for updates (offline or npm unavailable).
+Couldn't check for updates (offline or GitHub unavailable).
 
-To update manually: `npx get-shit-done-cc --global`
+To update manually: `npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global`
 ```
 
-STOP here if npm unavailable.
+STOP here if GitHub unavailable.
 </step>
 
 <step name="compare_versions">
@@ -106,7 +108,7 @@ STOP here if ahead.
 ────────────────────────────────────────────────────────────
 
 ⚠️  **Note:** The installer performs a clean install of WXCODE folders:
-- `~/.claude/commands/gsd/` will be wiped and replaced
+- `~/.claude/commands/wxcode/` will be wiped and replaced
 - `~/.claude/get-shit-done/` will be wiped and replaced
 - `~/.claude/agents/wxcode-*` files will be replaced
 
@@ -132,7 +134,7 @@ Use AskUserQuestion:
 Run the update:
 
 ```bash
-npx get-shit-done-cc --global
+npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global
 ```
 
 Capture output. If install fails, show error and STOP.
@@ -154,7 +156,7 @@ Format completion message (changelog was already shown in confirmation step):
 
 ⚠️  Restart Claude Code to pick up the new commands.
 
-[View full changelog](https://github.com/glittercowboy/get-shit-done/blob/main/CHANGELOG.md)
+[View full changelog](https://github.com/GilbertoAbrao/get-shit-done/blob/main-wxcode/CHANGELOG-WXCODE.md)
 ```
 </step>
 
