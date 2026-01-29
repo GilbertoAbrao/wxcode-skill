@@ -246,6 +246,41 @@ Create `start-dev.sh` based on stack group. See templates in `.wxcode/conversion
 chmod +x start-dev.sh
 ```
 
+### Verify Development Server
+
+**IMPORTANT:** Test that the project runs before proceeding.
+
+1. **Execute start-dev.sh:**
+```bash
+./start-dev.sh &
+DEV_PID=$!
+sleep 5
+```
+
+2. **Test server response:**
+```bash
+curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/ 2>/dev/null || echo "failed"
+```
+(Adjust port based on stack: 8000 for Python, 3000 for Node, etc.)
+
+3. **Stop the server:**
+```bash
+kill $DEV_PID 2>/dev/null
+```
+
+**If test fails:**
+- Read error output from start-dev.sh
+- Fix configuration issues (missing dependencies, wrong paths, port conflicts)
+- Re-run verification until server starts successfully
+
+**Common fixes:**
+- Missing `__init__.py` files in Python packages
+- Missing dependencies in requirements.txt/package.json
+- Wrong module paths in entry point
+- Port already in use (try different port)
+
+**Only proceed to next phase when server starts and responds.**
+
 ## Phase C3: Schema Decision
 
 Use AskUserQuestion:
@@ -403,6 +438,7 @@ Elements are converted via milestones. Each milestone:
 - [x] Configuration files created
 - [x] Entry point created
 - [x] start-dev.sh created
+- [x] Development server verified ✓
 - [x] [Schema status]
 - [x] Planning documents created
 - [x] CONVERSION.md created
@@ -450,7 +486,7 @@ mcp__wxcode-kb__mark_project_initialized()
 | Structure | ✓ Created |
 | Config | ✓ Created |
 | Entry point | ✓ Ready to run |
-| start-dev.sh | ✓ Executable |
+| start-dev.sh | ✓ Verified working |
 | Models | ✓ [N] generated / Pending |
 | Planning | ✓ Initialized |
 | CONVERSION.md | ✓ Created |
@@ -1427,6 +1463,7 @@ Present completion with next steps:
 - [ ] Configuration files created (per stack)
 - [ ] Entry point created (project can run)
 - [ ] start-dev.sh created and executable
+- [ ] **Development server tested and working** (verified via curl)
 - [ ] Schema decision made (all now / on-demand)
 - [ ] Models generated (if "all now" selected)
 - [ ] config.json created with workflow preferences → **committed**
