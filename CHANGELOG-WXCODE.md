@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.7] - 2026-01-29
+
+### Fixed
+- Built hooks (`hooks/dist/`) now included in repo for GitHub installs
+- Statusline now correctly shows `/wxcode:update` instead of `/gsd:update`
+
 ## [1.1.6] - 2026-01-29
 
 ### Changed
@@ -121,6 +127,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | WXCODE Version | GSD Version | Sync Date | Notes |
 |----------------|-------------|-----------|-------|
+| 1.1.7 | 1.9.13 | 2026-01-29 | Include built hooks for GitHub |
 | 1.1.6 | 1.9.13 | 2026-01-29 | health_check with 3 retries |
 | 1.1.5 | 1.9.13 | 2026-01-29 | Fix MCP check false negatives |
 | 1.1.4 | 1.9.13 | 2026-01-29 | MCP availability check |
