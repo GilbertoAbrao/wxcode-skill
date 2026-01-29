@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.5] - 2026-01-29
+
+### Fixed
+- MCP availability check now calls tool directly instead of searching
+- Prevents false negatives when MCP is available but deferred tools search fails
+
 ## [1.1.4] - 2026-01-29
 
 ### Added
@@ -108,6 +114,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | WXCODE Version | GSD Version | Sync Date | Notes |
 |----------------|-------------|-----------|-------|
+| 1.1.5 | 1.9.13 | 2026-01-29 | Fix MCP check false negatives |
 | 1.1.4 | 1.9.13 | 2026-01-29 | MCP availability check |
 | 1.1.3 | 1.9.13 | 2026-01-29 | Added CLAUDE.md |
 | 1.1.2 | 1.9.13 | 2026-01-29 | Cache-busting, pyproject.toml fix |
