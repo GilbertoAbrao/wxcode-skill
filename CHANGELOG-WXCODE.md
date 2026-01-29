@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.3] - 2026-01-29
+
+### Added
+- `CLAUDE.md` with complete development context for AI assistants
+  - Extension architecture documentation
+  - Version management requirements
+  - MCP integration details
+  - Common issues and fixes
+
 ## [1.1.2] - 2026-01-29
 
 ### Fixed
@@ -92,6 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | WXCODE Version | GSD Version | Sync Date | Notes |
 |----------------|-------------|-----------|-------|
+| 1.1.3 | 1.9.13 | 2026-01-29 | Added CLAUDE.md |
 | 1.1.2 | 1.9.13 | 2026-01-29 | Cache-busting, pyproject.toml fix |
 | 1.1.1 | 1.9.13 | 2026-01-29 | Installer fixes, start-dev.sh verification |
 | 1.1.0 | 1.9.13 | 2026-01-29 | Conversion mode for new-project |
