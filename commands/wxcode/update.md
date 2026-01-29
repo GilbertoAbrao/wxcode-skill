@@ -131,10 +131,10 @@ Use AskUserQuestion:
 </step>
 
 <step name="run_update">
-Run the update:
+Clear npm cache to ensure fresh download, then run the update:
 
 ```bash
-npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global
+npm cache clean --force 2>/dev/null; rm -rf ~/.npm/_npx 2>/dev/null; npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global
 ```
 
 Capture output. If install fails, show error and STOP.
