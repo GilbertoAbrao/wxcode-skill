@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-01-29
+
+### Fixed
+- `/wxcode:update` now uses cache-busting to bypass GitHub raw content cache
+- `/wxcode:new-project` generates proper `pyproject.toml` with package discovery for Python stacks
+- Added "Multiple top-level packages" fix to common fixes list
+
 ## [1.1.1] - 2026-01-29
 
 ### Fixed
@@ -85,6 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | WXCODE Version | GSD Version | Sync Date | Notes |
 |----------------|-------------|-----------|-------|
+| 1.1.2 | 1.9.13 | 2026-01-29 | Cache-busting, pyproject.toml fix |
 | 1.1.1 | 1.9.13 | 2026-01-29 | Installer fixes, start-dev.sh verification |
 | 1.1.0 | 1.9.13 | 2026-01-29 | Conversion mode for new-project |
 | 1.0.0 | 1.9.13 | 2026-01-25 | Initial fork |
