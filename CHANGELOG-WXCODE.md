@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-01-29
+
+### Fixed
+- Install script now copies from `commands/wxcode/` instead of `commands/gsd/`
+- `/wxcode:update` now clears npm cache before updating to ensure fresh download
+
+### Added
+- `/wxcode:new-project` now verifies `start-dev.sh` works before proceeding (tests server, fixes issues if needed)
+
+### Changed
+- Updated README-WXCODE.md with correct update command (includes cache clearing)
+
+## [1.1.0] - 2026-01-29
+
+### Added
+
+#### Conversion Mode for `/wxcode:new-project`
+- Pass CONTEXT.md as argument to activate conversion mode
+- Creates complete project foundation (structure, config, entry point, start-dev.sh)
+- Single question: convert schema now or on-demand
+- Supports all 15 target stacks from WXCODE Conversor
+- Creates `.planning/CONVERSION.md` to activate conversion mode for other commands
+- Calls MCP `mark_project_initialized` on completion
+
+#### Documentation
+- `.wxcode/conversion/context-md-spec.md` — Specification for CONTEXT.md format
+- `.wxcode/conversion/mcp-usage.md` — Updated to 25 MCP tools (was 19)
+- `docs/CONTEXT.md` — CONTEXT.md specification for conversion projects
+
+### Changed
+- MCP tools documentation updated from 19 to 25 tools
+- Reorganized MCP tools by category (Elements, Controls, Procedures, Schema, Graph, Conversion, Stack, Planes, WLanguage, Similarity, PDF)
+
 ## [1.0.0] - 2026-01-25
 
 ### Added
@@ -52,6 +85,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | WXCODE Version | GSD Version | Sync Date | Notes |
 |----------------|-------------|-----------|-------|
+| 1.1.1 | 1.9.13 | 2026-01-29 | Installer fixes, start-dev.sh verification |
+| 1.1.0 | 1.9.13 | 2026-01-29 | Conversion mode for new-project |
 | 1.0.0 | 1.9.13 | 2026-01-25 | Initial fork |
 
 ---
