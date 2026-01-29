@@ -579,12 +579,12 @@ function uninstall(isGlobal, runtime = 'claude') {
       console.log(`  ${green}✓${reset} Removed WXCODE commands from command/`);
     }
   } else {
-    // Claude Code: remove commands/gsd/ directory
-    const gsdCommandsDir = path.join(targetDir, 'commands', 'gsd');
+    // Claude Code: remove commands/wxcode/ directory
+    const gsdCommandsDir = path.join(targetDir, 'commands', 'wxcode');
     if (fs.existsSync(gsdCommandsDir)) {
       fs.rmSync(gsdCommandsDir, { recursive: true });
       removedCount++;
-      console.log(`  ${green}✓${reset} Removed commands/gsd/`);
+      console.log(`  ${green}✓${reset} Removed commands/wxcode/`);
     }
   }
 
@@ -868,9 +868,9 @@ function install(isGlobal, runtime = 'claude') {
     const commandDir = path.join(targetDir, 'command');
     fs.mkdirSync(commandDir, { recursive: true });
     
-    // Copy commands/gsd/*.md as command/wxcode-*.md (flatten structure)
-    const gsdSrc = path.join(src, 'commands', 'gsd');
-    copyFlattenedCommands(gsdSrc, commandDir, 'gsd', pathPrefix, runtime);
+    // Copy commands/wxcode/*.md as command/wxcode-*.md (flatten structure)
+    const gsdSrc = path.join(src, 'commands', 'wxcode');
+    copyFlattenedCommands(gsdSrc, commandDir, 'wxcode', pathPrefix, runtime);
     if (verifyInstalled(commandDir, 'command/wxcode-*')) {
       const count = fs.readdirSync(commandDir).filter(f => f.startsWith('wxcode-')).length;
       console.log(`  ${green}✓${reset} Installed ${count} commands to command/`);
@@ -882,11 +882,11 @@ function install(isGlobal, runtime = 'claude') {
     const commandsDir = path.join(targetDir, 'commands');
     fs.mkdirSync(commandsDir, { recursive: true });
     
-    const gsdSrc = path.join(src, 'commands', 'gsd');
-    const gsdDest = path.join(commandsDir, 'gsd');
+    const gsdSrc = path.join(src, 'commands', 'wxcode');
+    const gsdDest = path.join(commandsDir, 'wxcode');
     copyWithPathReplacement(gsdSrc, gsdDest, pathPrefix, runtime);
-    if (verifyInstalled(gsdDest, 'commands/gsd')) {
-      console.log(`  ${green}✓${reset} Installed commands/gsd`);
+    if (verifyInstalled(gsdDest, 'commands/wxcode')) {
+      console.log(`  ${green}✓${reset} Installed commands/wxcode`);
     } else {
       failures.push('commands/gsd');
     }
