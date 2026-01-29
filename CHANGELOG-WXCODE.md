@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.4] - 2026-01-29
+
+### Added
+- MCP availability check in `/wxcode:new-project` (conversion mode)
+- MCP availability check in `/wxcode:new-milestone` (conversion projects)
+- Commands now abort with clear error if wxcode-kb MCP is not available
+
 ## [1.1.3] - 2026-01-29
 
 ### Added
@@ -101,6 +108,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | WXCODE Version | GSD Version | Sync Date | Notes |
 |----------------|-------------|-----------|-------|
+| 1.1.4 | 1.9.13 | 2026-01-29 | MCP availability check |
 | 1.1.3 | 1.9.13 | 2026-01-29 | Added CLAUDE.md |
 | 1.1.2 | 1.9.13 | 2026-01-29 | Cache-busting, pyproject.toml fix |
 | 1.1.1 | 1.9.13 | 2026-01-29 | Installer fixes, start-dev.sh verification |
