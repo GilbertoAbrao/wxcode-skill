@@ -5,8 +5,15 @@ allowed-tools:
   - Read
   - Bash
   - Write
+  - Edit
+  - Glob
+  - Grep
   - Task
   - AskUserQuestion
+  - mcp__wxcode-kb__get_schema
+  - mcp__wxcode-kb__get_project_stats
+  - mcp__wxcode-kb__list_elements
+  - mcp__wxcode-kb__mark_project_initialized
 ---
 
 <objective>
@@ -15,7 +22,12 @@ Initialize a new project through unified flow: questioning → research (optiona
 
 This is the most leveraged moment in any project. Deep questioning here means better plans, better execution, better outcomes. One command takes you from idea to ready-for-planning.
 
-**Creates:**
+**Two Modes:**
+
+1. **Greenfield Mode** (default): Deep questioning → research → requirements → roadmap
+2. **Conversion Mode** (when CONTEXT.md passed): Create foundation for WinDev/WebDev conversion
+
+**Creates (Greenfield):**
 - `.planning/PROJECT.md` — project context
 - `.planning/config.json` — workflow preferences
 - `.planning/research/` — domain research (optional)
@@ -23,7 +35,14 @@ This is the most leveraged moment in any project. Deep questioning here means be
 - `.planning/ROADMAP.md` — phase structure
 - `.planning/STATE.md` — project memory
 
-**After this command:** Run `/wxcode:plan-phase 1` to start execution.
+**Creates (Conversion):**
+- All of the above, plus:
+- `.planning/CONVERSION.md` — conversion-specific context
+- Project foundation (structure, config files, entry point)
+- `start-dev.sh` — development server script
+- Database models (all or on-demand)
+
+**After this command:** Run `/wxcode:new-milestone` to convert first element (conversion) or `/wxcode:plan-phase 1` (greenfield).
 
 </objective>
 
@@ -33,6 +52,9 @@ This is the most leveraged moment in any project. Deep questioning here means be
 @~/.claude/get-shit-done/references/ui-brand.md
 @~/.claude/get-shit-done/templates/project.md
 @~/.claude/get-shit-done/templates/requirements.md
+@~/.claude/get-shit-done/.wxcode/conversion/injection-points.md
+@~/.claude/get-shit-done/.wxcode/conversion/mcp-usage.md
+@~/.claude/get-shit-done/.wxcode/conversion/structure-preservation.md
 
 </execution_context>
 
@@ -65,6 +87,390 @@ This is the most leveraged moment in any project. Deep questioning here means be
    ```
 
    **You MUST run all bash commands above using the Bash tool before proceeding.**
+
+## Phase 1.5: Conversion Mode Detection
+
+**Check if CONTEXT.md was passed as argument:**
+
+```bash
+CONTEXT_PATH="$ARGUMENTS"
+```
+
+**If CONTEXT.md path provided:**
+
+This is a **Conversion Project**. The CONTEXT.md contains:
+- Project name and target stack
+- File structure and naming conventions
+- Type mappings for database conversion
+- Database schema from WinDev/WebDev
+
+**IMPORTANT:** CONTEXT.md is a **snapshot**. The MCP (wxcode-kb) is the **Source of Truth**.
+Always consult MCP for current data when needed.
+
+**→ Skip to [Phase C1: Conversion Mode](#phase-c1-conversion-mode-setup)**
+
+**If no CONTEXT.md provided:**
+
+Continue with standard greenfield flow (Phase 2 below).
+
+---
+
+# CONVERSION MODE FLOW
+
+## Phase C1: Conversion Mode Setup
+
+**Display banner:**
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ WXCODE ► INITIALIZING CONVERSION PROJECT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**Read CONTEXT.md and extract:**
+
+```
+- Project name (from "Name:" field)
+- Stack ID (from "Stack:" field, e.g., "fastapi-jinja2")
+- Language (from "Language:" field)
+- Framework (from "Framework:" field)
+- File structure (from "File Structure" section)
+- Naming conventions (from "Naming Conventions" section)
+- Type mappings (from "Type Mappings" section)
+- Database schema (all tables with columns, types, indexes)
+```
+
+**Consult MCP for current stats (SoT):**
+
+```
+mcp__wxcode-kb__get_project_stats()
+```
+
+Display:
+```
+Project: [Project Name]
+Stack: [Stack ID]
+Tables: [N] tables in schema
+Elements: [N] total (from MCP)
+```
+
+**Initialize git and planning:**
+
+```bash
+if [ -d .git ] || [ -f .git ]; then
+    echo "Git repo exists"
+else
+    git init
+fi
+mkdir -p .planning
+```
+
+## Phase C2: Create Project Foundation
+
+Based on the **Stack ID** from CONTEXT.md, create:
+
+### Directory Structure
+
+Use the **File Structure** section from CONTEXT.md exactly.
+
+Example for `fastapi-jinja2`:
+```bash
+mkdir -p app/models app/schemas app/routes app/services app/templates app/static app/config app/utils
+```
+
+Example for `nextjs-app-router`:
+```bash
+mkdir -p src/app src/components src/lib prisma public
+```
+
+### Configuration Files
+
+**For Python stacks (fastapi-*, django-*):**
+
+Create `pyproject.toml` with framework dependencies.
+Create `.env.example` with DATABASE_URL, SECRET_KEY placeholders.
+
+**For Node.js stacks (nextjs-*, nuxt3, sveltekit, remix, nestjs-*):**
+
+Create `package.json` with framework dependencies.
+Create `.env.example` with DATABASE_URL placeholder.
+Create `tsconfig.json` if TypeScript.
+
+**For Ruby stacks (rails-erb):**
+
+Create `Gemfile` with Rails dependencies.
+
+**For PHP stacks (laravel-*):**
+
+Create `composer.json` with Laravel dependencies.
+
+### Application Entry Point
+
+Create the main entry point that allows running the project.
+
+**fastapi-jinja2, fastapi-htmx:**
+```python
+# app/main.py
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
+app = FastAPI(title="[Project Name]")
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+templates = Jinja2Templates(directory="app/templates")
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+```
+
+**nextjs-app-router:**
+```tsx
+// src/app/page.tsx
+export default function Home() {
+  return <main><h1>[Project Name]</h1><p>Conversion in progress...</p></main>;
+}
+```
+
+(Use appropriate entry point for other stacks)
+
+### start-dev.sh
+
+Create `start-dev.sh` based on stack group. See templates in `.wxcode/conversion/` or reference the stack-specific templates.
+
+**Server-Rendered (single server):** fastapi-jinja2, fastapi-htmx, django-templates, rails-erb, laravel-blade
+**SPA (backend + frontend):** fastapi-react, fastapi-vue, nestjs-react, nestjs-vue, laravel-react
+**Fullstack (single Node):** nextjs-app-router, nextjs-pages, nuxt3, sveltekit, remix
+
+```bash
+chmod +x start-dev.sh
+```
+
+## Phase C3: Schema Decision
+
+Use AskUserQuestion:
+
+```
+questions: [
+  {
+    header: "Schema",
+    question: "Convert database schema now or on-demand as each milestone needs it?",
+    multiSelect: false,
+    options: [
+      { label: "Convert all now (Recommended)", description: "Generate all [N] models upfront — consistent foundation" },
+      { label: "On-demand", description: "Generate models as each element is converted — gradual approach" }
+    ]
+  }
+]
+```
+
+## Phase C4: Generate Database Models
+
+**If "Convert all now":**
+
+Display progress:
+```
+◆ Generating [N] database models...
+```
+
+For each table in schema:
+1. Convert table name using **Naming Conventions**
+2. Convert each column using **Type Mappings**
+3. Generate model file
+
+**Python/SQLAlchemy:**
+- Create `app/models/base.py` with Base class
+- Create `app/models/{table_name}.py` for each table
+- Create `app/models/__init__.py` exporting all
+
+**TypeScript/Prisma:**
+- Create `prisma/schema.prisma` with all models
+
+**If "On-demand":**
+
+Create only base infrastructure:
+- Base class/configuration
+- Empty models directory
+- Note in PROJECT.md that models are generated per milestone
+
+## Phase C5: Workflow Preferences
+
+Use the same workflow preferences as greenfield mode (Phase 5 below), but with conversion-appropriate defaults:
+
+**Suggested defaults for conversion:**
+- Mode: YOLO (conversion is well-defined)
+- Depth: Standard
+- Parallelization: Yes
+- Commit docs: Yes
+- Research: No (legacy is the source)
+- Plan Check: Yes
+- Verifier: Yes
+- Model Profile: Balanced
+
+Create `.planning/config.json` with selected settings.
+
+## Phase C6: Create Planning Documents
+
+**Create .planning/PROJECT.md:**
+
+```markdown
+# [Project Name]
+
+## What This Is
+
+Conversion of WinDev/WebDev application to [Stack Target].
+
+## Source
+
+- **Type:** WinDev/WebDev (via MCP: wxcode-kb)
+- **Elements:** [N] total
+
+## Target Stack
+
+- **Stack ID:** [stack-id]
+- **Language:** [language]
+- **Framework:** [framework]
+- **ORM:** [orm]
+
+## Conversion Strategy
+
+Element-by-element conversion via milestones. Each milestone:
+1. Queries Knowledge Base for source code
+2. Converts to target stack
+3. Integrates with existing foundation
+
+## Schema Status
+
+[✓ All [N] models generated | Models generated per milestone as needed]
+
+## Key Decisions
+
+| Decision | Rationale | Outcome |
+|----------|-----------|---------|
+| Stack: [Stack ID] | Defined in CONTEXT.md | — Set |
+| Schema: [all/on-demand] | User preference | — Set |
+
+---
+*Initialized: [date]*
+```
+
+**Create .planning/CONVERSION.md:**
+
+Use template from `.wxcode/conversion/templates/CONVERSION.md`, populated with:
+- Source project info from MCP
+- Target stack from CONTEXT.md
+- Initial state (0 converted)
+- Project-wide decisions (defaults, can adjust later)
+
+**Create .planning/ROADMAP.md:**
+
+```markdown
+# Conversion Roadmap
+
+## Strategy
+
+Elements are converted via milestones. Each milestone:
+1. Receives element context
+2. Queries Knowledge Base for source code (MCP is SoT)
+3. Converts to [Stack Target]
+4. Integrates with existing foundation
+
+## Milestones
+
+| # | Element | Status |
+|---|---------|--------|
+| — | Foundation | ✓ Complete |
+| 1 | (pending) | — |
+
+---
+*Initialized: [date]*
+```
+
+**Create .planning/STATE.md:**
+
+```markdown
+# Project State
+
+## Current Position
+
+- **Mode:** Conversion
+- **Phase:** Foundation complete
+- **Next:** First element conversion
+
+## Foundation Status
+
+- [x] Project structure created
+- [x] Configuration files created
+- [x] Entry point created
+- [x] start-dev.sh created
+- [x] [Schema status]
+- [x] Planning documents created
+- [x] CONVERSION.md created
+
+---
+*Last updated: [date]*
+```
+
+## Phase C7: Commit Foundation
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+feat: initialize conversion project foundation
+
+Stack: [Stack ID]
+Schema: [N] models [generated/pending]
+
+Ready for element conversion via milestones.
+EOF
+)"
+```
+
+## Phase C8: Mark Project Initialized
+
+**Call MCP to mark project as initialized:**
+
+```
+mcp__wxcode-kb__mark_project_initialized()
+```
+
+## Phase C9: Conversion Complete
+
+**Display completion (NO next step suggestion):**
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ WXCODE ► FOUNDATION READY ✓
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**[Project Name]**
+
+| Component | Status |
+|-----------|--------|
+| Structure | ✓ Created |
+| Config | ✓ Created |
+| Entry point | ✓ Ready to run |
+| start-dev.sh | ✓ Executable |
+| Models | ✓ [N] generated / Pending |
+| Planning | ✓ Initialized |
+| CONVERSION.md | ✓ Created |
+
+───────────────────────────────────────────────────────────────
+
+## Run the Project
+
+./start-dev.sh
+
+───────────────────────────────────────────────────────────────
+```
+
+**IMPORTANT:** Do NOT suggest next steps. IDE tooling will handle navigation.
+
+**→ End command (conversion mode)**
+
+---
+
+# GREENFIELD MODE FLOW
 
 ## Phase 2: Brownfield Offer
 
@@ -969,6 +1375,7 @@ Present completion with next steps:
 
 <output>
 
+**Greenfield Mode:**
 - `.planning/PROJECT.md`
 - `.planning/config.json`
 - `.planning/research/` (if research selected)
@@ -981,10 +1388,19 @@ Present completion with next steps:
 - `.planning/ROADMAP.md`
 - `.planning/STATE.md`
 
+**Conversion Mode (additional):**
+- `.planning/CONVERSION.md`
+- Project directory structure (per stack)
+- Configuration files (pyproject.toml, package.json, etc.)
+- Application entry point
+- `start-dev.sh`
+- Database models (if "convert all now" selected)
+
 </output>
 
 <success_criteria>
 
+**Greenfield Mode:**
 - [ ] .planning/ directory created
 - [ ] Git repo initialized
 - [ ] Brownfield detection completed
@@ -1002,6 +1418,25 @@ Present completion with next steps:
 - [ ] STATE.md initialized
 - [ ] REQUIREMENTS.md traceability updated
 - [ ] User knows next step is `/wxcode:discuss-phase 1`
+
+**Conversion Mode:**
+- [ ] CONTEXT.md loaded and parsed
+- [ ] MCP consulted for current stats (SoT)
+- [ ] Stack target identified
+- [ ] Project structure created (per CONTEXT.md file structure)
+- [ ] Configuration files created (per stack)
+- [ ] Entry point created (project can run)
+- [ ] start-dev.sh created and executable
+- [ ] Schema decision made (all now / on-demand)
+- [ ] Models generated (if "all now" selected)
+- [ ] config.json created with workflow preferences → **committed**
+- [ ] .planning/PROJECT.md created → **committed**
+- [ ] .planning/CONVERSION.md created → **committed**
+- [ ] .planning/ROADMAP.md created → **committed**
+- [ ] .planning/STATE.md created → **committed**
+- [ ] Foundation committed to git
+- [ ] MCP mark_project_initialized called
+- [ ] NO next step suggested (IDE handles navigation)
 
 **Atomic commits:** Each phase commits its artifacts immediately. If context is lost, artifacts persist.
 
