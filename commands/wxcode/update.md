@@ -35,10 +35,10 @@ Proceed to install step (treat as version 0.0.0 for comparison).
 </step>
 
 <step name="check_latest_version">
-Check GitHub for latest version:
+Check GitHub for latest version (with cache-busting):
 
 ```bash
-curl -s "https://raw.githubusercontent.com/GilbertoAbrao/get-shit-done/main-wxcode/VERSION" 2>/dev/null
+curl -s "https://raw.githubusercontent.com/GilbertoAbrao/get-shit-done/main-wxcode/VERSION?t=$(date +%s)" 2>/dev/null
 ```
 
 **If GitHub check fails:**
