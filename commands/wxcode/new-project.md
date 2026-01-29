@@ -187,7 +187,24 @@ mkdir -p src/app src/components src/lib prisma public
 
 **For Python stacks (fastapi-*, django-*):**
 
-Create `pyproject.toml` with framework dependencies.
+Create `pyproject.toml` with framework dependencies and **package discovery**:
+```toml
+[project]
+name = "{project_name}"
+version = "0.1.0"
+dependencies = [
+    "fastapi>=0.100.0",
+    "uvicorn[standard]>=0.22.0",
+    "sqlalchemy>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "jinja2>=3.1.0",  # if using templates
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*", "config*"]  # Include all project packages
+```
+
 Create `.env.example` with DATABASE_URL, SECRET_KEY placeholders.
 
 **For Node.js stacks (nextjs-*, nuxt3, sveltekit, remix, nestjs-*):**
@@ -278,6 +295,12 @@ kill $DEV_PID 2>/dev/null
 - Missing dependencies in requirements.txt/package.json
 - Wrong module paths in entry point
 - Port already in use (try different port)
+- **Multiple top-level packages error (setuptools):** Add to pyproject.toml:
+  ```toml
+  [tool.setuptools.packages.find]
+  where = ["."]
+  include = ["app*", "config*"]
+  ```
 
 **Only proceed to next phase when server starts and responds.**
 
