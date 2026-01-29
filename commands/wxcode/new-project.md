@@ -104,9 +104,15 @@ This is a **Conversion Project**.
 
 **Before proceeding, verify MCP wxcode-kb is available:**
 
-Call `mcp__wxcode-kb__get_conversion_stats` (or any MCP tool).
+Execute the MCP tool directly (do NOT search for it first, just call it):
 
-**If MCP NOT available (tool call fails or tool not found):**
+```
+mcp__wxcode-kb__get_conversion_stats
+```
+
+**If tool returns data (even if empty stats):** MCP is available. Continue below.
+
+**If tool returns error "Unknown tool" or "not found":**
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
@@ -123,9 +129,7 @@ Conversion Mode requires the wxcode-kb MCP server.
 **Cannot proceed without MCP.**
 ```
 
-**STOP here if MCP not available.**
-
-**If MCP available:** Continue below.
+**STOP only if tool returns "Unknown tool" error.**
 
 ---
 

@@ -62,9 +62,15 @@ Milestone name: $ARGUMENTS (optional - will prompt if not provided)
 
 This is a **Conversion Project** — MCP wxcode-kb is required.
 
-Call `mcp__wxcode-kb__get_conversion_stats` to verify MCP is available.
+Execute the MCP tool directly (do NOT search for it first, just call it):
 
-**If MCP NOT available (tool call fails or tool not found):**
+```
+mcp__wxcode-kb__get_conversion_stats
+```
+
+**If tool returns data (even if empty stats):** MCP is available. Continue below.
+
+**If tool returns error "Unknown tool" or "not found":**
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
@@ -82,7 +88,7 @@ Conversion projects require the wxcode-kb MCP server.
 **Cannot proceed without MCP.**
 ```
 
-**STOP here if MCP not available.**
+**STOP only if tool returns "Unknown tool" error.**
 
 **If MCP available or not a conversion project:** Continue below.
 
