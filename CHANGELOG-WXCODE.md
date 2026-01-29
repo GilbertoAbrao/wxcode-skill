@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.6] - 2026-01-29
+
+### Changed
+- MCP check now uses `health_check` tool instead of `get_conversion_stats`
+- Retry logic: 3 attempts with 10s delay between each
+- Shows "✓ WXCODE MCP conectado" on successful connection
+
 ## [1.1.5] - 2026-01-29
 
 ### Fixed
@@ -114,6 +121,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | WXCODE Version | GSD Version | Sync Date | Notes |
 |----------------|-------------|-----------|-------|
+| 1.1.6 | 1.9.13 | 2026-01-29 | health_check with 3 retries |
 | 1.1.5 | 1.9.13 | 2026-01-29 | Fix MCP check false negatives |
 | 1.1.4 | 1.9.13 | 2026-01-29 | MCP availability check |
 | 1.1.3 | 1.9.13 | 2026-01-29 | Added CLAUDE.md |
