@@ -167,51 +167,32 @@ Located in `.wxcode/conversion/`:
 
 ## MCP Integration
 
-WXCODE workflows use **19 MCP tools** from the WXCODE Conversor to access legacy code.
+WXCODE workflows use **25 MCP tools** from the WXCODE Conversor to access legacy code.
 
-### KB Read Tools (9)
-
-| Tool | Purpose | When to Use |
-|------|---------|-------------|
-| `get_element` | Full element data (code, AST) | Starting any element analysis |
-| `get_controls` | UI control hierarchy | Understanding page/window structure |
-| `get_procedures` | Related procedures | Understanding business logic |
-| `get_schema` | Database schema | Understanding data requirements |
-| `get_dependencies` | Dependency graph | Understanding conversion order |
-| `list_elements` | List all elements | Getting project overview |
-| `search_elements` | Search by name/content | Finding specific functionality |
-| `get_project_stats` | Project statistics | Understanding scope |
-| `list_projects` | List projects | Finding available KBs |
-
-### Neo4j Analysis Tools (6)
-
-| Tool | Purpose | When to Use |
-|------|---------|-------------|
-| `analyze_impact` | What's affected by changes | Understanding ripple effects |
-| `find_paths` | Paths between elements | Understanding connections |
-| `find_hubs` | Critical elements | Identifying core components |
-| `find_dead_code` | Unused elements | Cleanup candidates |
-| `detect_cycles` | Circular dependencies | Handling complex patterns |
-| `get_subgraph` | Local dependency context | Visualizing relationships |
-
-### Conversion Tools (4)
-
-| Tool | Purpose | When to Use |
-|------|---------|-------------|
-| `get_next_element` | Next element to convert | Determining conversion order |
-| `get_conversion_stats` | Conversion progress | Tracking overall progress |
-| `mark_converted` | Mark as converted | After successful conversion |
-| `get_conversion_context` | Current conversion state | Loading context |
+| Category | Tools | Description |
+|----------|-------|-------------|
+| **Elements** | `get_element`, `list_elements`, `search_code` | Access WinDev source code |
+| **Controls** | `get_controls`, `get_data_bindings` | UI hierarchy and bindings |
+| **Procedures** | `get_procedures`, `get_procedure` | Global and local procedures |
+| **Schema** | `get_schema`, `get_table` | Database schema |
+| **Graph** | `get_dependencies`, `get_impact`, `get_path`, `find_hubs`, `find_dead_code`, `find_cycles` | Dependency analysis (Neo4j) |
+| **Conversion** | `get_conversion_candidates`, `get_topological_order`, `get_conversion_stats`, `mark_converted`, `mark_project_initialized` | Conversion workflow |
+| **Stack** | `get_stack_conventions` | Target stack conventions |
+| **Planes** | `get_element_planes` | Tabs/wizard/views detection |
+| **WLanguage** | `get_wlanguage_reference`, `list_wlanguage_functions`, `get_wlanguage_pattern` | H* function reference |
+| **Similarity** | `search_converted_similar` | Find similar converted elements |
+| **PDF** | `get_element_pdf_slice` | Documentation and screenshots |
 
 ### Usage Pattern
 
 ```
 Before planning any element:
-1. get_element {name}         → Full code
-2. get_controls {name}        → UI structure
-3. get_procedures {name}      → Business logic
-4. get_dependencies {name}    → Prerequisites
-5. get_conversion_context     → What's already converted
+1. get_element {name}           → Full code
+2. get_controls {name}          → UI structure
+3. get_element_planes {name}    → Detect tabs/wizard
+4. get_procedures {name}        → Business logic
+5. get_dependencies {name}      → Prerequisites
+6. search_converted_similar     → Learn from similar
 ```
 
 See `.wxcode/conversion/mcp-usage.md` for complete documentation.

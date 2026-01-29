@@ -246,17 +246,56 @@ Full schema with all tables.
 ### MCP Tools Reference
 
 ```markdown
-## MCP Tools
+## MCP Tools (25 tools)
 
-For converting elements, use these MCP tools:
+### Elements
+- `get_element` — Get WinDev source code
+- `list_elements` — List all elements
+- `search_code` — Search in source code
 
-- `get_element(element_name, project_name)` — Get source code
-- `get_controls(element_name)` — Get UI structure
-- `get_procedures(element_name)` — Get business logic
-- `get_dependencies(element_name)` — Get dependencies
-- `get_schema()` — Get database schema
-- `mark_converted(element_name)` — Mark as converted
-- `mark_project_initialized()` — Mark project initialized
+### Controls
+- `get_controls` — Get UI control hierarchy
+- `get_data_bindings` — Get data bindings for controls
+
+### Procedures
+- `get_procedures` — Get global procedures
+- `get_procedure` — Get specific procedure
+
+### Schema
+- `get_schema` — Get database schema
+- `get_table` — Get specific table details
+
+### Graph (Neo4j)
+- `get_dependencies` — Get element dependencies
+- `get_impact` — Get impact analysis
+- `get_path` — Get path between elements
+- `find_hubs` — Find critical elements
+- `find_dead_code` — Find unused elements
+- `find_cycles` — Find circular dependencies
+
+### Conversion
+- `get_conversion_candidates` — Get elements ready to convert
+- `get_topological_order` — Get conversion order
+- `get_conversion_stats` — Get conversion progress
+- `mark_converted` — Mark element as converted
+- `mark_project_initialized` — Mark project initialized
+
+### Stack
+- `get_stack_conventions` — Get target stack conventions
+
+### Planes
+- `get_element_planes` — Detect tabs/wizard/views
+
+### WLanguage
+- `get_wlanguage_reference` — Get H* function reference
+- `list_wlanguage_functions` — List WLanguage functions
+- `get_wlanguage_pattern` — Get conversion patterns
+
+### Similarity
+- `search_converted_similar` — Find similar converted elements
+
+### PDF
+- `get_element_pdf_slice` — Get PDF docs and screenshots
 ```
 
 ### Model Template
@@ -414,15 +453,56 @@ The CONTEXT.md should be **data only**, not workflow instructions.
 ### Cliente
 ...
 
-## MCP Tools
+## MCP Tools (25 tools)
 
-For converting elements, use these MCP tools:
+### Elements
+- `get_element` — Get WinDev source code
+- `list_elements` — List all elements
+- `search_code` — Search in source code
 
-- `get_element(element_name, project_name)` — Get source code
-- `get_controls(element_name)` — Get UI structure
-- `get_procedures(element_name)` — Get business logic
-- `get_dependencies(element_name)` — Get dependencies
-- `mark_project_initialized()` — Mark project initialized
+### Controls
+- `get_controls` — Get UI control hierarchy
+- `get_data_bindings` — Get data bindings
+
+### Procedures
+- `get_procedures` — Get global procedures
+- `get_procedure` — Get specific procedure
+
+### Schema
+- `get_schema` — Get database schema
+- `get_table` — Get specific table
+
+### Graph (Neo4j)
+- `get_dependencies` — Get dependencies
+- `get_impact` — Get impact analysis
+- `get_path` — Get path between elements
+- `find_hubs` — Find critical elements
+- `find_dead_code` — Find unused elements
+- `find_cycles` — Find circular dependencies
+
+### Conversion
+- `get_conversion_candidates` — Get ready elements
+- `get_topological_order` — Get conversion order
+- `get_conversion_stats` — Get progress
+- `mark_converted` — Mark as converted
+- `mark_project_initialized` — Mark initialized
+
+### Stack
+- `get_stack_conventions` — Get stack conventions
+
+### Planes
+- `get_element_planes` — Detect tabs/wizard/views
+
+### WLanguage
+- `get_wlanguage_reference` — Get H* reference
+- `list_wlanguage_functions` — List functions
+- `get_wlanguage_pattern` — Get patterns
+
+### Similarity
+- `search_converted_similar` — Find similar converted
+
+### PDF
+- `get_element_pdf_slice` — Get PDF/screenshots
 ```
 
 ---

@@ -1,18 +1,26 @@
 # MCP Tools Usage Guide
 
-Reference for using the 19 MCP tools available from WXCODE Conversor.
+Reference for using the 25 MCP tools available from WXCODE Conversor.
 
 ## Tool Categories
 
 | Category | Count | Purpose |
 |----------|-------|---------|
-| KB Read | 9 | Read legacy code from MongoDB |
-| Neo4j Analysis | 6 | Analyze dependency graph |
-| Conversion | 4 | Track conversion progress |
+| Elements | 3 | Access WinDev source code |
+| Controls | 2 | UI control hierarchy and bindings |
+| Procedures | 2 | Global and local procedures |
+| Schema | 2 | Database schema |
+| Graph | 6 | Dependency analysis (Neo4j) |
+| Conversion | 5 | Conversion workflow |
+| Stack | 1 | Target stack conventions |
+| Planes | 1 | Tabs/wizard/views detection |
+| WLanguage | 3 | H* function reference |
+| Similarity | 1 | Find similar converted elements |
+| PDF | 1 | Documentation and screenshots |
 
 ---
 
-## KB Read Tools (9)
+## Elements (3)
 
 ### get_element
 
@@ -35,6 +43,39 @@ Output: {
 - `raw_content` - Original WLanguage source code
 - `ast` - Parsed abstract syntax tree (if available)
 - `properties` - Element configuration
+
+### list_elements
+
+Lists all elements in a project.
+
+**When to use:** Getting overview of project scope.
+
+```
+Input: project_name (string), optional: type_filter
+Output: {
+  "elements": [
+    { "name": "PAGE_Login", "type": "page" },
+    { "name": "proc:ValidaCPF", "type": "procedure" }
+  ]
+}
+```
+
+### search_code
+
+Searches elements by code content.
+
+**When to use:** Finding specific functionality or patterns.
+
+```
+Input: query (string), optional: project_name
+Output: {
+  "matches": [...]
+}
+```
+
+---
+
+## Controls (2)
 
 ### get_controls
 
@@ -68,9 +109,28 @@ Output: {
 - `properties.plane` - Plane number (for stacked views)
 - `events` - Event handlers with code references
 
+### get_data_bindings
+
+Returns data bindings for controls in an element.
+
+**When to use:** Understanding form-to-database mappings.
+
+```
+Input: element_name (string)
+Output: {
+  "bindings": [
+    { "control": "EDT_Nome", "table": "CLIENTE", "field": "NOME" }
+  ]
+}
+```
+
+---
+
+## Procedures (2)
+
 ### get_procedures
 
-Returns procedures related to an element.
+Returns all procedures related to an element.
 
 **When to use:** Understanding business logic.
 
@@ -86,32 +146,67 @@ Output: {
 }
 ```
 
-**Key fields:**
-- `local` - Procedures defined within the element
-- `called` - External procedures this element calls
+### get_procedure
+
+Returns a specific procedure by name.
+
+**When to use:** Getting details of a specific procedure.
+
+```
+Input: procedure_name (string)
+Output: {
+  "name": "ValidaCPF",
+  "code": "...",
+  "parameters": [...],
+  "returns": "boolean"
+}
+```
+
+---
+
+## Schema (2)
 
 ### get_schema
 
-Returns database schema for tables used by element.
+Returns full database schema.
 
-**When to use:** Understanding data layer requirements.
+**When to use:** Understanding complete data model.
 
 ```
-Input: element_name (string)
 Output: {
   "tables": [
     {
       "name": "CLIENTE",
-      "fields": [
-        { "name": "ID", "type": "int", "primary": true },
-        { "name": "NOME", "type": "string", "size": 100 }
-      ],
+      "fields": [...],
       "indexes": [...],
       "connections": [...]
     }
   ]
 }
 ```
+
+### get_table
+
+Returns details of a specific table.
+
+**When to use:** Understanding specific table structure.
+
+```
+Input: table_name (string)
+Output: {
+  "name": "CLIENTE",
+  "fields": [
+    { "name": "ID", "type": "int", "primary": true },
+    { "name": "NOME", "type": "string", "size": 100 }
+  ],
+  "indexes": [...],
+  "relations": [...]
+}
+```
+
+---
+
+## Graph - Neo4j Analysis (6)
 
 ### get_dependencies
 
@@ -134,73 +229,7 @@ Output: {
 
 **Important:** Check if `depends_on` items are already converted before planning.
 
-### list_elements
-
-Lists all elements in a project.
-
-**When to use:** Getting overview of project scope.
-
-```
-Input: project_name (string), optional: type_filter
-Output: {
-  "elements": [
-    { "name": "PAGE_Login", "type": "page" },
-    { "name": "proc:ValidaCPF", "type": "procedure" }
-  ]
-}
-```
-
-### search_elements
-
-Searches elements by name or content.
-
-**When to use:** Finding specific functionality.
-
-```
-Input: query (string), optional: project_name
-Output: {
-  "matches": [...]
-}
-```
-
-### get_project_stats
-
-Returns statistics about a project.
-
-**When to use:** Understanding project scope and complexity.
-
-```
-Input: project_name (string)
-Output: {
-  "total_elements": 150,
-  "by_type": {
-    "page": 45,
-    "procedure": 80,
-    "class": 15,
-    "table": 10
-  }
-}
-```
-
-### list_projects
-
-Lists all imported projects.
-
-**When to use:** Finding available knowledge bases.
-
-```
-Output: {
-  "projects": [
-    { "name": "Linkpay_ADM", "elements": 150 }
-  ]
-}
-```
-
----
-
-## Neo4j Analysis Tools (6)
-
-### analyze_impact
+### get_impact
 
 Analyzes what would be affected by changing an element.
 
@@ -215,7 +244,7 @@ Output: {
 }
 ```
 
-### find_paths
+### get_path
 
 Finds paths between two elements in the dependency graph.
 
@@ -257,7 +286,7 @@ Output: {
 }
 ```
 
-### detect_cycles
+### find_cycles
 
 Finds circular dependencies.
 
@@ -271,36 +300,39 @@ Output: {
 }
 ```
 
-### get_subgraph
-
-Gets a subgraph around an element.
-
-**When to use:** Visualizing local dependency context.
-
-```
-Input: element_name (string), depth (int)
-Output: {
-  "nodes": [...],
-  "edges": [...]
-}
-```
-
 ---
 
-## Conversion Tools (4)
+## Conversion (5)
 
-### get_next_element
+### get_conversion_candidates
 
-Returns the next element to convert (topological order).
+Returns elements ready to convert (dependencies satisfied).
 
-**When to use:** Determining what to convert next.
+**When to use:** Determining what can be converted next.
 
 ```
 Input: project_name (string)
 Output: {
-  "next": "proc:ValidaCPF",
-  "reason": "No unconverted dependencies",
-  "pending_dependencies": []
+  "candidates": [
+    { "name": "proc:ValidaCPF", "reason": "No dependencies" }
+  ]
+}
+```
+
+### get_topological_order
+
+Returns elements in topological order for conversion.
+
+**When to use:** Planning conversion sequence.
+
+```
+Input: project_name (string)
+Output: {
+  "order": [
+    "TABLE:USUARIO",
+    "proc:ValidaCPF",
+    "PAGE_Login"
+  ]
 }
 ```
 
@@ -333,22 +365,149 @@ Output: {
 }
 ```
 
-### get_conversion_context
+### mark_project_initialized
 
-Returns current conversion state and context.
+Marks output project as initialized.
 
-**When to use:** Loading conversion context at session start.
+**When to use:** After `/wxcode:new-project` creates foundation.
+
+```
+Output: {
+  "success": true
+}
+```
+
+---
+
+## Stack (1)
+
+### get_stack_conventions
+
+Returns conventions for the target stack.
+
+**When to use:** Ensuring generated code follows stack patterns.
+
+```
+Input: stack_id (string)
+Output: {
+  "naming": { ... },
+  "file_structure": { ... },
+  "patterns": { ... }
+}
+```
+
+---
+
+## Planes (1)
+
+### get_element_planes
+
+Detects planes (tabs/wizard/views) in an element.
+
+**When to use:** Understanding stacked UI patterns.
+
+```
+Input: element_name (string)
+Output: {
+  "has_planes": true,
+  "planes": [
+    { "number": 1, "controls": ["EDT_Nome", "EDT_Email"] },
+    { "number": 2, "controls": ["EDT_Endereco", "EDT_Cidade"] }
+  ],
+  "navigation_pattern": "wizard"
+}
+```
+
+---
+
+## WLanguage (3)
+
+### get_wlanguage_reference
+
+Returns reference for H* functions.
+
+**When to use:** Understanding WLanguage database functions.
+
+```
+Input: function_name (string)
+Output: {
+  "name": "HReadSeek",
+  "description": "...",
+  "parameters": [...],
+  "equivalent": "query().filter_by()"
+}
+```
+
+### list_wlanguage_functions
+
+Lists all WLanguage functions used in project.
+
+**When to use:** Getting overview of functions to convert.
 
 ```
 Input: project_name (string)
 Output: {
-  "current_element": "PAGE_Login",
-  "converted": ["proc:ValidaCPF", "TABLE:USUARIO"],
-  "pending": [...],
-  "output_project": {
-    "stack_id": "fastapi-jinja2",
-    "language": "python"
-  }
+  "functions": [
+    { "name": "HReadSeek", "count": 45 },
+    { "name": "HAdd", "count": 32 }
+  ]
+}
+```
+
+### get_wlanguage_pattern
+
+Returns conversion pattern for a WLanguage construct.
+
+**When to use:** Getting recommended conversion approach.
+
+```
+Input: pattern_name (string)
+Output: {
+  "wlanguage": "HReadSeek(...)",
+  "python": "session.query(...).filter_by(...)",
+  "notes": "..."
+}
+```
+
+---
+
+## Similarity (1)
+
+### search_converted_similar
+
+Finds similar elements that were already converted.
+
+**When to use:** Learning from previous conversions.
+
+```
+Input: element_name (string)
+Output: {
+  "similar": [
+    {
+      "name": "PAGE_ClienteEdit",
+      "similarity": 0.85,
+      "converted_file": "routes/cliente.py"
+    }
+  ]
+}
+```
+
+---
+
+## PDF (1)
+
+### get_element_pdf_slice
+
+Returns PDF documentation and screenshots for element.
+
+**When to use:** Getting visual reference of original UI.
+
+```
+Input: element_name (string)
+Output: {
+  "pdf_url": "...",
+  "screenshots": [...],
+  "documentation": "..."
 }
 ```
 
@@ -359,12 +518,12 @@ Output: {
 ### Starting a New Element
 
 ```
-1. get_conversion_context     → Current state
-2. get_element {name}         → Full element data
-3. get_controls {name}        → UI structure
-4. get_procedures {name}      → Business logic
-5. get_schema {name}          → Data requirements
-6. get_dependencies {name}    → Prerequisites
+1. get_element {name}           → Full element data
+2. get_controls {name}          → UI structure
+3. get_element_planes {name}    → Detect tabs/wizard
+4. get_procedures {name}        → Business logic
+5. get_dependencies {name}      → Prerequisites
+6. search_converted_similar     → Learn from similar
 ```
 
 ### Before Planning
@@ -372,8 +531,9 @@ Output: {
 ```
 1. Check depends_on from get_dependencies
 2. For each dependency:
-   - Is it in "converted" list? → Can import
-   - Is it in "pending" list? → May need to convert first
+   - Converted? → Can import
+   - Pending? → May need to convert first
+3. get_wlanguage_reference for H* functions found
 ```
 
 ### After Conversion
@@ -381,6 +541,14 @@ Output: {
 ```
 1. mark_converted {element_name}
 2. Commit changes with reference to element
+```
+
+### Project Initialization
+
+```
+1. get_schema                   → Full database schema
+2. get_conversion_stats         → Current state
+3. mark_project_initialized     → After foundation created
 ```
 
 ---
@@ -391,5 +559,6 @@ MCP tools may return errors if:
 - Element not found
 - Project not imported
 - Neo4j not available (for analysis tools)
+- PDF not available for element
 
 Always handle gracefully and inform user if data is unavailable.
