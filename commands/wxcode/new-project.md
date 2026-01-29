@@ -98,7 +98,38 @@ CONTEXT_PATH="$ARGUMENTS"
 
 **If CONTEXT.md path provided:**
 
-This is a **Conversion Project**. The CONTEXT.md contains:
+This is a **Conversion Project**.
+
+### MCP Availability Check (MANDATORY)
+
+**Before proceeding, verify MCP wxcode-kb is available:**
+
+Call `mcp__wxcode-kb__get_conversion_stats` (or any MCP tool).
+
+**If MCP NOT available (tool call fails or tool not found):**
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║  ERROR: MCP wxcode-kb not available                          ║
+╚══════════════════════════════════════════════════════════════╝
+
+Conversion Mode requires the wxcode-kb MCP server.
+
+**To fix:**
+1. Ensure wxcode-kb MCP server is running
+2. Verify MCP is configured in Claude Code settings
+3. Restart Claude Code if recently configured
+
+**Cannot proceed without MCP.**
+```
+
+**STOP here if MCP not available.**
+
+**If MCP available:** Continue below.
+
+---
+
+The CONTEXT.md contains:
 - Project name and target stack
 - File structure and naming conventions
 - Type mappings for database conversion

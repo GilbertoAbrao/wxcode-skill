@@ -8,6 +8,7 @@ allowed-tools:
   - Bash
   - Task
   - AskUserQuestion
+  - mcp__wxcode-kb__get_conversion_stats
 ---
 
 <objective>
@@ -53,6 +54,37 @@ Milestone name: $ARGUMENTS (optional - will prompt if not provided)
 - Read MILESTONES.md (what shipped previously)
 - Read STATE.md (pending todos, blockers)
 - Check for MILESTONE-CONTEXT.md (from /wxcode:discuss-milestone)
+- Check for CONVERSION.md (conversion project indicator)
+
+## Phase 1.5: MCP Availability Check (Conversion Projects Only)
+
+**If `.planning/CONVERSION.md` exists:**
+
+This is a **Conversion Project** — MCP wxcode-kb is required.
+
+Call `mcp__wxcode-kb__get_conversion_stats` to verify MCP is available.
+
+**If MCP NOT available (tool call fails or tool not found):**
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║  ERROR: MCP wxcode-kb not available                          ║
+╚══════════════════════════════════════════════════════════════╝
+
+This is a conversion project (CONVERSION.md exists).
+Conversion projects require the wxcode-kb MCP server.
+
+**To fix:**
+1. Ensure wxcode-kb MCP server is running
+2. Verify MCP is configured in Claude Code settings
+3. Restart Claude Code if recently configured
+
+**Cannot proceed without MCP.**
+```
+
+**STOP here if MCP not available.**
+
+**If MCP available or not a conversion project:** Continue below.
 
 ## Phase 2: Gather Milestone Goals
 
