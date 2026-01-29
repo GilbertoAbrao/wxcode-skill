@@ -8,7 +8,7 @@ allowed-tools:
   - Bash
   - Task
   - AskUserQuestion
-  - mcp__wxcode-kb__get_conversion_stats
+  - mcp__wxcode-kb__health_check
 ---
 
 <objective>
@@ -62,15 +62,32 @@ Milestone name: $ARGUMENTS (optional - will prompt if not provided)
 
 This is a **Conversion Project** — MCP wxcode-kb is required.
 
-Execute the MCP tool directly (do NOT search for it first, just call it):
+**Attempt 1:** Call `mcp__wxcode-kb__health_check`
 
+**If success:** Display and continue:
 ```
-mcp__wxcode-kb__get_conversion_stats
+✓ WXCODE MCP conectado
 ```
 
-**If tool returns data (even if empty stats):** MCP is available. Continue below.
+**If fails:** Wait 10 seconds, then **Attempt 2**
 
-**If tool returns error "Unknown tool" or "not found":**
+**Attempt 2:** Call `mcp__wxcode-kb__health_check`
+
+**If success:** Display and continue:
+```
+✓ WXCODE MCP conectado
+```
+
+**If fails:** Wait 10 seconds, then **Attempt 3**
+
+**Attempt 3:** Call `mcp__wxcode-kb__health_check`
+
+**If success:** Display and continue:
+```
+✓ WXCODE MCP conectado
+```
+
+**If fails after 3 attempts:**
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
@@ -79,6 +96,7 @@ mcp__wxcode-kb__get_conversion_stats
 
 This is a conversion project (CONVERSION.md exists).
 Conversion projects require the wxcode-kb MCP server.
+Tried 3 times with 10s delay between attempts.
 
 **To fix:**
 1. Ensure wxcode-kb MCP server is running
@@ -88,7 +106,7 @@ Conversion projects require the wxcode-kb MCP server.
 **Cannot proceed without MCP.**
 ```
 
-**STOP only if tool returns "Unknown tool" error.**
+**STOP only after all 3 attempts fail.**
 
 **If MCP available or not a conversion project:** Continue below.
 
