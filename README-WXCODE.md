@@ -42,10 +42,10 @@ Verify with `/wxcode:help` inside Claude Code.
 ### Updating
 
 ```bash
-npx github:GilbertoAbrao/get-shit-done#main-wxcode@latest --claude --global
+npm cache clean --force && rm -rf ~/.npm/_npx && npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global
 ```
 
-Or use `/wxcode:update` inside Claude Code.
+Or use `/wxcode:update` inside Claude Code (handles cache automatically).
 
 ---
 
@@ -157,7 +157,8 @@ Located in `.wxcode/conversion/`:
 | File | Purpose |
 |------|---------|
 | `README.md` | Overview of conversion context |
-| `mcp-usage.md` | Guide for using the 19 MCP tools |
+| `context-md-spec.md` | Specification for CONTEXT.md format |
+| `mcp-usage.md` | Guide for using the 25 MCP tools |
 | `planes-detection.md` | How to identify planes in WinDev code |
 | `structure-preservation.md` | Guidelines for familiar code generation |
 | `injection-points.md` | Where to inject conversion logic in commands |
@@ -517,7 +518,7 @@ See [CHANGELOG-WXCODE.md](CHANGELOG-WXCODE.md) for full version history.
 
 ### Current Version
 
-- **WXCODE:** 1.0.0
+- **WXCODE:** 1.1.0
 - **Based on GSD:** 1.9.13
 - **Upstream Commit:** 3d2a960
 
