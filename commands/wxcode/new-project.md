@@ -1562,11 +1562,60 @@ Present completion with next steps:
 
 ## Update Dashboard (Final Step)
 
-After project initialization completes, update the dashboard:
+After project initialization completes, generate and write the dashboard JSON.
 
-1. Generate dashboard JSON following `/wxcode:dashboard` schema
-2. Write to `.planning/dashboard.json`
-3. Output notification:
+**IMPORTANT:** Use EXACTLY this schema (do NOT invent a different format):
+
+```json
+{
+  "project": {
+    "name": "string",
+    "core_value": "string from PROJECT.md",
+    "current_milestone": "string",
+    "description": "string from PROJECT.md"
+  },
+  "current_position": {
+    "milestone": "string",
+    "phase_number": null,
+    "phase_name": null,
+    "phase_total": 0,
+    "plan_number": null,
+    "plan_total": null,
+    "status": "not_started"
+  },
+  "progress": {
+    "phases_complete": 0,
+    "phases_total": 0,
+    "phases_percentage": 0,
+    "requirements_complete": 0,
+    "requirements_total": 0,
+    "requirements_percentage": 0
+  },
+  "phases": [],
+  "requirements": {
+    "total": 0,
+    "complete": 0,
+    "categories": []
+  },
+  "blockers": [],
+  "todos": [],
+  "milestones_history": [],
+  "conversion": {
+    "is_conversion_project": true,
+    "elements_converted": 0,
+    "elements_total": 176,
+    "stack": "fastapi-jinja2"
+  },
+  "meta": {
+    "generated_at": "ISO8601 timestamp",
+    "wxcode_version": "1.1.9"
+  }
+}
+```
+
+**Steps:**
+1. Write JSON to `.planning/dashboard.json` using Write tool
+2. Output notification line:
 ```
 [WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
 ```

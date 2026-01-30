@@ -343,15 +343,19 @@ After all plans in phase complete (step 7):
 
 ## Update Dashboard (Final Step)
 
-After phase execution completes (or after each plan completes), update the dashboard:
+After phase execution completes (or after each plan completes), update the dashboard.
 
-1. Generate dashboard JSON following `/wxcode:dashboard` schema
-2. Write to `.planning/dashboard.json`
-3. Output notification:
+**Reference:** `~/.claude/get-shit-done/references/dashboard-schema.md`
+
+**Steps:**
+1. Read current `.planning/dashboard.json` (if exists)
+2. Update fields based on current state (phases, progress, requirements)
+3. Write updated JSON to `.planning/dashboard.json`
+4. Output notification:
 ```
 [WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
 ```
 
-This allows external UIs to track progress in real-time.
+**IMPORTANT:** Use the EXACT schema from the reference file. Do NOT invent a different format.
 
 </dashboard_update>

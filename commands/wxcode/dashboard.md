@@ -20,6 +20,10 @@ Generate a comprehensive JSON snapshot of project progress for external UI rende
 
 </objective>
 
+<execution_context>
+@~/.claude/get-shit-done/references/dashboard-schema.md
+</execution_context>
+
 <output_schema>
 
 ```json

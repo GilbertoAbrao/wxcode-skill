@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-01-29
+
+### Added
+- `/wxcode:dashboard` command for manual dashboard generation
+- `dashboard-schema.md` reference file with exact JSON schema
+
+### Fixed
+- Dashboard JSON format now deterministic (all commands reference exact schema)
+- All dashboard-generating commands updated with explicit schema reference:
+  - `/wxcode:new-project`
+  - `/wxcode:new-milestone`
+  - `/wxcode:plan-phase`
+  - `/wxcode:execute-phase`
+  - `/wxcode:verify-work`
+  - `/wxcode:complete-milestone`
+
 ## [1.1.9] - 2026-01-29
 
 ### Added
@@ -149,6 +165,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | WXCODE Version | GSD Version | Sync Date | Notes |
 |----------------|-------------|-----------|-------|
+| 1.2.0 | 1.9.13 | 2026-01-29 | Dashboard schema consistency |
 | 1.1.9 | 1.9.13 | 2026-01-29 | Dashboard file + watcher notification |
 | 1.1.8 | 1.9.13 | 2026-01-29 | Add /wxcode:dashboard JSON output |
 | 1.1.7 | 1.9.13 | 2026-01-29 | Include built hooks for GitHub |

@@ -529,13 +529,19 @@ Verification: {Passed | Passed with override | Skipped}
 
 ## Update Dashboard (Final Step)
 
-After planning completes, update the dashboard:
+After planning completes, update the dashboard.
 
-1. Generate dashboard JSON following `/wxcode:dashboard` schema
-2. Write to `.planning/dashboard.json`
-3. Output notification:
+**Reference:** `~/.claude/get-shit-done/references/dashboard-schema.md`
+
+**Steps:**
+1. Read current `.planning/dashboard.json` (if exists)
+2. Update fields based on current state (new plans added, phase status)
+3. Write updated JSON to `.planning/dashboard.json`
+4. Output notification:
 ```
 [WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
 ```
+
+**IMPORTANT:** Use the EXACT schema from the reference file. Do NOT invent a different format.
 
 </dashboard_update>
