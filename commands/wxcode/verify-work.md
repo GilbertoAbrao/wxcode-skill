@@ -265,6 +265,33 @@ Use CONVERSION.md for `conversion.stack`.
 4. Write to `.planning/dashboard_${MILESTONE_FOLDER_NAME}.json`
 5. Output: `[WXCODE:DASHBOARD_UPDATED] .planning/dashboard_<milestone>.json`
 
+### Step 5: Update workflow stages
+
+Update the `workflow` section based on verification result:
+
+**If UAT passed:**
+1. Set `workflow.stages[5]` (verified) to `"status": "complete"`, `"completed_at": "<now>"`
+2. Update `workflow.current_stage` to `"verified"`
+
+**If UAT failed (gaps found):**
+1. Keep verified stage as `"status": "pending"`
+2. Keep `workflow.current_stage` as `"executing"` (need more work)
+
+```json
+"workflow": {
+  "current_stage": "verified",
+  "stages": [
+    { "id": "created", "status": "complete", "completed_at": "..." },
+    { "id": "requirements", "status": "complete", "completed_at": "..." },
+    { "id": "roadmap", "status": "complete", "completed_at": "..." },
+    { "id": "planning", "status": "complete", "completed_at": "..." },
+    { "id": "executing", "status": "complete", "completed_at": "..." },
+    { "id": "verified", "status": "complete", "completed_at": "<now>" },
+    { "id": "archived", "status": "pending", "completed_at": null }
+  ]
+}
+```
+
 **IMPORTANT:** Use the EXACT schemas from the reference files. Do NOT invent a different format.
 
 </dashboard_update>

@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.5] - 2026-01-30
+
+### Added
+- Workflow stages tracking in milestone dashboard schema
+- 7-stage lifecycle: created → requirements → roadmap → planning → executing → verified → archived
+- `workflow.current_stage` field to identify active stage
+- `workflow.stages[].completed_at` timestamps for each stage
+- Stage detection logic documentation
+
+### Dashboard Schema
+- `workflow.current_stage` — identifies the active stage
+- `workflow.stages[]` — array of 7 lifecycle stages with status and timestamps
+- Each stage: id, name, description, status (pending/in_progress/complete), completed_at
+
 ## [1.2.4] - 2026-01-30
 
 ### Added
@@ -255,6 +269,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | WXCODE Version | GSD Version | Sync Date | Notes |
 |----------------|-------------|-----------|-------|
+| 1.2.5 | 1.9.13 | 2026-01-30 | Workflow stages in milestone dashboard |
+| 1.2.4 | 1.9.13 | 2026-01-30 | Tasks in milestone dashboard |
+| 1.2.3 | 1.9.13 | 2026-01-30 | Split dashboard schemas (project/milestone) |
 | 1.2.2 | 1.9.13 | 2026-01-29 | Conversion-first research priority |
 | 1.2.1 | 1.9.13 | 2026-01-29 | Dynamic MCP tool discovery for all agents |
 | 1.2.0 | 1.9.13 | 2026-01-29 | Dashboard schema consistency |

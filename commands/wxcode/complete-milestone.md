@@ -176,6 +176,29 @@ Use CONVERSION.md for `conversion.stack`.
 6. Write to `.planning/dashboard_${MILESTONE_FOLDER_NAME}.json`
 7. Output: `[WXCODE:DASHBOARD_UPDATED] .planning/dashboard_<milestone>.json`
 
+### Step 5: Update workflow stages
+
+Complete the `workflow` section:
+
+1. Set `workflow.stages[6]` (archived) to `"status": "complete"`, `"completed_at": "<now>"`
+2. Update `workflow.current_stage` to `"archived"`
+3. Ensure all previous stages are marked complete
+
+```json
+"workflow": {
+  "current_stage": "archived",
+  "stages": [
+    { "id": "created", "status": "complete", "completed_at": "..." },
+    { "id": "requirements", "status": "complete", "completed_at": "..." },
+    { "id": "roadmap", "status": "complete", "completed_at": "..." },
+    { "id": "planning", "status": "complete", "completed_at": "..." },
+    { "id": "executing", "status": "complete", "completed_at": "..." },
+    { "id": "verified", "status": "complete", "completed_at": "..." },
+    { "id": "archived", "status": "complete", "completed_at": "<now>" }
+  ]
+}
+```
+
 **IMPORTANT:** Use the EXACT schemas from the reference files. Do NOT invent a different format.
 
 </dashboard_update>

@@ -958,6 +958,25 @@ Output notification:
 [WXCODE:DASHBOARD_UPDATED] .planning/dashboard_<milestone>.json
 ```
 
+### Step 4: Initialize workflow stages
+
+Initialize the `workflow` section with first 3 stages complete:
+
+```json
+"workflow": {
+  "current_stage": "roadmap",
+  "stages": [
+    { "id": "created", "status": "complete", "completed_at": "<now>" },
+    { "id": "requirements", "status": "complete", "completed_at": "<now>" },
+    { "id": "roadmap", "status": "complete", "completed_at": "<now>" },
+    { "id": "planning", "status": "pending", "completed_at": null },
+    { "id": "executing", "status": "pending", "completed_at": null },
+    { "id": "verified", "status": "pending", "completed_at": null },
+    { "id": "archived", "status": "pending", "completed_at": null }
+  ]
+}
+```
+
 **IMPORTANT:** Use the EXACT schemas from the reference files. Do NOT invent a different format.
 
 </dashboard_update>
