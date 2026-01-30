@@ -1,7 +1,7 @@
 ---
 name: wxcode:new-milestone
 description: Start a new milestone cycle — update PROJECT.md and route to requirements
-argument-hint: "[milestone name] [--milestone-id=xxx] (id optional, from UI)"
+argument-hint: "--element=PAGE_Login --output-project=xxx (for conversion projects)"
 allowed-tools:
   - Read
   - Write
@@ -11,6 +11,7 @@ allowed-tools:
   - mcp__wxcode-kb__health_check
   - mcp__wxcode-kb__create_milestone
   - mcp__wxcode-kb__get_conversion_stats
+  - mcp__wxcode-kb__list_elements
 ---
 
 <objective>
@@ -37,10 +38,19 @@ This is the brownfield equivalent of new-project. The project exists, PROJECT.md
 
 <context>
 **Arguments parsing:**
-- Milestone name: First argument without `--` prefix (optional - will prompt if not provided)
-- `--milestone-id=xxx`: MongoDB Milestone ID passed by UI (optional)
 
-Example: `/wxcode:new-milestone v1.1 Notifications --milestone-id=507f1f77bcf86cd799439011`
+For **conversion projects** (UI-triggered):
+- `--element=PAGE_Login`: Element name to convert (required)
+- `--output-project=xxx`: MongoDB OutputProject ID (required)
+
+Example: `/wxcode:new-milestone --element=PAGE_Login --output-project=507f1f77bcf86cd799439011`
+
+For **greenfield projects** (CLI):
+- Milestone name as positional argument (optional - will prompt if not provided)
+
+Example: `/wxcode:new-milestone v1.1 Notifications`
+
+**Version is determined automatically by the agent** — never passed by UI.
 
 **Load project context:**
 @.planning/PROJECT.md
@@ -115,6 +125,103 @@ Tried 3 times with 10s delay between attempts.
 **STOP only after all 3 attempts fail.**
 
 **If MCP available or not a conversion project:** Continue below.
+
+## Phase 1.6: Parse Arguments and Create Milestone (Conversion Projects)
+
+**Skip this phase if NOT a conversion project** (no CONVERSION.md).
+
+### Step 1: Validate required arguments
+
+Parse from $ARGUMENTS:
+```
+--element=PAGE_Login     → ELEMENT_NAME
+--output-project=xxx     → OUTPUT_PROJECT_ID
+```
+
+**If missing `--element` or `--output-project`:**
+```
+╔══════════════════════════════════════════════════════════════╗
+║  ERROR: Missing required arguments                            ║
+╚══════════════════════════════════════════════════════════════╝
+
+Conversion projects require:
+  --element=<element_name>
+  --output-project=<output_project_id>
+
+Example:
+  /wxcode:new-milestone --element=PAGE_Login --output-project=507f1f77...
+```
+**STOP.**
+
+### Step 2: Determine version automatically
+
+Scan existing milestone dashboards to find highest version:
+```bash
+ls -1 .planning/dashboard_v*.json 2>/dev/null | sort -V | tail -1
+```
+
+**Version logic:**
+- No existing milestones → `v1.0`
+- Highest is `v1.0` → `v1.1`
+- Highest is `v1.5` → `v1.6`
+- Highest is `v1.9` → `v2.0`
+
+Store:
+```
+WXCODE_VERSION="v1.0"  # determined automatically
+MILESTONE_FOLDER_NAME="${WXCODE_VERSION}-${ELEMENT_NAME}"
+# Example: "v1.0-PAGE_Login"
+```
+
+### Step 3: Create milestone folder
+
+```bash
+mkdir -p .planning/milestones/${MILESTONE_FOLDER_NAME}
+```
+
+Display:
+```
+✓ Milestone folder: .planning/milestones/${MILESTONE_FOLDER_NAME}
+```
+
+### Step 4: Create Milestone in MongoDB (immediately after folder)
+
+**This MUST happen immediately after creating the folder.**
+
+```
+mcp__wxcode-kb__create_milestone(
+    output_project_id=OUTPUT_PROJECT_ID,
+    element_name=ELEMENT_NAME,
+    wxcode_version=WXCODE_VERSION,
+    milestone_folder_name=MILESTONE_FOLDER_NAME,
+    confirm=true
+)
+```
+
+Store the returned ID:
+```
+MONGODB_MILESTONE_ID=[returned milestone_id]
+```
+
+Display:
+```
+✓ Milestone created in MongoDB: ${MONGODB_MILESTONE_ID}
+✓ Version: ${WXCODE_VERSION}
+✓ Element: ${ELEMENT_NAME}
+```
+
+**If MCP call fails:**
+- Remove the created folder
+- Display error and **STOP**
+
+### Step 5: Store for later phases
+
+These values are used in later phases:
+- `ELEMENT_NAME` — for context gathering
+- `OUTPUT_PROJECT_ID` — for MCP calls
+- `WXCODE_VERSION` — for dashboard and STATE.md
+- `MILESTONE_FOLDER_NAME` — for dashboard filename
+- `MONGODB_MILESTONE_ID` — for dashboard content
 
 ## Phase 2: Gather Milestone Goals
 
@@ -724,55 +831,6 @@ EOF
 )"
 ```
 
-## Phase 9.5: Create Milestone in MongoDB (Conversion Projects)
-
-**Skip this phase if NOT a conversion project** (no CONVERSION.md).
-
-**If conversion project:**
-
-Parse output_project_id from CONVERSION.md:
-```bash
-OUTPUT_PROJECT_ID=$(grep -A1 "Output Project ID" .planning/CONVERSION.md | tail -1 | sed 's/.*`\([^`]*\)`.*/\1/' | tr -d '[:space:]')
-```
-
-Parse element_name from CONVERSION.md or MILESTONE-CONTEXT.md:
-```bash
-ELEMENT_NAME=$(grep -A1 "Current Element" .planning/CONVERSION.md | tail -1 | sed 's/.*`\([^`]*\)`.*/\1/' | tr -d '[:space:]')
-```
-
-Determine milestone folder name (version + element for uniqueness):
-```
-MILESTONE_FOLDER_NAME="v[X.Y]-[element_name]"
-# Example: "v1.0-PAGE_Login"
-```
-
-**Create Milestone in MongoDB:**
-
-```
-mcp__wxcode-kb__create_milestone(
-    output_project_id=OUTPUT_PROJECT_ID,
-    element_name=ELEMENT_NAME,
-    wxcode_version="v[X.Y]",
-    milestone_folder_name=MILESTONE_FOLDER_NAME,
-    confirm=true
-)
-```
-
-**If `--milestone-id` was passed:**
-- The UI already created the Milestone — skip creation
-- Instead, call a future `associate_milestone` tool to update it with wxcode_version and milestone_folder_name
-- For now, log a warning: "UI-created milestone association not yet implemented"
-
-**Store milestone_id for dashboard:**
-```
-MONGODB_MILESTONE_ID=[returned milestone_id or passed --milestone-id]
-```
-
-Display:
-```
-✓ Milestone created in MongoDB: [milestone_id]
-```
-
 ## Phase 10: Done
 
 Present completion with next steps:
@@ -814,6 +872,10 @@ Present completion with next steps:
 </process>
 
 <success_criteria>
+- [ ] **(Conversion projects)** Arguments parsed: --element and --output-project
+- [ ] **(Conversion projects)** Version determined automatically (v1.0, v1.1, etc.)
+- [ ] **(Conversion projects)** Milestone folder created: `.planning/milestones/<folder>`
+- [ ] **(Conversion projects)** Milestone created in MongoDB via MCP (immediately after folder)
 - [ ] PROJECT.md updated with Current Milestone section
 - [ ] STATE.md reset for new milestone
 - [ ] MILESTONE-CONTEXT.md consumed and deleted (if existed)
@@ -826,7 +888,6 @@ Present completion with next steps:
 - [ ] User feedback incorporated (if any)
 - [ ] ROADMAP.md created with phases continuing from previous milestone
 - [ ] All commits made (if planning docs committed)
-- [ ] **(Conversion projects)** Milestone created in MongoDB via MCP
 - [ ] User knows next step is `/wxcode:discuss-phase [N]`
 
 **Atomic commits:** Each phase commits its artifacts immediately. If context is lost, artifacts persist.
