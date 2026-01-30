@@ -41,12 +41,21 @@ Example filename: `.planning/dashboard_v1.0-PAGE_Login.json`
       "requirements_covered": ["REQ-ID", "..."],
       "plans": [
         {
-          "number": "number",
-          "name": "string",
+          "number": "string - e.g., '1.1'",
+          "name": "string - e.g., 'Database Layer'",
           "status": "pending | in_progress | complete",
           "tasks_complete": "number",
           "tasks_total": "number",
-          "summary": "string | null"
+          "summary": "string | null - from SUMMARY.md if complete",
+          "tasks": [
+            {
+              "id": "string - e.g., '1.1.1'",
+              "name": "string - e.g., 'Create AcessoUsuario Model'",
+              "file": "string | null - e.g., 'app/models/acesso_usuario.py'",
+              "status": "pending | in_progress | complete",
+              "description": "string - brief description of what the task does"
+            }
+          ]
         }
       ]
     }
@@ -126,8 +135,37 @@ Example filename: `.planning/dashboard_v1.0-PAGE_Login.json`
 | milestone.* | Created during `/wxcode:new-milestone` |
 | current_position.* | `.planning/STATE.md` |
 | phases | `.planning/ROADMAP.md` + `.planning/phases/*/` |
+| phases[].plans[].tasks | Parse from `*-PLAN.md` files (## Tasks section) |
 | requirements | `.planning/REQUIREMENTS.md` |
 | blockers | `.planning/STATE.md` |
+
+## Task Parsing
+
+Extract tasks from PLAN.md files by parsing the `## Tasks` section:
+
+```markdown
+## Tasks
+
+### Task 1.1.1: Create AcessoUsuario Model
+**File:** `app/models/acesso_usuario.py`
+**Description:** Create SQLAlchemy model...
+```
+
+Maps to:
+```json
+{
+  "id": "1.1.1",
+  "name": "Create AcessoUsuario Model",
+  "file": "app/models/acesso_usuario.py",
+  "status": "pending",
+  "description": "Create SQLAlchemy model..."
+}
+```
+
+Task status is determined by:
+- `pending`: PLAN.md exists, no SUMMARY.md
+- `in_progress`: Currently being executed
+- `complete`: SUMMARY.md exists for this plan
 
 ## Update Notification
 
