@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.9] - 2026-01-29
+
+### Added
+- Dashboard now writes JSON to `.planning/dashboard.json`
+- Watcher notification: `[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json`
+- Dashboard update integrated into key commands:
+  - `/wxcode:new-project`
+  - `/wxcode:new-milestone`
+  - `/wxcode:plan-phase`
+  - `/wxcode:execute-phase`
+  - `/wxcode:verify-work`
+  - `/wxcode:complete-milestone`
+
 ## [1.1.8] - 2026-01-29
 
 ### Added
@@ -136,6 +149,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | WXCODE Version | GSD Version | Sync Date | Notes |
 |----------------|-------------|-----------|-------|
+| 1.1.9 | 1.9.13 | 2026-01-29 | Dashboard file + watcher notification |
 | 1.1.8 | 1.9.13 | 2026-01-29 | Add /wxcode:dashboard JSON output |
 | 1.1.7 | 1.9.13 | 2026-01-29 | Include built hooks for GitHub |
 | 1.1.6 | 1.9.13 | 2026-01-29 | health_check with 3 retries |
