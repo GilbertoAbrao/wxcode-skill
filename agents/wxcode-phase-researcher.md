@@ -291,9 +291,139 @@ Before submitting research:
 
 </verification_protocol>
 
+<conversion_output_format>
+
+## RESEARCH.md Structure (Conversion Projects)
+
+**Location:** `.planning/phases/XX-name/{phase}-RESEARCH.md`
+
+**Priority:** Legacy understanding > Target stack research
+
+```markdown
+# Phase [X]: [Element Name] - Conversion Research
+
+**Element:** [legacy element name]
+**Type:** [Page/Window/Report/etc.]
+**Researched:** [date]
+**Confidence:** [HIGH/MEDIUM/LOW]
+
+## Summary
+
+[2-3 paragraph summary of what this element does in the legacy system
+and what's needed to convert it successfully]
+
+**Conversion approach:** [one-liner strategy]
+
+## Legacy Element Analysis
+
+### Source Code Overview
+[Key sections of the element, main functionality]
+
+### UI Structure
+| Control | Type | Purpose | Data Binding |
+|---------|------|---------|--------------|
+| [name] | [type] | [what it does] | [field/variable] |
+
+### Planes (if present)
+| Plane | Name | Controls | Purpose |
+|-------|------|----------|---------|
+| 1 | [name] | [controls] | [wizard step / tab content] |
+
+### Business Rules
+1. **[Rule name]:** [description from legacy code]
+2. **[Rule name]:** [description from legacy code]
+
+### Event Handlers
+| Event | Handler | Logic |
+|-------|---------|-------|
+| [event] | [procedure] | [what it does] |
+
+## Dependencies Analysis
+
+### Direct Dependencies
+
+| Dependency | Type | Status | Must Convert First? | Notes |
+|------------|------|--------|---------------------|-------|
+| [name] | Procedure | ✓ Converted | N/A | Already in target |
+| [name] | Class | ✗ Not converted | YES - blocking | Required for [reason] |
+| [name] | Table | ✓ Converted | N/A | Model exists |
+| [name] | Procedure | ✗ Not converted | NO - soft | Can stub temporarily |
+
+### Blocking Dependencies (MUST resolve before this phase)
+
+**[Dependency 1]:** [Why it blocks, what happens if missing]
+
+**[Dependency 2]:** [Why it blocks, what happens if missing]
+
+### Soft Dependencies (can proceed with stubs)
+
+**[Dependency 1]:** [How to stub, when to convert properly]
+
+## Output Project Analysis
+
+### Current Architecture
+
+```
+[directory structure of output project]
+```
+
+### Naming Conventions
+- Routes: [pattern observed]
+- Templates: [pattern observed]
+- Models: [pattern observed]
+- Services: [pattern observed]
+
+### Similar Conversions (patterns to follow)
+
+| Similar Element | Converted File | Pattern Used |
+|-----------------|----------------|--------------|
+| [legacy name] | [target file] | [how it was done] |
+
+### Code Patterns
+[Examples of how similar elements were converted]
+
+## Conversion Challenges
+
+### Challenge 1: [Name]
+**Legacy behavior:** [what it does]
+**Target equivalent:** [how to achieve same result]
+**Complexity:** [High/Medium/Low]
+
+### Challenge 2: [Name]
+**Legacy behavior:** [what it does]
+**Target equivalent:** [how to achieve same result]
+**Complexity:** [High/Medium/Low]
+
+## Conversion Recommendations
+
+1. **[Recommendation 1]:** [specific guidance]
+2. **[Recommendation 2]:** [specific guidance]
+3. **[Recommendation 3]:** [specific guidance]
+
+## Pre-Conversion Checklist
+
+- [ ] All blocking dependencies converted
+- [ ] Database tables/models exist
+- [ ] Authentication/authorization in place (if needed)
+- [ ] Similar conversions reviewed
+- [ ] Target architecture patterns understood
+
+## Open Questions
+
+1. **[Question]:** [what needs clarification from user]
+
+## Sources
+
+- MCP: get_element, get_controls, get_procedures, get_dependencies
+- Output project: [files examined]
+- Similar conversions: [elements referenced]
+```
+
+</conversion_output_format>
+
 <output_format>
 
-## RESEARCH.md Structure
+## RESEARCH.md Structure (Standard Projects)
 
 **Location:** `.planning/phases/XX-name/{phase}-RESEARCH.md`
 
@@ -455,6 +585,9 @@ cat "${PHASE_DIR}"/*-CONTEXT.md 2>/dev/null
 COMMIT_PLANNING_DOCS=$(cat .planning/config.json 2>/dev/null | grep -o '"commit_docs"[[:space:]]*:[[:space:]]*[^,}]*' | grep -o 'true\|false' || echo "true")
 # Auto-detect gitignored (overrides config)
 git check-ignore -q .planning 2>/dev/null && COMMIT_PLANNING_DOCS=false
+
+# Check if conversion project
+IS_CONVERSION=$([ -f .planning/CONVERSION.md ] && echo "true" || echo "false")
 ```
 
 **If CONTEXT.md exists**, it contains user decisions that MUST constrain your research:
@@ -465,14 +598,147 @@ git check-ignore -q .planning 2>/dev/null && COMMIT_PLANNING_DOCS=false
 | **Claude's Discretion** | Your freedom areas — research options, make recommendations |
 | **Deferred Ideas** | Out of scope — ignore completely |
 
-**Examples:**
-- User decided "use library X" → research X deeply, don't explore alternatives
-- User decided "simple UI, no animations" → don't research animation libraries
-- Marked as Claude's discretion → research options and recommend
-
 Parse CONTEXT.md content before proceeding to research.
 
-## Step 2: Identify Research Domains
+## Step 2: Route by Project Type
+
+**If `IS_CONVERSION=true`:** Go to Step 2A (Conversion Research Flow)
+
+**If `IS_CONVERSION=false`:** Go to Step 2B (Standard Research Flow)
+
+---
+
+## Step 2A: Conversion Research Flow (PRIORITY)
+
+**For conversion projects, understanding the legacy code is THE priority.**
+
+Stack research is secondary — the target stack is already defined in `.planning/CONVERSION.md`.
+
+### 2A.1: Verify MCP Availability
+
+```bash
+mcp__wxcode-kb__health_check
+```
+
+If MCP unavailable after 3 attempts, return `## RESEARCH BLOCKED` with MCP error.
+
+### 2A.2: Identify Element Being Converted
+
+From phase description or CONTEXT.md, identify the legacy element:
+- Element name (e.g., `PAGE_Login`, `FEN_Cadastro`)
+- Element type (Page, Window, Report, etc.)
+
+### 2A.3: Retrieve Legacy Code (MANDATORY)
+
+```
+mcp__wxcode-kb__get_element {element_name}
+```
+
+**Document:**
+- Full source code
+- Code structure (sections, procedures, events)
+- Business rules embedded in code
+
+### 2A.4: Retrieve UI Structure
+
+```
+mcp__wxcode-kb__get_controls {element_name}
+```
+
+**Document:**
+- Control hierarchy
+- Control types and properties
+- Data bindings
+- Planes (tabs/wizard) if present
+
+### 2A.5: Retrieve Business Logic
+
+```
+mcp__wxcode-kb__get_procedures {element_name}
+```
+
+**Document:**
+- Local procedures
+- Event handlers
+- Validation rules
+- Business calculations
+
+### 2A.6: Analyze Dependencies (CRITICAL)
+
+```
+mcp__wxcode-kb__get_dependencies {element_name}
+```
+
+**For EACH dependency, determine:**
+
+1. **Is it already converted?**
+   - Check output project: `ls -la {output_project}/` for converted file
+   - Use `mcp__wxcode-kb__get_conversion_stats` if available
+   - Search codebase: `grep -r "{dependency_name}" {output_project}/`
+
+2. **Must it be converted FIRST?**
+   - Is it a blocking dependency? (element won't work without it)
+   - Is it a soft dependency? (can use stub/mock temporarily)
+
+3. **Dependency classification:**
+
+| Dependency | Type | Already Converted? | Must Convert First? |
+|------------|------|-------------------|---------------------|
+| [name] | [Procedure/Class/Table] | Yes/No | Yes/No/Soft |
+
+**If blocking dependencies are NOT converted:** Flag in research output. Planner must address.
+
+### 2A.7: Analyze Output Project Architecture
+
+**Read existing converted code to understand patterns:**
+
+```bash
+# Find project structure
+ls -la {output_project}/
+find {output_project} -name "*.py" -o -name "*.ts" -o -name "*.tsx" | head -20
+
+# Read representative converted files
+cat {output_project}/routes/*.py 2>/dev/null | head -100
+cat {output_project}/templates/*.html 2>/dev/null | head -100
+```
+
+**Document:**
+- Directory structure pattern
+- File naming conventions
+- Import patterns
+- Component structure
+- How similar elements were converted
+
+### 2A.8: Search Similar Conversions
+
+```
+mcp__wxcode-kb__search_converted_similar {element_name}
+```
+
+**Document:**
+- Similar elements already converted
+- Patterns used
+- Lessons learned
+
+### 2A.9: Identify Conversion Challenges
+
+Based on legacy analysis:
+- Complex business rules that need careful translation
+- UI patterns that don't map 1:1 to target stack
+- Data structures that need transformation
+- Edge cases in legacy code
+
+### 2A.10: Write Conversion RESEARCH.md
+
+Use conversion-specific format (see `<conversion_output_format>`).
+
+---
+
+## Step 2B: Standard Research Flow (Non-Conversion)
+
+For greenfield projects, research the technology domain.
+
+### 2B.1: Identify Research Domains
 
 Based on phase description, identify what needs investigating:
 
@@ -500,7 +766,7 @@ Based on phase description, identify what needs investigating:
 - What existing solutions should be used?
 - What problems look simple but aren't?
 
-## Step 3: Execute Research Protocol
+### 2B.2: Execute Research Protocol
 
 For each domain, follow tool strategy in order:
 
@@ -511,19 +777,33 @@ For each domain, follow tool strategy in order:
 
 Document findings as you go with confidence levels.
 
-## Step 4: Quality Check
+---
 
-Run through verification protocol checklist:
+## Step 3: Quality Check
 
+**For Conversion Projects:**
+- [ ] Legacy element code retrieved and documented
+- [ ] UI structure analyzed
+- [ ] Business logic documented
+- [ ] ALL dependencies identified
+- [ ] Each dependency checked: converted or not?
+- [ ] Blocking vs soft dependencies classified
+- [ ] Output project architecture analyzed
+- [ ] Similar conversions reviewed
+- [ ] Conversion challenges identified
+
+**For Standard Projects:**
 - [ ] All domains investigated
 - [ ] Negative claims verified
 - [ ] Multiple sources for critical claims
 - [ ] Confidence levels assigned honestly
 - [ ] "What might I have missed?" review
 
-## Step 5: Write RESEARCH.md
+## Step 4: Write RESEARCH.md
 
-Use the output format template. Populate all sections with verified findings.
+Use the appropriate format:
+- Conversion projects: `<conversion_output_format>`
+- Standard projects: `<output_format>`
 
 Write to: `${PHASE_DIR}/${PADDED_PHASE}-RESEARCH.md`
 
@@ -614,61 +894,48 @@ When research cannot proceed:
 
 </structured_returns>
 
-<conversion_context>
+<mcp_reference>
 
-## MCP for Conversion Projects
+## MCP Tool Discovery
 
 **Reference:** `~/.claude/get-shit-done/references/mcp-discovery.md`
 
-**Check if conversion project:**
+MCP tools are dynamic. The wxcode-kb server evolves rapidly (currently 29+ tools).
+Discover available tools by their prefix `mcp__wxcode-kb__`.
 
-```bash
-[ -f .planning/CONVERSION.md ] && echo "CONVERSION PROJECT"
-```
+See `<execution_flow>` Step 2A for detailed conversion project research protocol.
 
-**If conversion project:** Before researching the phase, consult legacy code via MCP:
-
-1. **Verify MCP availability:** `mcp__wxcode-kb__health_check`
-2. **Get element source:** `mcp__wxcode-kb__get_element` with element name
-3. **Get UI structure:** `mcp__wxcode-kb__get_controls` for UI elements
-4. **Get procedures:** `mcp__wxcode-kb__get_procedures` for business logic
-5. **Get dependencies:** `mcp__wxcode-kb__get_dependencies` for prerequisites
-
-**MCP tools are dynamic.** The wxcode-kb server evolves rapidly. Discover available tools by their prefix `mcp__wxcode-kb__`. Common categories:
-
-- `get_element*` — Source code retrieval
-- `get_controls*` — UI hierarchy
-- `get_procedure*` — Business logic
-- `get_dependencies*` — Dependency graph
-- `search_*` — Code and similarity search
-
-**Add Legacy Analysis section to RESEARCH.md:**
-
-```markdown
-## Legacy Analysis (Conversion Project)
-
-**Element:** [name from CONVERSION.md or phase context]
-**Type:** [Page/Window/Report/etc.]
-
-### Source Structure
-[From get_element]
-
-### UI Components
-[From get_controls]
-
-### Business Logic
-[From get_procedures]
-
-### Dependencies
-[From get_dependencies — what must be converted first]
-
-### Conversion Notes
-[Patterns identified, planes detected, special considerations]
-```
-
-</conversion_context>
+</mcp_reference>
 
 <success_criteria>
+
+## For Conversion Projects
+
+Research is complete when:
+
+- [ ] MCP connectivity verified
+- [ ] Legacy element code retrieved and documented
+- [ ] UI structure analyzed (controls, planes)
+- [ ] Business logic documented (procedures, events)
+- [ ] ALL dependencies identified
+- [ ] Each dependency checked: already converted or not?
+- [ ] Blocking vs soft dependencies classified
+- [ ] Output project architecture analyzed (existing patterns)
+- [ ] Similar conversions reviewed
+- [ ] Conversion challenges identified
+- [ ] RESEARCH.md created with conversion format
+- [ ] RESEARCH.md committed to git
+- [ ] Structured return provided to orchestrator
+
+Conversion research quality indicators:
+
+- **Legacy-first:** Understands the element deeply before planning conversion
+- **Dependency-aware:** Knows exactly what's converted and what's missing
+- **Pattern-aligned:** Output follows existing architecture in target project
+- **Challenge-aware:** Identifies what will be hard to convert
+- **Actionable:** Planner knows exactly what to build and in what order
+
+## For Standard Projects
 
 Research is complete when:
 
@@ -684,7 +951,7 @@ Research is complete when:
 - [ ] RESEARCH.md committed to git
 - [ ] Structured return provided to orchestrator
 
-Research quality indicators:
+Standard research quality indicators:
 
 - **Specific, not vague:** "Three.js r160 with @react-three/fiber 8.15" not "use Three.js"
 - **Verified, not assumed:** Findings cite Context7 or official docs

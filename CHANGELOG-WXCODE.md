@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-01-29
+
+### Changed
+- Research agents now prioritize legacy analysis for conversion projects
+- `wxcode-phase-researcher`: Complete conversion research flow with dependency analysis
+- `wxcode-project-researcher`: Legacy inventory and conversion sequence output
+- New output formats: LEGACY-INVENTORY.md, CONVERSION-SEQUENCE.md
+- Researchers verify dependencies are converted before proceeding
+- Researchers analyze output project architecture patterns
+
+### Priority for Conversion Projects
+1. Understand legacy code (source, UI, business rules)
+2. Analyze dependencies (what's converted, what's blocking)
+3. Check output project patterns (follow existing architecture)
+4. Identify conversion challenges
+5. Stack research is secondary (target stack already defined)
+
 ## [1.2.1] - 2026-01-29
 
 ### Added
@@ -190,6 +207,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | WXCODE Version | GSD Version | Sync Date | Notes |
 |----------------|-------------|-----------|-------|
+| 1.2.2 | 1.9.13 | 2026-01-29 | Conversion-first research priority |
 | 1.2.1 | 1.9.13 | 2026-01-29 | Dynamic MCP tool discovery for all agents |
 | 1.2.0 | 1.9.13 | 2026-01-29 | Dashboard schema consistency |
 | 1.1.9 | 1.9.13 | 2026-01-29 | Dashboard file + watcher notification |

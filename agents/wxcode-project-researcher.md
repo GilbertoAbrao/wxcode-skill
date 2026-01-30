@@ -337,13 +337,206 @@ Before submitting research:
 
 </verification_protocol>
 
-<output_formats>
+<conversion_output_formats>
 
-## Output Location
+## Output Location (Conversion Projects)
 
 All files written to: `.planning/research/`
 
-## SUMMARY.md
+## SUMMARY.md (Conversion)
+
+```markdown
+# Conversion Research Summary: [Project Name]
+
+**Legacy System:** [WinDev/WebDev application name]
+**Target Stack:** [from CONVERSION.md]
+**Researched:** [date]
+**Overall confidence:** [HIGH/MEDIUM/LOW]
+
+## Executive Summary
+
+[3-4 paragraphs covering:
+- What the legacy system does
+- Current conversion progress
+- Recommended conversion strategy
+- Key challenges]
+
+## Conversion Status
+
+| Metric | Count |
+|--------|-------|
+| Total elements | [N] |
+| Already converted | [N] |
+| Remaining | [N] |
+| Progress | [X]% |
+
+## Key Findings
+
+**Architecture:** [output project pattern]
+**Critical path:** [key elements that block others]
+**Main challenge:** [biggest conversion challenge]
+
+## Implications for Roadmap
+
+Based on dependency analysis, suggested phase structure:
+
+1. **Phase [N]: [Name]** - [elements], [rationale]
+2. **Phase [N+1]: [Name]** - [elements], [rationale]
+
+**Phase ordering rationale:**
+- [Why this order based on dependencies]
+```
+
+## LEGACY-INVENTORY.md
+
+```markdown
+# Legacy Element Inventory
+
+**System:** [WinDev/WebDev application]
+**Total elements:** [N]
+**Analyzed:** [date]
+
+## Summary by Type
+
+| Type | Count | Converted | Remaining |
+|------|-------|-----------|-----------|
+| Pages | [N] | [N] | [N] |
+| Windows | [N] | [N] | [N] |
+| Reports | [N] | [N] | [N] |
+| Classes | [N] | [N] | [N] |
+| Procedures | [N] | [N] | [N] |
+
+## Element Inventory
+
+### Pages
+
+| Element | Status | Complexity | Dependencies | Notes |
+|---------|--------|------------|--------------|-------|
+| PAGE_Login | ✓ Converted | Low | 2 | [notes] |
+| PAGE_Dashboard | ✗ Pending | High | 8 | Has planes |
+| PAGE_Cadastro | ✗ Pending | Medium | 4 | [notes] |
+
+### Windows
+
+| Element | Status | Complexity | Dependencies | Notes |
+|---------|--------|------------|--------------|-------|
+| FEN_Config | ✗ Pending | Low | 1 | Modal |
+
+### Classes
+
+| Element | Status | Complexity | Used By | Notes |
+|---------|--------|------------|---------|-------|
+| CL_Usuario | ✓ Converted | Medium | 12 | Core entity |
+
+### Global Procedures
+
+| Element | Status | Complexity | Used By | Notes |
+|---------|--------|------------|---------|-------|
+| ValidaCPF | ✓ Converted | Low | 8 | Validation |
+| FormataCNPJ | ✗ Pending | Low | 5 | Validation |
+
+## Conversion Hubs (High Impact)
+
+Elements used by many others - convert carefully:
+
+1. **[Element]** - Used by [N] elements
+2. **[Element]** - Used by [N] elements
+
+## Complexity Assessment
+
+**High complexity (need careful planning):**
+- [Element]: [reason]
+- [Element]: [reason]
+
+**Patterns not mapping 1:1:**
+- [Legacy pattern]: [target equivalent]
+```
+
+## CONVERSION-SEQUENCE.md
+
+```markdown
+# Conversion Sequence
+
+**Based on:** Dependency analysis via MCP
+**Generated:** [date]
+
+## Principle
+
+Convert dependencies BEFORE dependents.
+Elements with no dependencies can be converted in parallel.
+
+## Recommended Sequence
+
+### Wave 1: Foundation (No Dependencies)
+
+Elements that can be converted immediately:
+
+| Element | Type | Complexity | Notes |
+|---------|------|------------|-------|
+| [Element] | [Type] | [Low/Med/High] | [notes] |
+
+### Wave 2: Core Entities
+
+Depends on Wave 1 completion:
+
+| Element | Type | Depends On | Notes |
+|---------|------|------------|-------|
+| [Element] | [Type] | [Wave 1 elements] | [notes] |
+
+### Wave 3: Business Logic
+
+Depends on Wave 2 completion:
+
+| Element | Type | Depends On | Notes |
+|---------|------|------------|-------|
+| [Element] | [Type] | [Wave 2 elements] | [notes] |
+
+### Wave 4+: Features
+
+[Continue pattern...]
+
+## Critical Path
+
+The longest dependency chain that determines minimum conversion time:
+
+```
+[Element A] → [Element B] → [Element C] → [Element D]
+```
+
+**Implication:** Cannot parallelize these elements.
+
+## Parallelization Opportunities
+
+Elements that can be converted in parallel (no shared dependencies):
+
+| Group | Elements | Can Start After |
+|-------|----------|-----------------|
+| A | [E1, E2, E3] | Wave 1 |
+| B | [E4, E5] | Wave 2 |
+
+## Blocking Elements
+
+Elements that block many others - prioritize these:
+
+1. **[Element]** - Blocks [N] elements
+2. **[Element]** - Blocks [N] elements
+
+## Already Converted (Reference)
+
+| Element | Converted File | Can Be Used By |
+|---------|---------------|----------------|
+| [Legacy] | [target path] | [dependents] |
+```
+
+</conversion_output_formats>
+
+<output_formats>
+
+## Output Location (Standard Projects)
+
+All files written to: `.planning/research/`
+
+## SUMMARY.md (Standard)
 
 Executive summary synthesizing all research with roadmap implications.
 
@@ -697,7 +890,137 @@ Orchestrator provides:
 
 Parse and confirm understanding before proceeding.
 
-## Step 2: Identify Research Domains
+```bash
+# Check if conversion project
+IS_CONVERSION=$([ -f .planning/CONVERSION.md ] && echo "true" || echo "false")
+```
+
+## Step 2: Route by Project Type
+
+**If `IS_CONVERSION=true`:** Go to Step 2A (Conversion Project Research)
+
+**If `IS_CONVERSION=false`:** Go to Step 2B (Standard Project Research)
+
+---
+
+## Step 2A: Conversion Project Research (PRIORITY)
+
+**For conversion projects, understanding the legacy system is THE priority.**
+
+The target stack is already defined in CONVERSION.md. Focus on:
+- Legacy system structure
+- Element inventory and complexity
+- Dependency graph
+- Conversion sequence
+- What's already been converted
+
+### 2A.1: Verify MCP Availability
+
+```bash
+mcp__wxcode-kb__health_check
+```
+
+If MCP unavailable after 3 attempts, return `## RESEARCH BLOCKED` with MCP error.
+
+### 2A.2: Get Conversion Statistics
+
+```
+mcp__wxcode-kb__get_conversion_stats
+```
+
+**Document:**
+- Total elements in legacy system
+- Elements already converted
+- Elements remaining
+- Conversion progress percentage
+
+### 2A.3: List All Elements
+
+```
+mcp__wxcode-kb__list_elements
+```
+
+**Categorize elements by:**
+- Type (Pages, Windows, Reports, Classes, Procedures)
+- Complexity (based on control count, code size)
+- Dependencies (standalone vs heavily connected)
+
+### 2A.4: Get Database Schema
+
+```
+mcp__wxcode-kb__get_schema
+```
+
+**Document:**
+- Tables and relationships
+- Which models already exist in output project
+- Which models still need creation
+
+### 2A.5: Analyze Dependency Graph
+
+```
+mcp__wxcode-kb__get_topological_order
+```
+
+**Document:**
+- Conversion sequence (what must come first)
+- Dependency clusters
+- Critical path elements
+- Potential parallelization opportunities
+
+### 2A.6: Identify Conversion Hubs
+
+```
+mcp__wxcode-kb__find_hubs
+```
+
+**Document:**
+- Highly connected elements (convert these carefully)
+- Shared procedures used by many elements
+- Common utility classes
+
+### 2A.7: Check What's Already Converted
+
+**Examine output project:**
+
+```bash
+# List converted code
+ls -la {output_project}/
+find {output_project} -name "*.py" -o -name "*.ts" -o -name "*.tsx" | wc -l
+
+# Read existing patterns
+cat {output_project}/routes/*.py 2>/dev/null | head -100
+```
+
+**Document:**
+- Architecture patterns established
+- Naming conventions used
+- How previous conversions were structured
+
+### 2A.8: Identify Conversion Challenges
+
+Based on legacy analysis:
+- Complex elements that need special attention
+- Patterns that don't translate well to target stack
+- Global state / shared procedures that need refactoring
+
+### 2A.9: Write Conversion Research Files
+
+Create in `.planning/research/`:
+
+1. **SUMMARY.md** - Overall conversion strategy
+2. **LEGACY-INVENTORY.md** - Complete element inventory with complexity
+3. **CONVERSION-SEQUENCE.md** - Recommended order based on dependencies
+4. **ARCHITECTURE.md** - Output project patterns (from existing code)
+5. **PITFALLS.md** - Conversion-specific warnings
+
+---
+
+## Step 2B: Standard Project Research (Non-Conversion)
+
+For greenfield projects, research the technology domain.
+
+### 2B.1: Identify Research Domains
 
 Based on project description, identify what needs investigating:
 
@@ -721,7 +1044,7 @@ Based on project description, identify what needs investigating:
 - What causes rewrites?
 - What's harder than it looks?
 
-## Step 3: Execute Research Protocol
+### 2B.2: Execute Research Protocol
 
 For each domain, follow tool strategy in order:
 
@@ -732,19 +1055,9 @@ For each domain, follow tool strategy in order:
 
 Document findings as you go with confidence levels.
 
-## Step 4: Quality Check
+### 2B.3: Write Standard Research Files
 
-Run through verification protocol checklist:
-
-- [ ] All domains investigated
-- [ ] Negative claims verified
-- [ ] Multiple sources for critical claims
-- [ ] Confidence levels assigned honestly
-- [ ] "What might I have missed?" review
-
-## Step 5: Write Output Files
-
-Create files in `.planning/research/`:
+Create in `.planning/research/`:
 
 1. **SUMMARY.md** - Always (synthesizes everything)
 2. **STACK.md** - Always (technology recommendations)
@@ -754,7 +1067,27 @@ Create files in `.planning/research/`:
 6. **COMPARISON.md** - If comparison mode
 7. **FEASIBILITY.md** - If feasibility mode
 
-## Step 6: Return Structured Result
+---
+
+## Step 3: Quality Check
+
+**For Conversion Projects:**
+- [ ] Conversion stats retrieved
+- [ ] Element inventory complete
+- [ ] Schema documented
+- [ ] Dependency graph analyzed
+- [ ] Conversion sequence determined
+- [ ] Output project patterns identified
+- [ ] Conversion challenges documented
+
+**For Standard Projects:**
+- [ ] All domains investigated
+- [ ] Negative claims verified
+- [ ] Multiple sources for critical claims
+- [ ] Confidence levels assigned honestly
+- [ ] "What might I have missed?" review
+
+## Step 4: Return Structured Result
 
 **DO NOT commit.** You are always spawned in parallel with other researchers. The orchestrator or synthesizer agent commits all research files together after all researchers complete.
 
@@ -837,56 +1170,48 @@ When research cannot proceed:
 
 </structured_returns>
 
-<conversion_context>
+<mcp_reference>
 
-## MCP for Conversion Projects
+## MCP Tool Discovery
 
 **Reference:** `~/.claude/get-shit-done/references/mcp-discovery.md`
 
-**Check if conversion project:**
+MCP tools are dynamic. The wxcode-kb server evolves rapidly (currently 29+ tools).
+Discover available tools by their prefix `mcp__wxcode-kb__`.
 
-```bash
-[ -f .planning/CONVERSION.md ] && echo "CONVERSION PROJECT"
-```
+See `<execution_flow>` Step 2A for detailed conversion project research protocol.
 
-**If conversion project:** Before researching the domain, consult legacy system via MCP:
-
-1. **Verify MCP availability:** `mcp__wxcode-kb__health_check`
-2. **Get conversion stats:** `mcp__wxcode-kb__get_conversion_stats` for overall progress
-3. **List elements:** `mcp__wxcode-kb__list_elements` for available elements
-4. **Get schema:** `mcp__wxcode-kb__get_schema` for database structure
-5. **Get topological order:** `mcp__wxcode-kb__get_topological_order` for conversion sequence
-
-**MCP tools are dynamic.** The wxcode-kb server evolves rapidly. Discover available tools by their prefix `mcp__wxcode-kb__`. Common categories:
-
-- `get_element*` — Source code retrieval
-- `get_schema*`, `get_table*` — Database structure
-- `get_conversion*` — Conversion workflow
-- `get_topological*` — Dependency ordering
-- `list_*` — Available elements
-
-**For conversion projects, add to FEATURES.md:**
-
-```markdown
-## Legacy Feature Mapping
-
-Features identified from legacy system analysis:
-
-| Legacy Element | Type | Features | Complexity |
-|---------------|------|----------|------------|
-| [element] | [Page/Window] | [features] | [Low/Med/High] |
-
-### Conversion Sequence
-
-Based on dependency analysis (from `get_topological_order`):
-1. [element] — no dependencies
-2. [element] — depends on #1
-...
-```
-
-</conversion_context>
+</mcp_reference>
 
 <success_criteria>
+
+## For Conversion Projects
+
+Research is complete when:
+
+- [ ] MCP connectivity verified
+- [ ] Conversion statistics retrieved (progress, counts)
+- [ ] Element inventory complete (all elements listed with types)
+- [ ] Database schema documented
+- [ ] Dependency graph analyzed (topological order)
+- [ ] Conversion hubs identified (high-impact elements)
+- [ ] Output project architecture analyzed (existing patterns)
+- [ ] Conversion sequence determined (waves based on dependencies)
+- [ ] Conversion challenges documented
+- [ ] LEGACY-INVENTORY.md created
+- [ ] CONVERSION-SEQUENCE.md created
+- [ ] SUMMARY.md includes conversion strategy
+- [ ] Files written (DO NOT commit — orchestrator handles this)
+- [ ] Structured return provided to orchestrator
+
+Conversion research quality indicators:
+
+- **Legacy-first:** Understands what exists before planning what to build
+- **Dependency-aware:** Knows what must be converted first
+- **Pattern-aligned:** Output follows existing architecture in target project
+- **Actionable:** Roadmap creator knows exactly which elements in which order
+
+## For Standard Projects
 
 Research is complete when:
 
@@ -902,7 +1227,7 @@ Research is complete when:
 - [ ] Files written (DO NOT commit — orchestrator handles this)
 - [ ] Structured return provided to orchestrator
 
-Research quality indicators:
+Standard research quality indicators:
 
 - **Comprehensive, not shallow:** All major categories covered
 - **Opinionated, not wishy-washy:** Clear recommendations, not just lists
