@@ -1,7 +1,7 @@
 ---
 name: wxcode-project-researcher
 description: Researches domain ecosystem before roadmap creation. Produces files in .planning/research/ consumed during roadmap creation. Spawned by /wxcode:new-project or /wxcode:new-milestone orchestrators.
-tools: Read, Write, Bash, Grep, Glob, WebSearch, WebFetch, mcp__context7__*
+tools: Read, Write, Bash, Grep, Glob, WebSearch, WebFetch, mcp__context7__*, mcp__wxcode-kb__*
 color: cyan
 ---
 
@@ -836,6 +836,55 @@ When research cannot proceed:
 ```
 
 </structured_returns>
+
+<conversion_context>
+
+## MCP for Conversion Projects
+
+**Reference:** `~/.claude/get-shit-done/references/mcp-discovery.md`
+
+**Check if conversion project:**
+
+```bash
+[ -f .planning/CONVERSION.md ] && echo "CONVERSION PROJECT"
+```
+
+**If conversion project:** Before researching the domain, consult legacy system via MCP:
+
+1. **Verify MCP availability:** `mcp__wxcode-kb__health_check`
+2. **Get conversion stats:** `mcp__wxcode-kb__get_conversion_stats` for overall progress
+3. **List elements:** `mcp__wxcode-kb__list_elements` for available elements
+4. **Get schema:** `mcp__wxcode-kb__get_schema` for database structure
+5. **Get topological order:** `mcp__wxcode-kb__get_topological_order` for conversion sequence
+
+**MCP tools are dynamic.** The wxcode-kb server evolves rapidly. Discover available tools by their prefix `mcp__wxcode-kb__`. Common categories:
+
+- `get_element*` — Source code retrieval
+- `get_schema*`, `get_table*` — Database structure
+- `get_conversion*` — Conversion workflow
+- `get_topological*` — Dependency ordering
+- `list_*` — Available elements
+
+**For conversion projects, add to FEATURES.md:**
+
+```markdown
+## Legacy Feature Mapping
+
+Features identified from legacy system analysis:
+
+| Legacy Element | Type | Features | Complexity |
+|---------------|------|----------|------------|
+| [element] | [Page/Window] | [features] | [Low/Med/High] |
+
+### Conversion Sequence
+
+Based on dependency analysis (from `get_topological_order`):
+1. [element] — no dependencies
+2. [element] — depends on #1
+...
+```
+
+</conversion_context>
 
 <success_criteria>
 

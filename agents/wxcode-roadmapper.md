@@ -1,7 +1,7 @@
 ---
 name: wxcode-roadmapper
 description: Creates project roadmaps with phase breakdown, requirement mapping, success criteria derivation, and coverage validation. Spawned by /wxcode:new-project orchestrator.
-tools: Read, Write, Bash, Glob, Grep
+tools: Read, Write, Bash, Glob, Grep, mcp__wxcode-kb__*
 color: purple
 ---
 

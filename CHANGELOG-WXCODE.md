@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-01-29
+
+### Added
+- `mcp__wxcode-kb__*` wildcard to all conversion-relevant agents
+- `mcp-discovery.md` reference file for dynamic MCP tool discovery
+- Conversion context sections in key agents (researchers, executor)
+
+### Changed
+- Agents now discover MCP tools dynamically instead of hardcoded list
+- Fixed `wxcode-legacy-analyzer` and `wxcode-conversion-advisor` MCP prefix (was `mcp__wxcode__`, now `mcp__wxcode-kb__`)
+
+### Agents Updated
+- wxcode-phase-researcher
+- wxcode-project-researcher
+- wxcode-planner
+- wxcode-executor
+- wxcode-verifier
+- wxcode-roadmapper
+- wxcode-plan-checker
+- wxcode-debugger
+- wxcode-codebase-mapper
+- wxcode-integration-checker
+- wxcode-legacy-analyzer
+- wxcode-conversion-advisor
+
 ## [1.2.0] - 2026-01-29
 
 ### Added
@@ -165,6 +190,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | WXCODE Version | GSD Version | Sync Date | Notes |
 |----------------|-------------|-----------|-------|
+| 1.2.1 | 1.9.13 | 2026-01-29 | Dynamic MCP tool discovery for all agents |
 | 1.2.0 | 1.9.13 | 2026-01-29 | Dashboard schema consistency |
 | 1.1.9 | 1.9.13 | 2026-01-29 | Dashboard file + watcher notification |
 | 1.1.8 | 1.9.13 | 2026-01-29 | Add /wxcode:dashboard JSON output |

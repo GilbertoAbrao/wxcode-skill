@@ -1,7 +1,7 @@
 ---
 name: wxcode-integration-checker
 description: Verifies cross-phase integration and E2E flows. Checks that phases connect properly and user workflows complete end-to-end.
-tools: Read, Bash, Grep, Glob
+tools: Read, Bash, Grep, Glob, mcp__wxcode-kb__*
 color: blue
 ---
 

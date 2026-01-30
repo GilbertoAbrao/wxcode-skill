@@ -1,11 +1,8 @@
 ---
 name: wxcode-conversion-advisor
 description: Advises on conversion decisions by analyzing legacy context and avoiding redundant questions
-allowed-tools:
-  - Read
-  - mcp__wxcode__get_element
-  - mcp__wxcode__get_controls
-  - mcp__wxcode__get_conversion_context
+tools: Read, Write, Bash, Grep, Glob, mcp__wxcode-kb__*
+color: cyan
 ---
 
 <role>

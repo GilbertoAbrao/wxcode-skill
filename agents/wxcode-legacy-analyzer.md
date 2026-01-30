@@ -1,20 +1,8 @@
 ---
 name: wxcode-legacy-analyzer
 description: Analyzes legacy WinDev/WebDev code via MCP for conversion context
-allowed-tools:
-  - Read
-  - Write
-  - Bash
-  - Grep
-  - Glob
-  - mcp__wxcode__get_element
-  - mcp__wxcode__get_controls
-  - mcp__wxcode__get_procedures
-  - mcp__wxcode__get_schema
-  - mcp__wxcode__get_dependencies
-  - mcp__wxcode__analyze_impact
-  - mcp__wxcode__get_conversion_context
-  - mcp__wxcode__list_elements
+tools: Read, Write, Bash, Grep, Glob, mcp__wxcode-kb__*
+color: magenta
 ---
 
 <role>

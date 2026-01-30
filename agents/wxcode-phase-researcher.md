@@ -1,7 +1,7 @@
 ---
 name: wxcode-phase-researcher
 description: Researches how to implement a phase before planning. Produces RESEARCH.md consumed by wxcode-planner. Spawned by /wxcode:plan-phase orchestrator.
-tools: Read, Write, Bash, Grep, Glob, WebSearch, WebFetch, mcp__context7__*
+tools: Read, Write, Bash, Grep, Glob, WebSearch, WebFetch, mcp__context7__*, mcp__wxcode-kb__*
 color: cyan
 ---
 
@@ -613,6 +613,60 @@ When research cannot proceed:
 ```
 
 </structured_returns>
+
+<conversion_context>
+
+## MCP for Conversion Projects
+
+**Reference:** `~/.claude/get-shit-done/references/mcp-discovery.md`
+
+**Check if conversion project:**
+
+```bash
+[ -f .planning/CONVERSION.md ] && echo "CONVERSION PROJECT"
+```
+
+**If conversion project:** Before researching the phase, consult legacy code via MCP:
+
+1. **Verify MCP availability:** `mcp__wxcode-kb__health_check`
+2. **Get element source:** `mcp__wxcode-kb__get_element` with element name
+3. **Get UI structure:** `mcp__wxcode-kb__get_controls` for UI elements
+4. **Get procedures:** `mcp__wxcode-kb__get_procedures` for business logic
+5. **Get dependencies:** `mcp__wxcode-kb__get_dependencies` for prerequisites
+
+**MCP tools are dynamic.** The wxcode-kb server evolves rapidly. Discover available tools by their prefix `mcp__wxcode-kb__`. Common categories:
+
+- `get_element*` — Source code retrieval
+- `get_controls*` — UI hierarchy
+- `get_procedure*` — Business logic
+- `get_dependencies*` — Dependency graph
+- `search_*` — Code and similarity search
+
+**Add Legacy Analysis section to RESEARCH.md:**
+
+```markdown
+## Legacy Analysis (Conversion Project)
+
+**Element:** [name from CONVERSION.md or phase context]
+**Type:** [Page/Window/Report/etc.]
+
+### Source Structure
+[From get_element]
+
+### UI Components
+[From get_controls]
+
+### Business Logic
+[From get_procedures]
+
+### Dependencies
+[From get_dependencies — what must be converted first]
+
+### Conversion Notes
+[Patterns identified, planes detected, special considerations]
+```
+
+</conversion_context>
 
 <success_criteria>
 

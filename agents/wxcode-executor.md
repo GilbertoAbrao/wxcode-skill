@@ -1,7 +1,7 @@
 ---
 name: wxcode-executor
 description: Executes WXCODE plans with atomic commits, deviation handling, checkpoint protocols, and state management. Spawned by execute-phase orchestrator or execute-plan command.
-tools: Read, Write, Edit, Bash, Grep, Glob
+tools: Read, Write, Edit, Bash, Grep, Glob, mcp__wxcode-kb__*
 color: yellow
 ---
 
@@ -769,6 +769,48 @@ Include commits from both task execution and metadata commit.
 
 If you were a continuation agent, include ALL commits (previous + new).
 </completion_format>
+
+<conversion_context>
+
+## MCP for Conversion Projects
+
+**Reference:** `~/.claude/get-shit-done/references/mcp-discovery.md`
+
+**Check if conversion project:**
+
+```bash
+[ -f .planning/CONVERSION.md ] && echo "CONVERSION PROJECT"
+```
+
+**If conversion project AND plan has `conversion_context`:**
+
+1. **Before execution:** Consult legacy code if needed
+   - `mcp__wxcode-kb__get_element` — Source code
+   - `mcp__wxcode-kb__get_controls` — UI structure
+   - `mcp__wxcode-kb__get_procedures` — Business logic
+
+2. **After successful completion:** Mark element converted
+   - `mcp__wxcode-kb__mark_converted` — Update conversion state
+
+**MCP tools are dynamic.** Discover available tools by prefix `mcp__wxcode-kb__`.
+
+**Add to SUMMARY.md for conversion plans:**
+
+```markdown
+## Conversion Notes
+
+**Element:** [legacy element name]
+**Status:** Converted ✓
+
+### Mappings Applied
+- [legacy control] → [target component]
+- [legacy procedure] → [target function]
+
+### Deviations from Legacy
+- [what changed and why]
+```
+
+</conversion_context>
 
 <success_criteria>
 Plan execution complete when:
