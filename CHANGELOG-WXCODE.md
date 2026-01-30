@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.4] - 2026-01-30
+
+### Added
+- Tasks included in milestone dashboard schema
+- Progress tracking for plans and tasks (not just phases)
+- Complete real-world example in dashboard-schema-milestone.md
+
+### Changed
+- `/wxcode:new-milestone` now accepts `--element` and `--output-project` arguments
+- Version determined automatically by agent (UI doesn't pass version)
+- Milestone created in MongoDB immediately after folder creation (Phase 1.6)
+- Removed redundant Phase 9.5 (milestone creation moved earlier)
+
+### Dashboard Schema
+- `progress.plans_complete/total/percentage` — track plan completion
+- `progress.tasks_complete/total/percentage` — track task completion
+- `phases[].plans[].tasks[]` — detailed task list per plan
+- Task fields: id, name, file, status, description
+
 ## [1.2.3] - 2026-01-30
 
 ### Added
