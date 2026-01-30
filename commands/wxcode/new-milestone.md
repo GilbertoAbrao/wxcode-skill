@@ -1,7 +1,7 @@
 ---
 name: wxcode:new-milestone
 description: Start a new milestone cycle — update PROJECT.md and route to requirements
-argument-hint: "[milestone name, e.g., 'v1.1 Notifications']"
+argument-hint: "[milestone name] [--milestone-id=xxx] (id optional, from UI)"
 allowed-tools:
   - Read
   - Write
@@ -9,6 +9,8 @@ allowed-tools:
   - Task
   - AskUserQuestion
   - mcp__wxcode-kb__health_check
+  - mcp__wxcode-kb__create_milestone
+  - mcp__wxcode-kb__get_conversion_stats
 ---
 
 <objective>
@@ -34,7 +36,11 @@ This is the brownfield equivalent of new-project. The project exists, PROJECT.md
 </execution_context>
 
 <context>
-Milestone name: $ARGUMENTS (optional - will prompt if not provided)
+**Arguments parsing:**
+- Milestone name: First argument without `--` prefix (optional - will prompt if not provided)
+- `--milestone-id=xxx`: MongoDB Milestone ID passed by UI (optional)
+
+Example: `/wxcode:new-milestone v1.1 Notifications --milestone-id=507f1f77bcf86cd799439011`
 
 **Load project context:**
 @.planning/PROJECT.md
@@ -718,6 +724,55 @@ EOF
 )"
 ```
 
+## Phase 9.5: Create Milestone in MongoDB (Conversion Projects)
+
+**Skip this phase if NOT a conversion project** (no CONVERSION.md).
+
+**If conversion project:**
+
+Parse output_project_id from CONVERSION.md:
+```bash
+OUTPUT_PROJECT_ID=$(grep -A1 "Output Project ID" .planning/CONVERSION.md | tail -1 | sed 's/.*`\([^`]*\)`.*/\1/' | tr -d '[:space:]')
+```
+
+Parse element_name from CONVERSION.md or MILESTONE-CONTEXT.md:
+```bash
+ELEMENT_NAME=$(grep -A1 "Current Element" .planning/CONVERSION.md | tail -1 | sed 's/.*`\([^`]*\)`.*/\1/' | tr -d '[:space:]')
+```
+
+Determine milestone folder name (version + element for uniqueness):
+```
+MILESTONE_FOLDER_NAME="v[X.Y]-[element_name]"
+# Example: "v1.0-PAGE_Login"
+```
+
+**Create Milestone in MongoDB:**
+
+```
+mcp__wxcode-kb__create_milestone(
+    output_project_id=OUTPUT_PROJECT_ID,
+    element_name=ELEMENT_NAME,
+    wxcode_version="v[X.Y]",
+    milestone_folder_name=MILESTONE_FOLDER_NAME,
+    confirm=true
+)
+```
+
+**If `--milestone-id` was passed:**
+- The UI already created the Milestone — skip creation
+- Instead, call a future `associate_milestone` tool to update it with wxcode_version and milestone_folder_name
+- For now, log a warning: "UI-created milestone association not yet implemented"
+
+**Store milestone_id for dashboard:**
+```
+MONGODB_MILESTONE_ID=[returned milestone_id or passed --milestone-id]
+```
+
+Display:
+```
+✓ Milestone created in MongoDB: [milestone_id]
+```
+
 ## Phase 10: Done
 
 Present completion with next steps:
@@ -771,30 +826,77 @@ Present completion with next steps:
 - [ ] User feedback incorporated (if any)
 - [ ] ROADMAP.md created with phases continuing from previous milestone
 - [ ] All commits made (if planning docs committed)
+- [ ] **(Conversion projects)** Milestone created in MongoDB via MCP
 - [ ] User knows next step is `/wxcode:discuss-phase [N]`
 
 **Atomic commits:** Each phase commits its artifacts immediately. If context is lost, artifacts persist.
 
-**Dashboard:** After milestone initialization completes, update dashboard (see below).
+**Dashboards:** After milestone initialization completes:
+- Update project dashboard: `.planning/dashboard.json`
+- Create milestone dashboard: `.planning/dashboard_<milestone>.json`
+- Use hybrid approach for conversion progress (MCP = source of truth)
 </success_criteria>
 
 <dashboard_update>
 
-## Update Dashboard (Final Step)
+## Update Dashboards (Final Step)
 
-After milestone initialization completes, update the dashboard.
+After milestone initialization completes, update TWO dashboards:
+1. **Project dashboard** (global) — `.planning/dashboard.json`
+2. **Milestone dashboard** — `.planning/dashboard_<milestone>.json`
 
-**Reference:** `~/.claude/get-shit-done/references/dashboard-schema.md`
+**References:**
+- Project dashboard: `~/.claude/get-shit-done/references/dashboard-schema-project.md`
+- Milestone dashboard: `~/.claude/get-shit-done/references/dashboard-schema-milestone.md`
 
-**Steps:**
+### Step 1: Gather data
+
+**For conversion projects — use HYBRID approach:**
+- Stack/config info: from `.planning/CONVERSION.md`
+- Conversion progress: from MCP (source of truth)
+
+```
+mcp__wxcode-kb__get_conversion_stats(project_name=PROJECT_NAME)
+```
+
+Use MCP response for:
+- `conversion.elements_converted`
+- `conversion.elements_total`
+
+Use CONVERSION.md for:
+- `conversion.is_conversion_project`: true
+- `conversion.stack`: from Target Stack section
+
+### Step 2: Update project dashboard
+
 1. Read current `.planning/dashboard.json` (if exists)
 2. Update fields based on current state (new milestone, phases, requirements)
-3. Write updated JSON to `.planning/dashboard.json`
-4. Output notification:
+3. Update `conversion.*` with hybrid data
+4. Write updated JSON to `.planning/dashboard.json`
+5. Output notification:
 ```
 [WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
 ```
 
-**IMPORTANT:** Use the EXACT schema from the reference file. Do NOT invent a different format.
+### Step 3: Create milestone dashboard
+
+Create milestone-specific dashboard:
+
+```
+DASHBOARD_FILE=".planning/dashboard_${MILESTONE_FOLDER_NAME}.json"
+# Example: .planning/dashboard_v1.0-PAGE_Login.json
+```
+
+Write milestone dashboard with:
+- Only THIS milestone's phases, requirements, progress
+- `mongodb_milestone_id`: from Phase 9.5 (if conversion project)
+- Same schema structure, scoped to milestone
+
+Output notification:
+```
+[WXCODE:DASHBOARD_UPDATED] .planning/dashboard_<milestone>.json
+```
+
+**IMPORTANT:** Use the EXACT schemas from the reference files. Do NOT invent a different format.
 
 </dashboard_update>

@@ -1,6 +1,6 @@
 {
   "name": "wxcode",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "WXCODE - A customized fork of GSD (Get Shit Done) for Claude Code",
   "bin": {
     "wxcode": "bin/install.js"

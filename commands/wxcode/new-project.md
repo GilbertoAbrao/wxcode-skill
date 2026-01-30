@@ -15,6 +15,7 @@ allowed-tools:
   - mcp__wxcode-kb__get_project_stats
   - mcp__wxcode-kb__list_elements
   - mcp__wxcode-kb__mark_project_initialized
+  - mcp__wxcode-kb__get_conversion_stats
 ---
 
 <objective>
@@ -1562,62 +1563,58 @@ Present completion with next steps:
 
 ## Update Dashboard (Final Step)
 
-After project initialization completes, generate and write the dashboard JSON.
+After project initialization completes, create the **project dashboard** only.
+Milestone dashboards are created later by `/wxcode:new-milestone`.
 
-**IMPORTANT:** Use EXACTLY this schema (do NOT invent a different format):
+**Reference:** `~/.claude/get-shit-done/references/dashboard-schema-project.md`
+
+### Step 1: Gather conversion data (if conversion project)
+
+**Use HYBRID approach:**
+```
+mcp__wxcode-kb__get_conversion_stats(project_name=PROJECT_NAME)
+```
+
+Use MCP response for `conversion.elements_converted` and `conversion.elements_total`.
+Use CONVERSION.md for `conversion.stack`.
+
+### Step 2: Create project dashboard
+
+Write to `.planning/dashboard.json`:
 
 ```json
 {
   "project": {
-    "name": "string",
-    "core_value": "string from PROJECT.md",
-    "current_milestone": "string",
-    "description": "string from PROJECT.md"
+    "name": "string - from PROJECT.md",
+    "core_value": "string - from PROJECT.md",
+    "description": "string - from PROJECT.md"
   },
-  "current_position": {
-    "milestone": "string",
-    "phase_number": null,
-    "phase_name": null,
-    "phase_total": 0,
-    "plan_number": null,
-    "plan_total": null,
-    "status": "not_started"
-  },
-  "progress": {
-    "phases_complete": 0,
-    "phases_total": 0,
-    "phases_percentage": 0,
-    "requirements_complete": 0,
-    "requirements_total": 0,
-    "requirements_percentage": 0
-  },
-  "phases": [],
-  "requirements": {
-    "total": 0,
-    "complete": 0,
-    "categories": []
-  },
-  "blockers": [],
-  "todos": [],
-  "milestones_history": [],
   "conversion": {
     "is_conversion_project": true,
     "elements_converted": 0,
-    "elements_total": 176,
-    "stack": "fastapi-jinja2"
+    "elements_total": "number - from MCP",
+    "stack": "string - from CONVERSION.md"
+  },
+  "milestones": [],
+  "current_milestone": null,
+  "progress": {
+    "milestones_complete": 0,
+    "milestones_total": 0,
+    "milestones_percentage": 0
   },
   "meta": {
     "generated_at": "ISO8601 timestamp",
-    "wxcode_version": "1.1.9"
+    "wxcode_version": "string - from VERSION"
   }
 }
 ```
 
-**Steps:**
-1. Write JSON to `.planning/dashboard.json` using Write tool
-2. Output notification line:
+### Step 3: Output notification
+
 ```
 [WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
 ```
+
+**IMPORTANT:** Use the EXACT schema from the reference file. Do NOT invent a different format.
 
 </dashboard_update>

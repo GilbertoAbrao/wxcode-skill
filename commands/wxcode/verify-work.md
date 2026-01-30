@@ -10,6 +10,7 @@ allowed-tools:
   - Edit
   - Write
   - Task
+  - mcp__wxcode-kb__get_conversion_stats
 ---
 
 <objective>
@@ -221,21 +222,49 @@ Review the issues above and either:
 
 <dashboard_update>
 
-## Update Dashboard (Final Step)
+## Update Dashboards (Final Step)
 
-After verification completes, update the dashboard.
+After verification completes, update TWO dashboards:
+1. **Project dashboard** (global) — `.planning/dashboard.json`
+2. **Milestone dashboard** — `.planning/dashboard_<milestone>.json`
 
-**Reference:** `~/.claude/get-shit-done/references/dashboard-schema.md`
+**References:**
+- Project dashboard: `~/.claude/get-shit-done/references/dashboard-schema-project.md`
+- Milestone dashboard: `~/.claude/get-shit-done/references/dashboard-schema-milestone.md`
 
-**Steps:**
-1. Read current `.planning/dashboard.json` (if exists)
-2. Update fields based on current state (verification results, phase status)
-3. Write updated JSON to `.planning/dashboard.json`
-4. Output notification:
+### Step 1: Determine milestone folder name
+
+Read from STATE.md or CONVERSION.md:
 ```
-[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
+MILESTONE_FOLDER_NAME="v[X.Y]-[element_name]"
 ```
 
-**IMPORTANT:** Use the EXACT schema from the reference file. Do NOT invent a different format.
+### Step 2: Gather conversion data (if conversion project)
+
+**Use HYBRID approach:**
+```
+mcp__wxcode-kb__get_conversion_stats(project_name=PROJECT_NAME)
+```
+
+Use MCP response for `conversion.elements_converted` and `conversion.elements_total`.
+Use CONVERSION.md for `conversion.stack`.
+
+### Step 3: Update project dashboard
+
+1. Read current `.planning/dashboard.json`
+2. Update `milestones[]` with verification results
+3. Update `conversion.*` with hybrid data
+4. Write to `.planning/dashboard.json`
+5. Output: `[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json`
+
+### Step 4: Update milestone dashboard
+
+1. Read `.planning/dashboard_${MILESTONE_FOLDER_NAME}.json`
+2. Update verification status in `phases[]`
+3. Update `requirements` completion based on UAT results
+4. Write to `.planning/dashboard_${MILESTONE_FOLDER_NAME}.json`
+5. Output: `[WXCODE:DASHBOARD_UPDATED] .planning/dashboard_<milestone>.json`
+
+**IMPORTANT:** Use the EXACT schemas from the reference files. Do NOT invent a different format.
 
 </dashboard_update>

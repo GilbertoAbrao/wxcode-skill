@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.3] - 2026-01-30
+
+### Added
+- Split dashboard schemas: project-level and milestone-level
+- `dashboard-schema-project.md`: Global project dashboard schema
+- `dashboard-schema-milestone.md`: Per-milestone dashboard schema
+- `dashboard-migration-prompt.md`: Migration guide for UI integration
+- Hybrid approach for conversion progress (MCP = source of truth)
+
+### Changed
+- All dashboard-emitting commands now update TWO dashboards:
+  - `.planning/dashboard.json` (project)
+  - `.planning/dashboard_<milestone>.json` (milestone-specific)
+- `/wxcode:new-milestone` now creates Milestone in MongoDB via MCP
+- Commands updated: new-project, new-milestone, plan-phase, execute-phase, verify-work, complete-milestone
+- Added `mcp__wxcode-kb__get_conversion_stats` to all dashboard-emitting commands
+- Added `mcp__wxcode-kb__create_milestone` to new-milestone command
+
+### New MCP Tool Required
+- `create_milestone`: Creates Milestone in MongoDB with wxcode_version and milestone_folder_name
+
+### Dashboard Structure
+```
+.planning/
+├── dashboard.json                 # Project (global)
+├── dashboard_v1.0-PAGE_Login.json # Milestone
+└── dashboard_v1.1-PAGE_Dashboard.json
+```
+
 ## [1.2.2] - 2026-01-29
 
 ### Changed
