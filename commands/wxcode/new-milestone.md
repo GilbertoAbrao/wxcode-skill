@@ -774,4 +774,21 @@ Present completion with next steps:
 - [ ] User knows next step is `/wxcode:discuss-phase [N]`
 
 **Atomic commits:** Each phase commits its artifacts immediately. If context is lost, artifacts persist.
+
+**Dashboard:** After milestone initialization completes, update dashboard (see below).
 </success_criteria>
+
+<dashboard_update>
+
+## Update Dashboard (Final Step)
+
+After milestone initialization completes, update the dashboard:
+
+1. Generate dashboard JSON following `/wxcode:dashboard` schema
+2. Write to `.planning/dashboard.json`
+3. Output notification:
+```
+[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
+```
+
+</dashboard_update>

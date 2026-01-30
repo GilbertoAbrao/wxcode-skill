@@ -335,5 +335,23 @@ After all plans in phase complete (step 7):
 - [ ] STATE.md reflects phase completion
 - [ ] ROADMAP.md updated
 - [ ] REQUIREMENTS.md updated (phase requirements marked Complete)
+- [ ] Dashboard updated (see below)
 - [ ] User informed of next steps
 </success_criteria>
+
+<dashboard_update>
+
+## Update Dashboard (Final Step)
+
+After phase execution completes (or after each plan completes), update the dashboard:
+
+1. Generate dashboard JSON following `/wxcode:dashboard` schema
+2. Write to `.planning/dashboard.json`
+3. Output notification:
+```
+[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
+```
+
+This allows external UIs to track progress in real-time.
+
+</dashboard_update>

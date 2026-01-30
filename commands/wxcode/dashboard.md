@@ -1,8 +1,9 @@
 ---
 name: wxcode:dashboard
-description: Return project progress as JSON for UI rendering
+description: Generate project progress JSON and notify watchers
 allowed-tools:
   - Read
+  - Write
   - Bash
   - Glob
 ---
@@ -11,9 +12,11 @@ allowed-tools:
 
 Generate a comprehensive JSON snapshot of project progress for external UI rendering.
 
-**Output:** Pure JSON to stdout (no markdown, no explanations)
+**Output:**
+1. Writes JSON to `.planning/dashboard.json`
+2. Emits watcher notification: `[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json`
 
-**Use case:** IDE integrations, dashboards, progress visualization
+**Use case:** IDE integrations, dashboards, progress visualization, file watchers
 
 </objective>
 
@@ -193,15 +196,22 @@ For each phase folder (e.g., `01-project-setup/`):
 - Extract stack target
 - Extract conversion stats if available
 
-## Step 5: Output JSON
+## Step 5: Write JSON and Notify
 
-Output ONLY the JSON object. No markdown, no code blocks, no explanation.
+1. **Write JSON to file:**
+   - Use Write tool to save to `.planning/dashboard.json`
+   - Ensure valid JSON (proper escaping, no trailing commas)
+
+2. **Emit watcher notification:**
+   - Output exactly this line (for terminal watchers):
+   ```
+   [WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
+   ```
 
 **IMPORTANT:**
-- Output raw JSON directly
-- No ```json markers
-- No text before or after
-- Ensure valid JSON (proper escaping, no trailing commas)
+- The notification line must be exactly as shown above
+- No extra formatting or explanation around it
+- This allows external processes to detect dashboard updates
 
 </process>
 
@@ -393,8 +403,9 @@ Output ONLY the JSON object. No markdown, no code blocks, no explanation.
 </example_output>
 
 <success_criteria>
-- [ ] Output is valid JSON (parseable)
-- [ ] No markdown or text outside JSON
+- [ ] JSON is valid (parseable)
+- [ ] Written to `.planning/dashboard.json`
+- [ ] Notification emitted: `[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json`
 - [ ] All existing files parsed correctly
 - [ ] Missing files handled gracefully (null values)
 - [ ] Phase details include all plans
@@ -402,3 +413,31 @@ Output ONLY the JSON object. No markdown, no code blocks, no explanation.
 - [ ] Blockers and todos included
 - [ ] Conversion project info included (if applicable)
 </success_criteria>
+
+<integration>
+
+## Triggering Dashboard Updates
+
+Other commands should trigger dashboard update after significant state changes.
+
+**Add this step to commands that modify project state:**
+
+```
+## Final Step: Update Dashboard
+
+After completing all other steps, update the project dashboard:
+
+1. Generate dashboard JSON (follow /wxcode:dashboard process)
+2. Write to `.planning/dashboard.json`
+3. Output: `[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json`
+```
+
+**Commands that should trigger dashboard update:**
+- `/wxcode:new-project` (after completion)
+- `/wxcode:new-milestone` (after completion)
+- `/wxcode:plan-phase` (after PLAN.md created)
+- `/wxcode:execute-phase` (after each plan completes)
+- `/wxcode:verify-work` (after verification)
+- `/wxcode:complete-milestone` (after archiving)
+
+</integration>

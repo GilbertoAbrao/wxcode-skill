@@ -520,6 +520,22 @@ Verification: {Passed | Passed with override | Skipped}
 - [ ] Plans created (PLANNING COMPLETE or CHECKPOINT handled)
 - [ ] wxcode-plan-checker spawned (unless --skip-verify)
 - [ ] Verification passed OR user override OR max iterations with user decision
+- [ ] Dashboard updated (see below)
 - [ ] User sees status between agent spawns
 - [ ] User knows next steps (execute or review)
 </success_criteria>
+
+<dashboard_update>
+
+## Update Dashboard (Final Step)
+
+After planning completes, update the dashboard:
+
+1. Generate dashboard JSON following `/wxcode:dashboard` schema
+2. Write to `.planning/dashboard.json`
+3. Output notification:
+```
+[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
+```
+
+</dashboard_update>

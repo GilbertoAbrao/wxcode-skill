@@ -121,8 +121,24 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
 - PROJECT.md updated with current state
 - Git tag v{{version}} created
 - Commit successful
+- Dashboard updated
 - User knows next steps (including need for fresh requirements)
-  </success_criteria>
+</success_criteria>
+
+<dashboard_update>
+
+## Update Dashboard (Final Step)
+
+After milestone completion, update the dashboard:
+
+1. Generate dashboard JSON following `/wxcode:dashboard` schema
+2. Write to `.planning/dashboard.json`
+3. Output notification:
+```
+[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
+```
+
+</dashboard_update>
 
 <critical_rules>
 

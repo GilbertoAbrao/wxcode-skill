@@ -215,5 +215,21 @@ Review the issues above and either:
 - [ ] If issues: parallel debug agents diagnose root causes
 - [ ] If issues: wxcode-planner creates fix plans from diagnosed gaps
 - [ ] If issues: wxcode-plan-checker verifies fix plans (max 3 iterations)
+- [ ] Dashboard updated
 - [ ] Ready for `/wxcode:execute-phase` when complete
 </success_criteria>
+
+<dashboard_update>
+
+## Update Dashboard (Final Step)
+
+After verification completes, update the dashboard:
+
+1. Generate dashboard JSON following `/wxcode:dashboard` schema
+2. Write to `.planning/dashboard.json`
+3. Output notification:
+```
+[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
+```
+
+</dashboard_update>
