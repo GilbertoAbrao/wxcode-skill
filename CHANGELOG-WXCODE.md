@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.6] - 2026-01-30
+
+### Added
+- **wxcode-planner**: Conversion context section with MCP Source of Truth
+  - Detects conversion projects automatically
+  - Queries MCP for legacy element details if RESEARCH.md incomplete
+  - Checks dependency conversion status before planning
+  - Uses stack conventions from MCP
+  - Searches similar conversions for patterns
+
+- **wxcode-plan-checker**: Dimension 7 - Conversion Coverage
+  - Verifies all legacy controls have corresponding tasks
+  - Verifies all legacy procedures have corresponding tasks
+  - Checks dependency conversion status
+  - Flags missing conversion items as blockers
+
+- **wxcode-verifier**: Step 1.5 and Step 6.5 for conversion verification
+  - Loads legacy element from MCP as Source of Truth
+  - Builds conversion verification matrix
+  - Verifies all controls converted
+  - Verifies all procedures converted
+  - Verifies data bindings preserved
+  - Checks behavior equivalence
+  - Adds conversion gaps to gap output
+
+### Changed
+- All three agents now use MCP wxcode-kb as Source of Truth for conversion projects
+- Conversion projects get additional verification dimensions
+
 ## [1.2.5] - 2026-01-30
 
 ### Added
@@ -269,6 +298,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | WXCODE Version | GSD Version | Sync Date | Notes |
 |----------------|-------------|-----------|-------|
+| 1.2.6 | 1.9.13 | 2026-01-30 | MCP Source of Truth for planning/verification agents |
 | 1.2.5 | 1.9.13 | 2026-01-30 | Workflow stages in milestone dashboard |
 | 1.2.4 | 1.9.13 | 2026-01-30 | Tasks in milestone dashboard |
 | 1.2.3 | 1.9.13 | 2026-01-30 | Split dashboard schemas (project/milestone) |

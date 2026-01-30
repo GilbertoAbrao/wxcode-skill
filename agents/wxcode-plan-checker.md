@@ -235,6 +235,79 @@ issue:
   fix_hint: "Reframe as user-observable: 'User can log in', 'Session persists'"
 ```
 
+## Dimension 7: Conversion Coverage (Conversion Projects Only)
+
+**Question:** Do plans cover all legacy elements that need conversion?
+
+**Applies when:** `.planning/CONVERSION.md` exists (conversion project)
+
+**Process:**
+
+1. Detect conversion project:
+```bash
+IS_CONVERSION=$([ -f .planning/CONVERSION.md ] && echo "true" || echo "false")
+```
+
+2. If conversion project, query MCP for legacy element details:
+```
+mcp__wxcode-kb__get_controls {element_name}
+mcp__wxcode-kb__get_procedures {element_name}
+mcp__wxcode-kb__get_data_bindings {element_name}
+```
+
+3. Map legacy items to plan tasks:
+   - Each control should have a task creating its modern equivalent
+   - Each procedure should have a task implementing its logic
+   - Each data binding should be handled
+
+4. Check dependency status:
+```
+mcp__wxcode-kb__get_dependencies {element_name}
+```
+   - Blocking dependencies must be converted or stubbed
+   - Soft dependencies should be noted
+
+**Red flags:**
+- Control exists in legacy but no task creates modern equivalent
+- Procedure exists in legacy but no task implements it
+- Data binding not handled (form without submit handler)
+- Blocking dependency not converted and not addressed
+
+**Coverage matrix for conversion:**
+```
+Legacy Item          | Type      | Task | Status
+---------------------|-----------|------|--------
+EDT_Login            | Control   | 1.2  | COVERED
+EDT_Senha            | Control   | 1.2  | COVERED
+BTN_Entrar           | Control   | 1.3  | COVERED
+ValidaLogin          | Procedure | 1.4  | COVERED
+AcessoUsuario        | Table     | 1.1  | COVERED (model created)
+SharedProcedure      | Procedure | -    | MISSING (blocker!)
+```
+
+**Example issue:**
+```yaml
+issue:
+  dimension: conversion_coverage
+  severity: blocker
+  description: "Legacy procedure 'ValidaCPF' has no covering task"
+  legacy_element: "ValidaCPF"
+  legacy_type: "Procedure"
+  source: "MCP get_procedures"
+  fix_hint: "Add task to convert ValidaCPF or create stub if dependency"
+```
+
+**Example issue (dependency):**
+```yaml
+issue:
+  dimension: conversion_coverage
+  severity: blocker
+  description: "Blocking dependency 'ServerProcedures.GetConfig' not converted"
+  dependency: "ServerProcedures.GetConfig"
+  dependency_type: "Procedure"
+  fix_hint: "Convert dependency first OR add stub task with TODO"
+```
+
 </verification_dimensions>
 
 <verification_process>

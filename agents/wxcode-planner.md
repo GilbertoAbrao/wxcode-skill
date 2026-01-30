@@ -116,6 +116,138 @@ For niche domains (3D, games, audio, shaders, ML), suggest `/wxcode:research-pha
 
 </discovery_levels>
 
+<conversion_context>
+
+## Conversion Project Support
+
+**For conversion projects (CONVERSION.md exists), MCP wxcode-kb is the Source of Truth.**
+
+### Step 0: Detect Conversion Project
+
+```bash
+IS_CONVERSION=$([ -f .planning/CONVERSION.md ] && echo "true" || echo "false")
+```
+
+**If `IS_CONVERSION=true`:** Follow conversion planning flow below.
+
+### Step 1: Load Conversion Context
+
+Read essential files:
+
+```bash
+# Target stack and config
+cat .planning/CONVERSION.md
+
+# Research should have legacy analysis
+cat "${PHASE_DIR}"/*-RESEARCH.md 2>/dev/null
+```
+
+The researcher (wxcode-phase-researcher) should have already analyzed the legacy element via MCP. Check RESEARCH.md for:
+
+- Legacy source code
+- Control hierarchy
+- Business logic (procedures)
+- Dependencies and their conversion status
+
+### Step 2: Verify Research Completeness
+
+**If RESEARCH.md is missing or incomplete, query MCP directly:**
+
+```
+mcp__wxcode-kb__get_element {element_name}
+mcp__wxcode-kb__get_controls {element_name}
+mcp__wxcode-kb__get_procedures {element_name}
+mcp__wxcode-kb__get_dependencies {element_name}
+```
+
+### Step 3: Check Dependency Conversion Status
+
+**CRITICAL: Before planning, verify dependencies are converted.**
+
+```
+mcp__wxcode-kb__get_dependencies {element_name}
+```
+
+For each dependency:
+
+| Dependency | Type | Converted? | Action |
+|------------|------|------------|--------|
+| Shared procedure | Procedure | Yes | Reference existing |
+| Shared procedure | Procedure | No | Flag as blocker OR plan stub |
+| Database table | Table | Yes | Use existing model |
+| Database table | Table | No | Add to this phase |
+
+**If blocking dependencies are NOT converted:**
+- Option A: Add tasks to convert dependency first
+- Option B: Create stub/mock and flag for later
+- Option C: Flag as blocker to orchestrator
+
+### Step 4: Get Stack Conventions
+
+Query MCP for target stack patterns:
+
+```
+mcp__wxcode-kb__get_stack_conventions {output_project_id}
+```
+
+Use conventions for:
+- File naming patterns
+- Directory structure
+- Import patterns
+- Component structure
+
+### Step 5: Search Similar Conversions
+
+Find already-converted similar elements for patterns:
+
+```
+mcp__wxcode-kb__search_converted_similar {element_name} {output_project_id}
+```
+
+**Use similar conversions to:**
+- Follow established patterns
+- Maintain consistency
+- Avoid reinventing approaches
+
+### Conversion Task Requirements
+
+**Each task in a conversion plan MUST:**
+
+1. **Reference legacy source** — What legacy code/control is being converted
+2. **Preserve behavior** — Explicit note on what behavior must be maintained
+3. **Handle edge cases** — Document any legacy edge cases to preserve
+4. **Use stack conventions** — Follow patterns from `get_stack_conventions`
+
+**Task template for conversion:**
+
+```xml
+<task type="auto">
+  <name>Task X: Convert {legacy_control/procedure}</name>
+  <legacy_reference>{element_name}.{control/procedure}</legacy_reference>
+  <files>app/{path}/component.tsx</files>
+  <action>
+    Convert {legacy_item} to {target_stack}:
+    - Legacy behavior: {describe what it does}
+    - Preserve: {specific behavior to maintain}
+    - Stack pattern: {from get_stack_conventions}
+  </action>
+  <verify>Behavior matches legacy: {how to verify}</verify>
+  <done>{acceptance criteria matching legacy behavior}</done>
+</task>
+```
+
+### Conversion Completeness Check
+
+Before returning PLANNING COMPLETE, verify:
+
+- [ ] All controls from `get_controls` have corresponding tasks
+- [ ] All procedures from `get_procedures` have corresponding tasks
+- [ ] All data bindings are handled
+- [ ] Dependencies are converted or stubbed
+- [ ] Stack conventions are followed
+
+</conversion_context>
+
 <task_breakdown>
 
 ## Task Anatomy
