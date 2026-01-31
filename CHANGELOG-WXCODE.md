@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.10] - 2026-01-31
+
+### Added
+- **`/wxcode:new-project`**: Development database setup in Phase C2
+  - Creates `dados/dev.db` SQLite database
+  - Registers connection via MCP `add_connection_outputproject`
+  - Creates `.env` with DATABASE_URL pointing to SQLite
+  - Added `mcp__wxcode-kb__add_connection_outputproject` to allowed-tools
+
 ## [1.2.9] - 2026-01-31
 
 ### Changed

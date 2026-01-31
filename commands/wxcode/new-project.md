@@ -16,6 +16,7 @@ allowed-tools:
   - mcp__wxcode-kb__list_elements
   - mcp__wxcode-kb__mark_project_initialized
   - mcp__wxcode-kb__get_conversion_stats
+  - mcp__wxcode-kb__add_connection_outputproject
 ---
 
 <objective>
@@ -236,6 +237,38 @@ mkdir -p app/models app/schemas app/routes app/services app/templates app/static
 Example for `nextjs-app-router`:
 ```bash
 mkdir -p src/app src/components src/lib prisma public
+```
+
+### Development Database Setup
+
+**Create SQLite dev database:**
+
+```bash
+mkdir -p dados
+touch dados/dev.db
+```
+
+**Register connection in OutputProject via MCP:**
+
+```
+mcp__wxcode-kb__add_connection_outputproject:
+  output_project_id: "<OUTPUT_PROJECT_ID>"
+  connection_name: "dev"
+  connection_type: "sqlite"
+  connection_string: "sqlite:///dados/dev.db"
+  is_default: true
+  confirm: true
+```
+
+**Create `.env` with database connection:**
+
+```env
+# Development database
+DATABASE_URL=sqlite:///dados/dev.db
+
+# Add other environment variables as needed
+SECRET_KEY=dev-secret-change-in-production
+DEBUG=true
 ```
 
 ### Configuration Files
