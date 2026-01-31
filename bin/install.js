@@ -89,16 +89,16 @@ function getGlobalDir(runtime, explicitDir = null) {
 }
 
 const banner = `
-${cyan}   ██████╗ ███████╗██████╗
-  ██╔════╝ ██╔════╝██╔══██╗
-  ██║  ███╗███████╗██║  ██║
-  ██║   ██║╚════██║██║  ██║
-  ╚██████╔╝███████║██████╔╝
-   ╚═════╝ ╚══════╝╚═════╝${reset}
+${cyan}  ██╗    ██╗██╗  ██╗ ██████╗ ██████╗ ██████╗ ███████╗
+  ██║    ██║╚██╗██╔╝██╔════╝██╔═══██╗██╔══██╗██╔════╝
+  ██║ █╗ ██║ ╚███╔╝ ██║     ██║   ██║██║  ██║█████╗
+  ██║███╗██║ ██╔██╗ ██║     ██║   ██║██║  ██║██╔══╝
+  ╚███╔███╔╝██╔╝ ██╗╚██████╗╚██████╔╝██████╔╝███████╗
+   ╚══╝╚══╝ ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝${reset}
 
-  Get Shit Done ${dim}v${pkg.version}${reset}
-  A meta-prompting, context engineering and spec-driven
-  development system for Claude Code (and opencode) by TÂCHES.
+  WXCODE ${dim}v${pkg.version}${reset}
+  WinDev/WebDev code conversion system for Claude Code.
+  Based on GSD (Get Shit Done) by TÂCHES.
 `;
 
 // Parse --config-dir argument

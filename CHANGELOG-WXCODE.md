@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.12] - 2026-01-31
+
+### Changed
+- **Installer branding**: Shows WXCODE ASCII art instead of GSD during installation
+- Updated banner text to "WinDev/WebDev code conversion system"
+
 ## [1.2.11] - 2026-01-31
 
 ### Changed
