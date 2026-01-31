@@ -10,14 +10,8 @@ allowed-tools:
   - Grep
   - Task
   - AskUserQuestion
-  - mcp__wxcode-kb__health_check
-  - mcp__wxcode-kb__get_schema
-  - mcp__wxcode-kb__get_project_stats
-  - mcp__wxcode-kb__list_elements
-  - mcp__wxcode-kb__mark_project_initialized
-  - mcp__wxcode-kb__get_conversion_stats
-  - mcp__wxcode-kb__add_connection_outputproject
-  - mcp__mongodb__find
+  - mcp__wxcode-kb__*
+  - mcp__mongodb__*
 ---
 
 <objective>

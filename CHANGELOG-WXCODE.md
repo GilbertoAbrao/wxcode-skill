@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.13] - 2026-01-31
+
+### Fixed
+- **MCP tools in skills**: Use wildcard patterns `mcp__wxcode-kb__*` and `mcp__mongodb__*`
+  instead of specific tool names to ensure MCP access in skills
+
 ## [1.2.12] - 2026-01-31
 
 ### Changed

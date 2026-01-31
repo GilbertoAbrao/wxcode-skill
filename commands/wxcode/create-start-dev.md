@@ -6,8 +6,8 @@ allowed-tools:
   - Write
   - Bash
   - Skill
-  - mcp__wxcode-kb__get_stack_conventions
-  - mcp__mongodb__find
+  - mcp__wxcode-kb__*
+  - mcp__mongodb__*
 ---
 
 <objective>
