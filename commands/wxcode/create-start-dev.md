@@ -7,7 +7,6 @@ allowed-tools:
   - Bash
   - Skill
   - mcp__wxcode-kb__*
-  - mcp__mongodb__*
 ---
 
 <objective>
@@ -73,23 +72,18 @@ Available stacks:
 ```
 Exit.
 
-## Phase 2: Fetch Template from MongoDB
+## Phase 2: Fetch Stack Conventions via MCP
 
-**2.1 Query stack collection:**
-
-Use MCP to fetch the stack's start_dev_template:
+**2.1 Get stack conventions (includes start_dev_template):**
 
 ```
-mcp__mongodb__find:
-  database: wxcode
-  collection: stacks
-  filter: {"stack_id": "<DETECTED_STACK_ID>"}
-  projection: {"stack_id": 1, "start_dev_template": 1}
+mcp__wxcode-kb__get_stack_conventions:
+  stack_id: "<DETECTED_STACK_ID>"
 ```
 
-**2.2 Extract template data:**
+**2.2 Extract template data from response:**
 
-From the result, get:
+From the `start_dev_template` field in the response, get:
 - `start_dev_template.ports.backend` → PORT_BACKEND
 - `start_dev_template.ports.frontend` → PORT_FRONTEND (if SPA)
 - `start_dev_template.script` → Template script

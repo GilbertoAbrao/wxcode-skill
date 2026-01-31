@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.14] - 2026-01-31
+
+### Changed
+- **All data access via wxcode-kb MCP**: Removed direct `mcp__mongodb__*` access
+  - `/wxcode:new-project` now uses `get_stack_conventions(stack_id=...)`
+  - `/wxcode:create-start-dev` now uses `get_stack_conventions(stack_id=...)`
+  - Single source of truth: wxcode-kb MCP server
+
 ## [1.2.13] - 2026-01-31
 
 ### Fixed

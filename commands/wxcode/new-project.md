@@ -11,7 +11,6 @@ allowed-tools:
   - Task
   - AskUserQuestion
   - mcp__wxcode-kb__*
-  - mcp__mongodb__*
 ---
 
 <objective>
@@ -236,15 +235,14 @@ mkdir -p src/app src/components src/lib prisma public
 
 ### Development Database Setup
 
-**First, get ORM from stack via MCP:**
+**First, get stack conventions (including ORM) via MCP:**
 
 ```
-mcp__mongodb__find:
-  database: wxcode
-  collection: stacks
-  filter: {"stack_id": "<STACK_ID>"}
-  projection: {"orm": 1, "language": 1}
+mcp__wxcode-kb__get_stack_conventions:
+  stack_id: "<STACK_ID>"
 ```
+
+This returns the stack's `orm`, `language`, `file_structure`, `naming_conventions`, etc.
 
 **Create database directory:**
 
