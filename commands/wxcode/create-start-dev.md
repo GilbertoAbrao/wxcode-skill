@@ -5,6 +5,7 @@ allowed-tools:
   - Read
   - Write
   - Bash
+  - Skill
   - mcp__wxcode-kb__get_stack_conventions
   - mcp__mongodb__find
 ---
@@ -13,11 +14,15 @@ allowed-tools:
 
 Generate a `start-dev.sh` script for the current project based on its stack configuration stored in MongoDB.
 
+**IMPORTANT:** ALWAYS recreate the file, even if it already exists. Never skip creation.
+
 The script will:
 - Kill any processes running on required ports
 - Start development server(s) for the stack
 - Redirect logs to `/tmp/{project_name}.log`
 - Store PID files for process management
+
+After creation, automatically execute `/wxcode:start-dev` to start the server.
 
 </objective>
 
@@ -170,6 +175,16 @@ http://localhost:[PORT_BACKEND] (API)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
+## Phase 5: Start Development Server
+
+After displaying the result, automatically invoke:
+
+```
+/wxcode:start-dev
+```
+
+This starts the development server immediately after script creation.
+
 </process>
 
 <output>
@@ -187,7 +202,9 @@ Creates `start-dev.sh` in project root with:
 - [ ] Project stack identified from config files
 - [ ] Template fetched from MongoDB via MCP
 - [ ] Placeholders substituted with actual ports
-- [ ] start-dev.sh created and executable
+- [ ] start-dev.sh created (ALWAYS, even if exists)
+- [ ] Permissions set (chmod +x)
 - [ ] Configuration summary displayed
+- [ ] /wxcode:start-dev invoked automatically
 
 </success_criteria>
