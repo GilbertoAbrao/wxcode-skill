@@ -17,6 +17,7 @@ allowed-tools:
   - mcp__wxcode-kb__mark_project_initialized
   - mcp__wxcode-kb__get_conversion_stats
   - mcp__wxcode-kb__add_connection_outputproject
+  - mcp__mongodb__find
 ---
 
 <objective>
@@ -241,11 +242,20 @@ mkdir -p src/app src/components src/lib prisma public
 
 ### Development Database Setup
 
-**Create SQLite dev database:**
+**First, get ORM from stack via MCP:**
+
+```
+mcp__mongodb__find:
+  database: wxcode
+  collection: stacks
+  filter: {"stack_id": "<STACK_ID>"}
+  projection: {"orm": 1, "language": 1}
+```
+
+**Create database directory:**
 
 ```bash
 mkdir -p dados
-touch dados/dev.db
 ```
 
 **Register connection in OutputProject via MCP:**
@@ -260,15 +270,126 @@ mcp__wxcode-kb__add_connection_outputproject:
   confirm: true
 ```
 
-**Create `.env` with database connection:**
+**Create ORM-specific configuration based on stack's `orm` field:**
+
+---
+
+**If `orm: sqlalchemy` (Python stacks):**
 
 ```env
-# Development database
+# .env
 DATABASE_URL=sqlite:///dados/dev.db
-
-# Add other environment variables as needed
 SECRET_KEY=dev-secret-change-in-production
 DEBUG=true
+```
+
+```python
+# app/config/database.py
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///dados/dev.db")
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {})
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+```
+
+---
+
+**If `orm: prisma` (Node.js fullstack stacks):**
+
+```env
+# .env
+DATABASE_URL="file:./dados/dev.db"
+```
+
+```prisma
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Models will be added during schema conversion
+```
+
+Run `npx prisma generate` after adding models.
+
+---
+
+**If `orm: typeorm` (NestJS stacks):**
+
+```env
+# .env
+DATABASE_URL=sqlite:./dados/dev.db
+```
+
+```typescript
+// src/config/database.config.ts
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+
+export const databaseConfig: TypeOrmModuleOptions = {
+  type: 'sqlite',
+  database: './dados/dev.db',
+  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+  synchronize: true, // Only in dev
+};
+```
+
+---
+
+**If `orm: django-orm` (Django stacks):**
+
+```python
+# settings.py (add to DATABASES)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'dados' / 'dev.db',
+    }
+}
+```
+
+---
+
+**If `orm: eloquent` (Laravel stacks):**
+
+```env
+# .env
+DB_CONNECTION=sqlite
+DB_DATABASE=/absolute/path/to/dados/dev.db
+```
+
+```php
+// config/database.php (sqlite connection already exists, just use .env)
+```
+
+---
+
+**If `orm: active-record` (Rails stacks):**
+
+```yaml
+# config/database.yml
+development:
+  adapter: sqlite3
+  database: dados/dev.db
+  pool: 5
+  timeout: 5000
 ```
 
 ### Configuration Files
@@ -311,33 +432,94 @@ Create `composer.json` with Laravel dependencies.
 
 ### Application Entry Point
 
-Create the main entry point that allows running the project.
+Create the main entry point based on the stack's ORM. The database config was created in the previous step.
 
-**fastapi-jinja2, fastapi-htmx:**
+**If `orm: sqlalchemy` (fastapi-jinja2, fastapi-htmx, fastapi-react, fastapi-vue):**
+
 ```python
 # app/main.py
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from app.config.database import engine, Base
 
 app = FastAPI(title="[Project Name]")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
+
+@app.on_event("startup")
+async def startup():
+    Base.metadata.create_all(bind=engine)
 
 @app.get("/health")
 async def health():
     return {"status": "ok"}
 ```
 
-**nextjs-app-router:**
+---
+
+**If `orm: prisma` (nextjs-app-router, nextjs-pages, nuxt3, sveltekit, remix):**
+
+```typescript
+// src/lib/db.ts (or lib/prisma.ts)
+import { PrismaClient } from '@prisma/client'
+
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
+
+export const prisma = globalForPrisma.prisma || new PrismaClient()
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+```
+
 ```tsx
-// src/app/page.tsx
+// src/app/page.tsx (Next.js) or equivalent
 export default function Home() {
   return <main><h1>[Project Name]</h1><p>Conversion in progress...</p></main>;
 }
 ```
 
-(Use appropriate entry point for other stacks)
+---
+
+**If `orm: typeorm` (nestjs-react, nestjs-vue):**
+
+```typescript
+// src/app.module.ts
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { databaseConfig } from './config/database.config';
+
+@Module({
+  imports: [TypeOrmModule.forRoot(databaseConfig)],
+})
+export class AppModule {}
+```
+
+---
+
+**If `orm: django-orm` (django-templates):**
+
+```python
+# Standard Django manage.py - database configured in settings.py
+# Run: python manage.py migrate
+```
+
+---
+
+**If `orm: eloquent` (laravel-blade, laravel-react):**
+
+```php
+// Standard Laravel - database configured in config/database.php
+// Run: php artisan migrate
+```
+
+---
+
+**If `orm: active-record` (rails-erb):**
+
+```ruby
+# Standard Rails - database configured in config/database.yml
+# Run: rails db:migrate
+```
 
 ### start-dev.sh
 

@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.11] - 2026-01-31
+
+### Changed
+- **`/wxcode:new-project`**: Adaptive database config based on stack ORM
+  - Fetches ORM from `stacks` collection via MCP
+  - Generates ORM-specific database configuration:
+    - `sqlalchemy` → Python SQLAlchemy config
+    - `prisma` → Prisma schema.prisma
+    - `typeorm` → TypeORM config for NestJS
+    - `django-orm` → Django settings.py
+    - `eloquent` → Laravel .env config
+    - `active-record` → Rails database.yml
+  - Added `mcp__mongodb__find` to allowed-tools
+
 ## [1.2.10] - 2026-01-31
 
 ### Added
