@@ -308,48 +308,42 @@ export default function Home() {
 
 ### start-dev.sh
 
-Create `start-dev.sh` based on stack group. See templates in `.wxcode/conversion/` or reference the stack-specific templates.
+**Use the dedicated skill to create start-dev.sh from the stack template:**
 
-**Server-Rendered (single server):** fastapi-jinja2, fastapi-htmx, django-templates, rails-erb, laravel-blade
-**SPA (backend + frontend):** fastapi-react, fastapi-vue, nestjs-react, nestjs-vue, laravel-react
-**Fullstack (single Node):** nextjs-app-router, nextjs-pages, nuxt3, sveltekit, remix
-
-```bash
-chmod +x start-dev.sh
 ```
+/wxcode:create-start-dev
+```
+
+This skill will:
+1. Detect the project's stack from configuration
+2. Fetch the appropriate template from MongoDB (via MCP)
+3. Generate `start-dev.sh` with correct ports (7xxx series)
+4. Set executable permissions
 
 ### Verify Development Server
 
 **IMPORTANT:** Test that the project runs before proceeding.
 
-1. **Execute start-dev.sh:**
-```bash
-./start-dev.sh &
-DEV_PID=$!
-sleep 5
+**Use the dedicated skill to start the development server:**
+
+```
+/wxcode:start-dev
 ```
 
-2. **Test server response:**
-```bash
-curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/ 2>/dev/null || echo "failed"
-```
-(Adjust port based on stack: 8000 for Python, 3000 for Node, etc.)
-
-3. **Stop the server:**
-```bash
-kill $DEV_PID 2>/dev/null
-```
+This skill will:
+1. Execute start-dev.sh
+2. Verify server is running
+3. Display access URLs and log location
 
 **If test fails:**
-- Read error output from start-dev.sh
-- Fix configuration issues (missing dependencies, wrong paths, port conflicts)
-- Re-run verification until server starts successfully
+- Check logs: `cat /tmp/{project_name}.log`
+- Fix configuration issues (missing dependencies, wrong paths)
+- Re-run `/wxcode:start-dev`
 
 **Common fixes:**
 - Missing `__init__.py` files in Python packages
 - Missing dependencies in requirements.txt/package.json
 - Wrong module paths in entry point
-- Port already in use (try different port)
 - **Multiple top-level packages error (setuptools):** Add to pyproject.toml:
   ```toml
   [tool.setuptools.packages.find]
@@ -573,7 +567,7 @@ mcp__wxcode-kb__mark_project_initialized()
 
 ## Run the Project
 
-./start-dev.sh
+/wxcode:start-dev
 
 ───────────────────────────────────────────────────────────────
 ```

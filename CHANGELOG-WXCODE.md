@@ -7,6 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.8] - 2026-01-31
+
+### Changed
+- **`/wxcode:create-start-dev`**: Clearer instructions for placeholder substitution
+  - Explicit example showing template → final transformation
+  - Emphasized that NO placeholders should remain in output
+
+## [1.2.7] - 2026-01-31
+
+### Added
+- **start-dev templates in MongoDB**: All 15 stacks now have `start_dev_template` field with:
+  - Standardized ports (7xxx series)
+  - Auto-kill of processes on required ports
+  - Log redirection to `/tmp/{project_name}.log`
+  - PID file management for process control
+
+- **`/wxcode:create-start-dev` skill**: Generate start-dev.sh from stack template
+  - Detects project stack from configuration
+  - Fetches template from MongoDB via MCP
+  - Substitutes port placeholders
+  - Sets executable permissions
+
+- **`/wxcode:start-dev` skill**: Execute start-dev.sh
+  - Verifies script exists
+  - Executes and validates server startup
+  - Displays access URLs and log location
+
+### Changed
+- **`/wxcode:new-project`**: Now uses `/wxcode:create-start-dev` and `/wxcode:start-dev` instead of manual script creation
+- **Port standardization**: All stacks use 7xxx ports:
+  - Server-Rendered: 7300-7340
+  - SPA: 7380-7389 (backend/frontend pairs)
+  - Fullstack: 7400-7440
+
 ## [1.2.6] - 2026-01-30
 
 ### Added

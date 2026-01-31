@@ -154,6 +154,32 @@ View complete sync and customization history.
 
 **Usage:** `/wxcode:history`
 
+## Development Server Commands
+
+### `/wxcode:create-start-dev`
+
+Generate start-dev.sh script from stack template.
+
+- Detects project stack from configuration
+- Fetches template from MongoDB via MCP
+- Uses standardized ports (7xxx series)
+- Sets executable permissions
+
+**Usage:** `/wxcode:create-start-dev`
+
+---
+
+### `/wxcode:start-dev`
+
+Execute start-dev.sh to start development server(s).
+
+- Kills processes on required ports automatically
+- Starts server(s) in background
+- Redirects logs to `/tmp/{project_name}.log`
+- Displays access URLs
+
+**Usage:** `/wxcode:start-dev`
+
 ## Workflow
 
 ### Standard Workflow
