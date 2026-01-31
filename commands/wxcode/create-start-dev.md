@@ -27,6 +27,47 @@ After creation, automatically execute `/wxcode:start-dev` to start the server.
 
 <process>
 
+## Phase 0: MCP Health Check (Precondition)
+
+**Before proceeding, verify MCP wxcode-kb is available.**
+
+**Attempt 1:** Call `mcp__wxcode-kb__health_check`
+
+**If success:** Continue to Phase 1.
+
+**If fails:** Wait 10 seconds, then **Attempt 2**
+
+**Attempt 2:** Call `mcp__wxcode-kb__health_check`
+
+**If success:** Continue to Phase 1.
+
+**If fails:** Wait 10 seconds, then **Attempt 3**
+
+**Attempt 3:** Call `mcp__wxcode-kb__health_check`
+
+**If success:** Continue to Phase 1.
+
+**If fails after 3 attempts:**
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║  ERROR: MCP wxcode-kb not available                          ║
+╚══════════════════════════════════════════════════════════════╝
+
+This command requires the wxcode-kb MCP server.
+
+**To fix:**
+1. Ensure wxcode-kb MCP server is running
+2. Verify MCP is configured in Claude Code settings
+3. Restart Claude Code if recently configured
+
+**Cannot proceed without MCP.**
+```
+
+**STOP and abort command.**
+
+---
+
 ## Phase 1: Identify Project Stack
 
 **1.1 Find stack configuration:**

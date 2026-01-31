@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.15] - 2026-01-31
+
+### Added
+- **MCP health_check precondition**: Added to all commands that use wxcode-kb MCP
+  - `/wxcode:create-start-dev` - Phase 0 health check
+  - `/wxcode:execute-phase` - Step 0 health check
+  - `/wxcode:plan-phase` - Step 0 health check
+  - `/wxcode:verify-work` - Step 0 health check
+  - `/wxcode:new-project` - already had (unchanged)
+  - `/wxcode:new-milestone` - already had (unchanged)
+  - `/wxcode:complete-milestone` - excluded (doesn't need MCP)
+
+### Changed
+- **Wildcard MCP patterns**: All commands now use `mcp__wxcode-kb__*` instead of specific tool names
+
 ## [1.2.14] - 2026-01-31
 
 ### Changed

@@ -8,10 +8,7 @@ allowed-tools:
   - Bash
   - Task
   - AskUserQuestion
-  - mcp__wxcode-kb__health_check
-  - mcp__wxcode-kb__create_milestone
-  - mcp__wxcode-kb__get_conversion_stats
-  - mcp__wxcode-kb__list_elements
+  - mcp__wxcode-kb__*
 ---
 
 <objective>

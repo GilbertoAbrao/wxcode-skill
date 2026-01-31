@@ -10,7 +10,7 @@ allowed-tools:
   - Edit
   - Write
   - Task
-  - mcp__wxcode-kb__get_conversion_stats
+  - mcp__wxcode-kb__*
 ---
 
 <objective>
@@ -36,6 +36,48 @@ Phase: $ARGUMENTS (optional)
 </context>
 
 <process>
+
+## 0. MCP Health Check (Precondition)
+
+**Before proceeding, verify MCP wxcode-kb is available.**
+
+**Attempt 1:** Call `mcp__wxcode-kb__health_check`
+
+**If success:** Continue to step 1.
+
+**If fails:** Wait 10 seconds, then **Attempt 2**
+
+**Attempt 2:** Call `mcp__wxcode-kb__health_check`
+
+**If success:** Continue to step 1.
+
+**If fails:** Wait 10 seconds, then **Attempt 3**
+
+**Attempt 3:** Call `mcp__wxcode-kb__health_check`
+
+**If success:** Continue to step 1.
+
+**If fails after 3 attempts:**
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║  ERROR: MCP wxcode-kb not available                          ║
+╚══════════════════════════════════════════════════════════════╝
+
+This command requires the wxcode-kb MCP server.
+
+**To fix:**
+1. Ensure wxcode-kb MCP server is running
+2. Verify MCP is configured in Claude Code settings
+3. Restart Claude Code if recently configured
+
+**Cannot proceed without MCP.**
+```
+
+**STOP and abort command.**
+
+---
+
 1. Check for active UAT sessions (resume or start new)
 2. Find SUMMARY.md files for the phase
 3. Extract testable deliverables (user-observable outcomes)
