@@ -175,12 +175,43 @@ For each dependency:
 | Shared procedure | Procedure | Yes | Reference existing |
 | Shared procedure | Procedure | No | Flag as blocker OR plan stub |
 | Database table | Table | Yes | Use existing model |
-| Database table | Table | No | Add to this phase |
+| Database table | Table | No | **Query MCP for schema, then add conversion task** |
 
 **If blocking dependencies are NOT converted:**
 - Option A: Add tasks to convert dependency first
 - Option B: Create stub/mock and flag for later
 - Option C: Flag as blocker to orchestrator
+
+### CRITICAL: Table Schema Handling
+
+**NEVER infer table structure in conversion projects.**
+
+CONTEXT.md is a snapshot and may be incomplete. MCP is the Source of Truth.
+
+**If a table is needed but not in CONTEXT.md:**
+
+1. **Query MCP for actual schema:**
+   ```
+   mcp__wxcode-kb__get_table {table_name} {project_name}
+   ```
+
+2. **If MCP returns schema:** Use it to create conversion task with exact columns, types, indexes
+
+3. **If MCP returns not found:** Flag as blocker - table may not exist or name is wrong
+
+**WRONG approach:**
+```
+❌ "Based on the procedure, I can infer the table has columns X, Y, Z"
+❌ "The table probably has these fields..."
+❌ "I'll assume the structure is..."
+```
+
+**CORRECT approach:**
+```
+✓ Query mcp__wxcode-kb__get_table for actual schema
+✓ Use exact column names, types, constraints from MCP
+✓ If not found, flag as blocker and ask user
+```
 
 ### Step 4: Get Stack Conventions
 

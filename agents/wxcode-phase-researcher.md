@@ -688,6 +688,42 @@ mcp__wxcode-kb__get_dependencies {element_name}
 
 **If blocking dependencies are NOT converted:** Flag in research output. Planner must address.
 
+### 2A.6.1: Table Schema Resolution (CRITICAL)
+
+**NEVER infer table structure. MCP is the Source of Truth.**
+
+For each table dependency identified:
+
+1. **Check if model exists in output project:**
+   ```bash
+   ls {output_project}/app/models/ 2>/dev/null
+   grep -l "{table_name}" {output_project}/app/models/*.py 2>/dev/null
+   ```
+
+2. **If model doesn't exist, query MCP for schema:**
+   ```
+   mcp__wxcode-kb__get_table {table_name} {project_name}
+   ```
+
+3. **Document the ACTUAL schema from MCP:**
+   - Column names (exact)
+   - Column types (exact)
+   - Constraints (primary key, foreign keys, unique)
+   - Indexes
+
+**WRONG:**
+```
+❌ "Based on the procedure code, the table probably has columns..."
+❌ "I'll infer the structure from how it's used..."
+```
+
+**CORRECT:**
+```
+✓ mcp__wxcode-kb__get_table returns actual schema
+✓ Document exact columns from MCP response
+✓ If MCP returns not found, flag as blocker
+```
+
 ### 2A.7: Analyze Output Project Architecture
 
 **Read existing converted code to understand patterns:**

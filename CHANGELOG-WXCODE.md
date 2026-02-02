@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.6] - 2026-02-02
+
+### Fixed
+- **CRITICAL: Never infer table structure in conversion projects**
+  - Added explicit rule to `wxcode-planner`: Must query `mcp__wxcode-kb__get_table` for missing tables
+  - Added explicit rule to `wxcode-phase-researcher`: Must resolve table schema from MCP, not infer
+  - CONTEXT.md is snapshot only, MCP is Source of Truth for database schema
+
 ## [1.3.5] - 2026-02-02
 
 ### Added
