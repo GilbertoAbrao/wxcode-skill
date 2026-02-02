@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.2] - 2026-02-02
+
+### Changed
+- **`/wxcode:design-system` now uses MCP Playwright exclusively**
+  - Replaces WebFetch with `mcp__playwright__navigate` + `mcp__playwright__screenshot`
+  - Better support for JS-rendered sites and SPAs
+  - No CSP blocking issues
+- Added "Enter my own URL" as first option in URL selection
+
 ## [1.4.1] - 2026-02-02
 
 ### Added
