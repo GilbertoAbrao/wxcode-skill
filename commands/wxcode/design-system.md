@@ -7,9 +7,9 @@ allowed-tools:
   - Write
   - Bash
   - Glob
-  - WebFetch
   - AskUserQuestion
   - mcp__wxcode-kb__*
+  - mcp__playwright__*
 ---
 
 <objective>
@@ -138,28 +138,62 @@ questions:
    **IMPORTANT:** "Enter my own URL" must be the FIRST option.
    When user selects "Other" or "Enter my own URL", ask inline for the URL.
 
-2. **Fetch and analyze:**
-   ```
-   WebFetch:
-     url: <provided-url>
-     prompt: "Extract design tokens from this page:
-       - All CSS custom properties (--primary, --secondary, etc.)
-       - Computed colors from logo, buttons, backgrounds
-       - Font families, sizes, weights
-       - Spacing values (padding, margin, gap patterns)
-       - Box shadows
-       - Border radius values
+2. **Navigate and capture with MCP Playwright:**
 
-       Return as structured JSON with confidence levels."
+   ```
+   mcp__playwright__navigate: url=<provided-url>
    ```
 
-3. **If WebFetch fails** (CSP, JS-rendered):
-   - Inform user extraction failed
-   - Offer to try screenshots or questionnaire instead
+   Wait for page to fully load (JS-rendered content included).
 
-4. **Present extracted values** for confirmation (see design-system-flow.md for format)
+   ```
+   mcp__playwright__screenshot: (capture full page)
+   ```
+
+3. **Analyze the screenshot:**
+
+   Use the captured screenshot to extract design tokens:
+   - Dominant colors from logo, buttons, backgrounds
+   - Typography characteristics (font style, sizes)
+   - Spacing patterns
+   - Shadow and border styles
+
+   **Extraction prompt for screenshot analysis:**
+   ```
+   Analyze this webpage screenshot and extract design tokens:
+
+   COLORS:
+   - Primary brand color (from logo, main buttons)
+   - Secondary color (supporting elements)
+   - Background colors (main, card, input)
+   - Text colors (primary, secondary, muted)
+   - Semantic colors if visible (success green, error red, warning yellow)
+
+   TYPOGRAPHY:
+   - Font family style (serif, sans-serif, modern, classic)
+   - Apparent size scale (compact, normal, spacious)
+   - Weight usage (light, regular, bold patterns)
+
+   SPACING:
+   - Density (compact, comfortable, spacious)
+   - Apparent base unit (4px or 8px system)
+
+   VISUAL STYLE:
+   - Shadow intensity (none, subtle, pronounced)
+   - Border radius style (sharp, soft, rounded, pill)
+   - Overall aesthetic (minimal, corporate, playful, technical)
+
+   Return structured analysis with confidence levels.
+   ```
+
+4. **Present extracted values** for confirmation
+
+   Show the user what was detected and ask for confirmation/adjustments.
+   (See design-system-flow.md for detailed preview format)
 
 5. **Allow adjustments** before generating
+
+   User can modify any extracted values before final generation.
 
 ---
 
