@@ -533,18 +533,29 @@ How to determine each stage's status:
 
 ## Task Parsing
 
-Tasks are extracted from PLAN.md files by parsing the `## Tasks` section:
+Tasks are extracted from PLAN.md files by parsing `<task>` XML blocks:
 
 **Source format (PLAN.md):**
-```markdown
-## Tasks
-
-### Task 1.1.1: Create AcessoUsuario Model
-
-**File:** `app/models/acesso_usuario.py`
-
-**Description:** Create SQLAlchemy model for the AcessoUsuario table...
+```xml
+<task type="auto">
+  <name>Task 1: Create AcessoUsuario Model</name>
+  <files>app/models/acesso_usuario.py</files>
+  <action>
+    Create SQLAlchemy model for the AcessoUsuario table with all fields
+    from legacy schema. Include proper column types and relationships.
+  </action>
+  <verify>python -c "from app.models import AcessoUsuario" succeeds</verify>
+  <done>Model created with all columns matching legacy table</done>
+</task>
 ```
+
+**Extraction rules:**
+
+1. **id**: Generate from plan number + task sequence (e.g., `1.1.1`, `1.1.2`, `1.1.3`)
+2. **name**: Content of `<name>` tag, strip "Task N: " prefix
+3. **file**: First file from `<files>` tag (may be comma-separated)
+4. **status**: Based on SUMMARY.md existence (see Status Logic below)
+5. **description**: Content of `<action>` tag (first line or summary)
 
 **Parsed result:**
 ```json
@@ -553,7 +564,7 @@ Tasks are extracted from PLAN.md files by parsing the `## Tasks` section:
   "name": "Create AcessoUsuario Model",
   "file": "app/models/acesso_usuario.py",
   "status": "pending",
-  "description": "Create SQLAlchemy model for the AcessoUsuario table..."
+  "description": "Create SQLAlchemy model for the AcessoUsuario table with all fields from legacy schema."
 }
 ```
 

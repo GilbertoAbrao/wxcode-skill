@@ -337,16 +337,50 @@ ls .planning/phases/01-*/
 
 For each `*-PLAN.md` file:
 1. Extract plan number from filename (e.g., `1.1-PLAN.md` → `1.1`)
-2. Extract plan name from first heading
-3. Parse `## Tasks` section for task list
+2. Extract plan name from frontmatter `name:` field or first heading
+3. Parse all `<task>` XML blocks for task list
 4. Check if corresponding `*-SUMMARY.md` exists → status=complete
 
-**Task parsing:**
-```markdown
-### Task 1.1.1: Create Model
-**File:** `app/models/user.py`
-**Description:** Create the user model...
+**Task parsing (XML format):**
+
+Tasks in PLAN.md files use XML format:
+
+```xml
+<task type="auto">
+  <name>Task 1: Convert login form</name>
+  <files>app/routes/auth.py, app/templates/auth/login.html</files>
+  <action>
+    Create login route with form validation...
+  </action>
+  <verify>curl -X POST /login returns 200</verify>
+  <done>User can log in with valid credentials</done>
+</task>
 ```
+
+**For each `<task>` block, extract:**
+
+1. **id**: Generate from plan number + task sequence (e.g., `1.1.1`, `1.1.2`)
+2. **name**: Content of `<name>` tag (strip "Task N: " prefix if present)
+3. **file**: First file from `<files>` tag (comma-separated list)
+4. **status**:
+   - `complete` if SUMMARY.md exists for this plan
+   - `in_progress` if this is current plan being executed
+   - `pending` otherwise
+5. **description**: Content of `<action>` tag (first line or summary)
+
+**Build task object:**
+
+```json
+{
+  "id": "1.1.1",
+  "name": "Convert login form",
+  "file": "app/routes/auth.py",
+  "status": "pending",
+  "description": "Create login route with form validation..."
+}
+```
+
+**Add tasks to plan's `tasks[]` array.**
 
 #### 11.5: Parse REQUIREMENTS.md
 
