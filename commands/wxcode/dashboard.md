@@ -290,6 +290,12 @@ Output notification:
 
 **If REGEN_ALL=true:** Continue for each milestone found.
 
+**CRITICAL: `--all` means REGENERATE from source files.**
+- Do NOT skip because dashboard file exists
+- Do NOT say "already updated"
+- ALWAYS parse PLAN.md files and extract tasks
+- ALWAYS rebuild the complete JSON structure from scratch
+
 ### For Each Milestone:
 
 #### 11.1: Set Milestone Context
@@ -437,14 +443,14 @@ ls -d ${PHASES_DIR}/0*-*/
 # Structure A (nested):
 # .planning/v1.0-PAGE_Login/phases/
 #   01-database-model/
-#     1.1-PLAN.md
-#     1.1-SUMMARY.md
+#     01-01-PLAN.md
+#     01-01-SUMMARY.md
 #
 # Structure B (flat):
 # .planning/phases/
 #   01-database-model/
-#     1.1-PLAN.md
-#     1.1-SUMMARY.md
+#     01-01-PLAN.md
+#     01-01-SUMMARY.md
 ```
 
 **For each phase directory:**
@@ -457,22 +463,23 @@ ls ${PHASES_DIR}/01-database-model/*-PLAN.md
 **For each `*-PLAN.md` file found:**
 
 1. **Extract plan number** from filename:
-   - `1.1-PLAN.md` → plan number = `"1.1"`
-   - `2.1-PLAN.md` → plan number = `"2.1"`
+   - `01-01-PLAN.md` → phase=01, plan=01 → plan number = `"1.1"`
+   - `04-01-PLAN.md` → phase=04, plan=01 → plan number = `"4.1"`
 
-2. **Extract plan name** from frontmatter or first heading:
+2. **Extract plan name** from frontmatter or `<objective>`:
    ```yaml
    ---
-   name: Database Layer
+   phase: 04-login-ui-and-routes
+   plan: 01
    wave: 1
    ---
    ```
-   Or from `# Database Layer` heading.
+   Plan name from `<objective>` first line or phase folder name.
 
 3. **Check for SUMMARY.md** to determine status:
    ```bash
-   # If 1.1-SUMMARY.md exists → plan is complete
-   [ -f "${PHASE_DIR}/1.1-SUMMARY.md" ] && PLAN_STATUS="complete" || PLAN_STATUS="pending"
+   # If 01-01-SUMMARY.md exists → plan is complete
+   [ -f "${PHASE_DIR}/01-01-SUMMARY.md" ] && PLAN_STATUS="complete" || PLAN_STATUS="pending"
    ```
 
 4. **Parse `<task>` XML blocks** from PLAN.md content.
@@ -546,6 +553,36 @@ Tasks in PLAN.md files use XML format:
 **Add plan to phase's `plans[]` array.**
 
 **Repeat for all phases and all plans.**
+
+**CRITICAL: Final phase structure MUST have nested plans with tasks:**
+
+```json
+{
+  "phases": [
+    {
+      "number": 1,
+      "name": "Database Model",
+      "goal": "Create AcessoUsuario model",
+      "status": "complete",
+      "requirements_covered": ["DATA-01", "DATA-02"],
+      "plans": [
+        {
+          "number": "1.1",
+          "name": "Database Layer",
+          "status": "complete",
+          "summary": "Created model",
+          "tasks": [
+            { "id": "1.1.1", "name": "Create Model", "file": "...", "status": "complete", "description": "..." },
+            { "id": "1.1.2", "name": "Export Model", "file": "...", "status": "complete", "description": "..." }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+Do NOT use simplified structure like `{ "plans_complete": 1, "plans_total": 1 }` without the nested arrays.
 
 #### 11.5: Parse REQUIREMENTS.md
 
