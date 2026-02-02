@@ -301,45 +301,126 @@ MILESTONE_NAME="v1.0-PAGE_Login"
 
 #### 11.2: Detect Workflow Stages
 
-| Stage | Detection |
-|-------|-----------|
-| `created` | Folder exists → complete |
-| `requirements` | REQUIREMENTS.md exists and has content → complete |
-| `roadmap` | ROADMAP.md exists and has phases → complete |
-| `planning` | All phases have at least one PLAN.md → complete |
-| `executing` | At least one SUMMARY.md exists → complete |
-| `verified` | UAT.md exists with status "passed" → complete |
-| `archived` | In `.planning/milestones/` folder → complete |
+**Stage Status Logic:**
 
-Set `current_stage` to first incomplete stage.
+| Stage | Status: complete | Status: in_progress |
+|-------|------------------|---------------------|
+| `created` | Folder exists | — |
+| `requirements` | REQUIREMENTS.md exists with content | — |
+| `roadmap` | ROADMAP.md exists with phases | — |
+| `planning` | ALL phases have at least one PLAN.md | SOME phases have PLAN.md |
+| `executing` | ALL phases have SUMMARY.md | SOME phases have SUMMARY.md (but not all) |
+| `verified` | UAT.md exists with status "passed" | — |
+| `archived` | In `.planning/milestones/` folder | — |
+
+**Determine `current_stage`:**
+
+1. Find the first stage with status `in_progress` → that's current
+2. If no `in_progress`, find first stage with status `pending` → that's current
+3. If all stages complete → current_stage = "archived"
+
+**Example:** 3 of 4 phases have SUMMARY.md:
+- `planning` = complete (all have PLAN.md)
+- `executing` = in_progress (some but not all have SUMMARY.md)
+- `current_stage` = "executing"
 
 #### 11.3: Parse ROADMAP.md
 
-Extract phases:
+**Locate ROADMAP.md:**
+
+For milestones, ROADMAP.md is inside the milestone folder:
+```bash
+# Active milestone
+ROADMAP_PATH="${MILESTONE_FOLDER}/ROADMAP.md"
+# Example: .planning/v1.0-PAGE_Login/ROADMAP.md
+
+# Archived milestone
+ROADMAP_PATH=".planning/milestones/${MILESTONE_NAME}/ROADMAP.md"
+```
+
+**Extract phases from ROADMAP.md:**
+
+Look for phase sections or tables:
+```markdown
+## Phases
+
+### Phase 1: Database Model
+**Goal:** Create AcessoUsuario model for user authentication
+
+### Phase 2: Authentication Service
+**Goal:** Implement login validation logic
+```
+
+Or table format:
 ```markdown
 | # | Phase | Goal | Requirements |
 |---|-------|------|--------------|
-| 1 | login-implementation | ... | AUTH-01, AUTH-02 |
+| 1 | Database Model | Create AcessoUsuario model | DATA-01, DATA-02 |
+| 2 | Authentication Service | Implement login validation | AUTH-01, AUTH-02 |
 ```
 
 For each phase, gather:
 - number, name, goal
-- requirements_covered (from table)
-- status (based on SUMMARY.md existence)
+- requirements_covered (from table or section)
+- Initialize `plans: []` array (populated in next step)
 
 #### 11.4: Parse PLAN.md Files
 
-For each phase folder in `.planning/phases/`:
+**CRITICAL: Locate PLAN.md files in correct path.**
+
+**For each phase, find its plans:**
 
 ```bash
-ls .planning/phases/01-*/
+# Milestone phases are in: ${MILESTONE_FOLDER}/phases/
+PHASES_DIR="${MILESTONE_FOLDER}/phases"
+
+# List phase directories
+ls -d ${PHASES_DIR}/0*-*/
+
+# Example structure:
+# .planning/v1.0-PAGE_Login/phases/
+#   01-database-model/
+#     1.1-PLAN.md
+#     1.1-SUMMARY.md
+#   02-authentication-service/
+#     2.1-PLAN.md
+#     2.1-SUMMARY.md
+#   03-session-management/
+#     3.1-PLAN.md
+#     3.1-SUMMARY.md
+#   04-login-ui-routes/
+#     4.1-PLAN.md
 ```
 
-For each `*-PLAN.md` file:
-1. Extract plan number from filename (e.g., `1.1-PLAN.md` → `1.1`)
-2. Extract plan name from frontmatter `name:` field or first heading
-3. Parse all `<task>` XML blocks for task list
-4. Check if corresponding `*-SUMMARY.md` exists → status=complete
+**For each phase directory:**
+
+```bash
+# Find all PLAN.md files in this phase
+ls ${PHASES_DIR}/01-database-model/*-PLAN.md
+```
+
+**For each `*-PLAN.md` file found:**
+
+1. **Extract plan number** from filename:
+   - `1.1-PLAN.md` → plan number = `"1.1"`
+   - `2.1-PLAN.md` → plan number = `"2.1"`
+
+2. **Extract plan name** from frontmatter or first heading:
+   ```yaml
+   ---
+   name: Database Layer
+   wave: 1
+   ---
+   ```
+   Or from `# Database Layer` heading.
+
+3. **Check for SUMMARY.md** to determine status:
+   ```bash
+   # If 1.1-SUMMARY.md exists → plan is complete
+   [ -f "${PHASE_DIR}/1.1-SUMMARY.md" ] && PLAN_STATUS="complete" || PLAN_STATUS="pending"
+   ```
+
+4. **Parse `<task>` XML blocks** from PLAN.md content.
 
 **Task parsing (XML format):**
 
@@ -347,40 +428,69 @@ Tasks in PLAN.md files use XML format:
 
 ```xml
 <task type="auto">
-  <name>Task 1: Convert login form</name>
-  <files>app/routes/auth.py, app/templates/auth/login.html</files>
+  <name>Task 1: Create AcessoUsuario Model</name>
+  <files>app/models/acesso_usuario.py</files>
   <action>
-    Create login route with form validation...
+    Create SQLAlchemy model for the AcessoUsuario table...
   </action>
-  <verify>curl -X POST /login returns 200</verify>
-  <done>User can log in with valid credentials</done>
+  <verify>python -c "from app.models import AcessoUsuario"</verify>
+  <done>Model created with all columns</done>
+</task>
+
+<task type="auto">
+  <name>Task 2: Update Models Init</name>
+  <files>app/models/__init__.py</files>
+  <action>Export AcessoUsuario from package</action>
+  <verify>Import works</verify>
+  <done>Model exported</done>
 </task>
 ```
 
 **For each `<task>` block, extract:**
 
-1. **id**: Generate from plan number + task sequence (e.g., `1.1.1`, `1.1.2`)
-2. **name**: Content of `<name>` tag (strip "Task N: " prefix if present)
-3. **file**: First file from `<files>` tag (comma-separated list)
-4. **status**:
-   - `complete` if SUMMARY.md exists for this plan
-   - `in_progress` if this is current plan being executed
-   - `pending` otherwise
-5. **description**: Content of `<action>` tag (first line or summary)
+1. **id**: Generate from plan number + task sequence
+   - First task in plan 1.1 → `"1.1.1"`
+   - Second task in plan 1.1 → `"1.1.2"`
+   - First task in plan 2.1 → `"2.1.1"`
 
-**Build task object:**
+2. **name**: Content of `<name>` tag (strip "Task N: " prefix)
+
+3. **file**: First file from `<files>` tag
+
+4. **status**: Same as plan status (complete if SUMMARY.md exists)
+
+5. **description**: Content of `<action>` tag (first line)
+
+**Build plan object with tasks:**
 
 ```json
 {
-  "id": "1.1.1",
-  "name": "Convert login form",
-  "file": "app/routes/auth.py",
-  "status": "pending",
-  "description": "Create login route with form validation..."
+  "number": "1.1",
+  "name": "Database Layer",
+  "status": "complete",
+  "summary": "Created AcessoUsuario model",
+  "tasks": [
+    {
+      "id": "1.1.1",
+      "name": "Create AcessoUsuario Model",
+      "file": "app/models/acesso_usuario.py",
+      "status": "complete",
+      "description": "Create SQLAlchemy model for the AcessoUsuario table"
+    },
+    {
+      "id": "1.1.2",
+      "name": "Update Models Init",
+      "file": "app/models/__init__.py",
+      "status": "complete",
+      "description": "Export AcessoUsuario from package"
+    }
+  ]
 }
 ```
 
-**Add tasks to plan's `tasks[]` array.**
+**Add plan to phase's `plans[]` array.**
+
+**Repeat for all phases and all plans.**
 
 #### 11.5: Parse REQUIREMENTS.md
 
@@ -402,14 +512,37 @@ From STATE.md or by scanning:
 
 #### 11.7: Calculate Milestone Progress
 
-```
-phases_complete = count phases where all plans complete
-plans_complete = count all complete plans
-tasks_complete = count all complete tasks
-requirements_complete = count checked [x] items
+**Count from populated `phases[]` array built in previous steps:**
+
+```javascript
+// Phases
+phases_total = phases.length
+phases_complete = phases.filter(p => p.status === "complete").length
+phases_percentage = Math.round((phases_complete / phases_total) * 100)
+
+// Plans (flatten all phases)
+plans_total = phases.reduce((sum, p) => sum + p.plans.length, 0)
+plans_complete = phases.reduce((sum, p) =>
+  sum + p.plans.filter(pl => pl.status === "complete").length, 0)
+plans_percentage = plans_total > 0 ? Math.round((plans_complete / plans_total) * 100) : 0
+
+// Tasks (flatten all plans from all phases)
+tasks_total = phases.reduce((sum, p) =>
+  sum + p.plans.reduce((s, pl) => s + pl.tasks.length, 0), 0)
+tasks_complete = phases.reduce((sum, p) =>
+  sum + p.plans.reduce((s, pl) =>
+    s + pl.tasks.filter(t => t.status === "complete").length, 0), 0)
+tasks_percentage = tasks_total > 0 ? Math.round((tasks_complete / tasks_total) * 100) : 0
+
+// Requirements (from REQUIREMENTS.md parsing)
+requirements_total = count all requirement items
+requirements_complete = count [x] checked items
+requirements_percentage = Math.round((requirements_complete / requirements_total) * 100)
 ```
 
-Calculate percentages.
+**CRITICAL:** If `plans_total` or `tasks_total` is 0, check that:
+1. PLAN.md files were found in `${MILESTONE_FOLDER}/phases/*/`
+2. Task XML blocks were parsed correctly from PLAN.md content
 
 #### 11.8: Write Milestone Dashboard
 
