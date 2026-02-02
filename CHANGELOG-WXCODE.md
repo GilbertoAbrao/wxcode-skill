@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-02-02
+
+### Added
+- **`/wxcode:design-system` standalone command**
+  - Interactive mode to choose method (URL, screenshots, questionnaire)
+  - `--url <url>` — Extract design tokens from live website
+  - `--screenshots` — Analyze design mockups/images
+  - `--questionnaire` — 12 structured questions
+  - `--regenerate` — Rebuild stack files from existing tokens.json
+  - Generates DTCG tokens, CSS variables, Tailwind config, and README
+
 ## [1.4.0] - 2026-02-02
 
 ### Added
