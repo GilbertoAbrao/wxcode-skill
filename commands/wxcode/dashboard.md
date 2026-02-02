@@ -294,12 +294,54 @@ Output notification:
 
 #### 11.1: Set Milestone Context
 
+**Detect milestone folder structure:**
+
+```bash
+# Two possible structures:
+#
+# Structure A: Nested milestone folder
+#   .planning/v1.0-PAGE_Login/ROADMAP.md
+#   .planning/v1.0-PAGE_Login/phases/01-*/
+#
+# Structure B: Flat structure (single active milestone)
+#   .planning/ROADMAP.md
+#   .planning/phases/01-*/
+
+# Detect which structure exists:
+if [ -d ".planning/${MILESTONE_NAME}" ]; then
+  # Structure A: Nested milestone folder
+  MILESTONE_FOLDER=".planning/${MILESTONE_NAME}"
+elif [ -f ".planning/ROADMAP.md" ]; then
+  # Structure B: Flat structure
+  MILESTONE_FOLDER=".planning"
+else
+  echo "ERROR: Cannot determine milestone folder structure"
+fi
 ```
-MILESTONE_FOLDER=".planning/milestones/v1.0-PAGE_Login"  # or active path
-MILESTONE_NAME="v1.0-PAGE_Login"
+
+**For archived milestones:**
+```bash
+MILESTONE_FOLDER=".planning/milestones/${MILESTONE_NAME}"
 ```
 
 #### 11.2: Detect Workflow Stages
+
+**Locate key files (structure-aware):**
+
+```bash
+# ROADMAP.md location
+ROADMAP_PATH="${MILESTONE_FOLDER}/ROADMAP.md"
+
+# REQUIREMENTS.md location
+REQUIREMENTS_PATH="${MILESTONE_FOLDER}/REQUIREMENTS.md"
+
+# Phases directory
+if [ -d "${MILESTONE_FOLDER}/phases" ]; then
+  PHASES_DIR="${MILESTONE_FOLDER}/phases"
+elif [ -d ".planning/phases" ]; then
+  PHASES_DIR=".planning/phases"
+fi
+```
 
 **Stage Status Logic:**
 
@@ -326,16 +368,12 @@ MILESTONE_NAME="v1.0-PAGE_Login"
 
 #### 11.3: Parse ROADMAP.md
 
-**Locate ROADMAP.md:**
-
-For milestones, ROADMAP.md is inside the milestone folder:
+**ROADMAP.md already located in 11.2:**
 ```bash
-# Active milestone
 ROADMAP_PATH="${MILESTONE_FOLDER}/ROADMAP.md"
-# Example: .planning/v1.0-PAGE_Login/ROADMAP.md
-
-# Archived milestone
-ROADMAP_PATH=".planning/milestones/${MILESTONE_NAME}/ROADMAP.md"
+# Structure A: .planning/v1.0-PAGE_Login/ROADMAP.md
+# Structure B: .planning/ROADMAP.md
+# Archived: .planning/milestones/v1.0-PAGE_Login/ROADMAP.md
 ```
 
 **Extract phases from ROADMAP.md:**
@@ -368,28 +406,45 @@ For each phase, gather:
 
 **CRITICAL: Locate PLAN.md files in correct path.**
 
+**Detect phases directory (two possible structures):**
+
+```bash
+# Structure A: Nested milestone (phases inside milestone folder)
+# .planning/v1.0-PAGE_Login/phases/01-*/
+
+# Structure B: Flat structure (phases directly in .planning)
+# .planning/phases/01-*/
+
+# Detect which structure exists:
+if [ -d "${MILESTONE_FOLDER}/phases" ]; then
+  PHASES_DIR="${MILESTONE_FOLDER}/phases"
+elif [ -d ".planning/phases" ]; then
+  PHASES_DIR=".planning/phases"
+else
+  echo "ERROR: No phases directory found"
+  exit 1
+fi
+```
+
 **For each phase, find its plans:**
 
 ```bash
-# Milestone phases are in: ${MILESTONE_FOLDER}/phases/
-PHASES_DIR="${MILESTONE_FOLDER}/phases"
-
 # List phase directories
 ls -d ${PHASES_DIR}/0*-*/
 
-# Example structure:
+# Example structures:
+#
+# Structure A (nested):
 # .planning/v1.0-PAGE_Login/phases/
 #   01-database-model/
 #     1.1-PLAN.md
 #     1.1-SUMMARY.md
-#   02-authentication-service/
-#     2.1-PLAN.md
-#     2.1-SUMMARY.md
-#   03-session-management/
-#     3.1-PLAN.md
-#     3.1-SUMMARY.md
-#   04-login-ui-routes/
-#     4.1-PLAN.md
+#
+# Structure B (flat):
+# .planning/phases/
+#   01-database-model/
+#     1.1-PLAN.md
+#     1.1-SUMMARY.md
 ```
 
 **For each phase directory:**
