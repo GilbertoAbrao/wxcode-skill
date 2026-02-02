@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-02-02
+
+### Added
+- **Deterministic Python dashboard generator** (`bin/generate-dashboard.py`)
+  - Replaces LLM-based JSON generation with deterministic script
+  - Parses `.planning/` files and extracts tasks from XML `<task>` blocks
+  - Generates proper nested `phases[].plans[].tasks[]` structure
+  - Handles both nested and flat milestone structures
+  - Falls back to root `phases/` when milestone folder is empty marker
+  - Outputs `[WXCODE:DASHBOARD_UPDATED]` notifications
+
+### Changed
+- `/wxcode:dashboard` now calls Python script instead of generating JSON via LLM
+
 ## [1.3.9] - 2026-02-02
 
 ### Fixed
