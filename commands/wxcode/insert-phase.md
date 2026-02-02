@@ -6,6 +6,7 @@ allowed-tools:
   - Read
   - Write
   - Bash
+  - mcp__wxcode-kb__*
 ---
 
 <objective>
@@ -223,5 +224,37 @@ Phase insertion is complete when:
 - [ ] Phase inserted in correct position (after target phase, before next integer phase)
 - [ ] STATE.md updated with roadmap evolution note
 - [ ] Decimal number calculated correctly (based on existing decimals)
+- [ ] Dashboard updated
 - [ ] User informed of next steps and dependency implications
-      </success_criteria>
+</success_criteria>
+
+<dashboard_update>
+
+## Update Dashboards (Final Step)
+
+**MANDATORY:** After inserting a phase, regenerate dashboards following `/wxcode:dashboard` logic.
+
+### Regenerate Dashboards
+
+Follow the exact process from `/wxcode:dashboard`:
+
+1. **Read schemas:**
+   - `~/.claude/get-shit-done/references/dashboard-schema-project.md`
+   - `~/.claude/get-shit-done/references/dashboard-schema-milestone.md`
+
+2. **Gather data:**
+   - Project info from PROJECT.md
+   - Conversion stats from MCP: `mcp__wxcode-kb__get_conversion_stats(project_name=PROJECT_NAME)`
+   - Updated phase list from ROADMAP.md (including inserted decimal phase)
+
+3. **Write dashboards:**
+   - `.planning/dashboard.json` (project)
+   - `.planning/dashboard_<milestone>.json` (current milestone with inserted phase)
+
+4. **Emit notifications:**
+   ```
+   [WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
+   [WXCODE:DASHBOARD_UPDATED] .planning/dashboard_<milestone>.json
+   ```
+
+</dashboard_update>

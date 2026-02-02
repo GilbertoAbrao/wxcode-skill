@@ -2538,58 +2538,28 @@ Present completion with next steps:
 
 ## Update Dashboard (Final Step)
 
-After project initialization completes, create the **project dashboard** only.
+**MANDATORY:** After project initialization, create project dashboard following `/wxcode:dashboard` logic.
+
 Milestone dashboards are created later by `/wxcode:new-milestone`.
 
-**Reference:** `~/.claude/get-shit-done/references/dashboard-schema-project.md`
+### Create Project Dashboard
 
-### Step 1: Gather conversion data (if conversion project)
+Follow the exact process from `/wxcode:dashboard`:
 
-**Use HYBRID approach:**
-```
-mcp__wxcode-kb__get_conversion_stats(project_name=PROJECT_NAME)
-```
+1. **Read schema:**
+   - `~/.claude/get-shit-done/references/dashboard-schema-project.md`
 
-Use MCP response for `conversion.elements_converted` and `conversion.elements_total`.
-Use CONVERSION.md for `conversion.stack`.
+2. **Gather data:**
+   - Project info from PROJECT.md (name, core_value, description)
+   - Conversion stats from MCP: `mcp__wxcode-kb__get_conversion_stats(project_name=PROJECT_NAME)`
+   - Stack from CONVERSION.md (if conversion project)
 
-### Step 2: Create project dashboard
+3. **Write dashboard:**
+   - `.planning/dashboard.json` (initial state - empty milestones array)
 
-Write to `.planning/dashboard.json`:
-
-```json
-{
-  "project": {
-    "name": "string - from PROJECT.md",
-    "core_value": "string - from PROJECT.md",
-    "description": "string - from PROJECT.md"
-  },
-  "conversion": {
-    "is_conversion_project": true,
-    "elements_converted": 0,
-    "elements_total": "number - from MCP",
-    "stack": "string - from CONVERSION.md"
-  },
-  "milestones": [],
-  "current_milestone": null,
-  "progress": {
-    "milestones_complete": 0,
-    "milestones_total": 0,
-    "milestones_percentage": 0
-  },
-  "meta": {
-    "generated_at": "ISO8601 timestamp",
-    "wxcode_version": "string - from VERSION"
-  }
-}
-```
-
-### Step 3: Output notification
-
-```
-[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
-```
-
-**IMPORTANT:** Use the EXACT schema from the reference file. Do NOT invent a different format.
+4. **Emit notification:**
+   ```
+   [WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
+   ```
 
 </dashboard_update>

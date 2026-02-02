@@ -899,65 +899,11 @@ Present completion with next steps:
 
 ## Update Dashboards (Final Step)
 
-After milestone initialization completes, update TWO dashboards:
-1. **Project dashboard** (global) — `.planning/dashboard.json`
-2. **Milestone dashboard** — `.planning/dashboard_<milestone>.json`
+**MANDATORY:** After milestone initialization, create dashboards following `/wxcode:dashboard` logic.
 
-**References:**
-- Project dashboard: `~/.claude/get-shit-done/references/dashboard-schema-project.md`
-- Milestone dashboard: `~/.claude/get-shit-done/references/dashboard-schema-milestone.md`
+### Workflow Stage Update (new-milestone specific)
 
-### Step 1: Gather data
-
-**For conversion projects — use HYBRID approach:**
-- Stack/config info: from `.planning/CONVERSION.md`
-- Conversion progress: from MCP (source of truth)
-
-```
-mcp__wxcode-kb__get_conversion_stats(project_name=PROJECT_NAME)
-```
-
-Use MCP response for:
-- `conversion.elements_converted`
-- `conversion.elements_total`
-
-Use CONVERSION.md for:
-- `conversion.is_conversion_project`: true
-- `conversion.stack`: from Target Stack section
-
-### Step 2: Update project dashboard
-
-1. Read current `.planning/dashboard.json` (if exists)
-2. Update fields based on current state (new milestone, phases, requirements)
-3. Update `conversion.*` with hybrid data
-4. Write updated JSON to `.planning/dashboard.json`
-5. Output notification:
-```
-[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
-```
-
-### Step 3: Create milestone dashboard
-
-Create milestone-specific dashboard:
-
-```
-DASHBOARD_FILE=".planning/dashboard_${MILESTONE_FOLDER_NAME}.json"
-# Example: .planning/dashboard_v1.0-PAGE_Login.json
-```
-
-Write milestone dashboard with:
-- Only THIS milestone's phases, requirements, progress
-- `mongodb_milestone_id`: from Phase 9.5 (if conversion project)
-- Same schema structure, scoped to milestone
-
-Output notification:
-```
-[WXCODE:DASHBOARD_UPDATED] .planning/dashboard_<milestone>.json
-```
-
-### Step 4: Initialize workflow stages
-
-Initialize the `workflow` section with first 3 stages complete:
+Initialize workflow stages with first 3 stages complete:
 
 ```json
 "workflow": {
@@ -974,6 +920,27 @@ Initialize the `workflow` section with first 3 stages complete:
 }
 ```
 
-**IMPORTANT:** Use the EXACT schemas from the reference files. Do NOT invent a different format.
+### Create/Update Dashboards
+
+Follow the exact process from `/wxcode:dashboard`:
+
+1. **Read schemas:**
+   - `~/.claude/get-shit-done/references/dashboard-schema-project.md`
+   - `~/.claude/get-shit-done/references/dashboard-schema-milestone.md`
+
+2. **Gather data:**
+   - Project info from PROJECT.md
+   - Conversion stats from MCP: `mcp__wxcode-kb__get_conversion_stats(project_name=PROJECT_NAME)`
+   - New milestone info (folder name, element name, mongodb_id from MCP create_milestone)
+
+3. **Write dashboards:**
+   - `.planning/dashboard.json` (project - add new milestone to array)
+   - `.planning/dashboard_<milestone>.json` (new milestone dashboard)
+
+4. **Emit notifications:**
+   ```
+   [WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
+   [WXCODE:DASHBOARD_UPDATED] .planning/dashboard_<milestone>.json
+   ```
 
 </dashboard_update>

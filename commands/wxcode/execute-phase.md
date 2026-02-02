@@ -386,71 +386,39 @@ After all plans in phase complete (step 7):
 
 ## Update Dashboards (After Each Plan or Phase Completion)
 
-After phase execution completes (or after each plan completes), update TWO dashboards:
-1. **Project dashboard** (global) — `.planning/dashboard.json`
-2. **Milestone dashboard** — `.planning/dashboard_<milestone>.json`
+**MANDATORY:** After each plan completes, regenerate dashboards following `/wxcode:dashboard` logic.
 
-**References:**
-- Project dashboard: `~/.claude/get-shit-done/references/dashboard-schema-project.md`
-- Milestone dashboard: `~/.claude/get-shit-done/references/dashboard-schema-milestone.md`
+### Workflow Stage Update (execute-phase specific)
 
-### Step 1: Determine milestone folder name
-
-Read from STATE.md or CONVERSION.md:
-```
-MILESTONE_FOLDER_NAME="v[X.Y]-[element_name]"
-```
-
-### Step 2: Gather conversion data (if conversion project)
-
-**Use HYBRID approach:**
-```
-mcp__wxcode-kb__get_conversion_stats(project_name=PROJECT_NAME)
-```
-
-Use MCP response for `conversion.elements_converted` and `conversion.elements_total`.
-Use CONVERSION.md for `conversion.stack`.
-
-### Step 3: Update project dashboard
-
-1. Read current `.planning/dashboard.json`
-2. Update `milestones[]` with current milestone progress
-3. Update `conversion.*` with hybrid data
-4. Write to `.planning/dashboard.json`
-5. Output: `[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json`
-
-### Step 4: Update milestone dashboard
-
-1. Read `.planning/dashboard_${MILESTONE_FOLDER_NAME}.json`
-2. Update `phases[]` with execution progress (plans completed, tasks)
-3. Update `current_position`, `progress`, and `requirements` completion
-4. Write to `.planning/dashboard_${MILESTONE_FOLDER_NAME}.json`
-5. Output: `[WXCODE:DASHBOARD_UPDATED] .planning/dashboard_<milestone>.json`
-
-### Step 5: Update workflow stages
-
-Update the `workflow` section:
+Before regenerating, update workflow stages in the milestone:
 
 1. Set `workflow.stages[4]` (executing) to `"status": "in_progress"`
 2. Update `workflow.current_stage` to `"executing"`
 3. Check if ALL plans in ALL phases now have SUMMARY.md:
    - If yes: Set executing stage to `"status": "complete"`, `"completed_at": "<now>"`
 
-```json
-"workflow": {
-  "current_stage": "executing",
-  "stages": [
-    { "id": "created", "status": "complete", "completed_at": "..." },
-    { "id": "requirements", "status": "complete", "completed_at": "..." },
-    { "id": "roadmap", "status": "complete", "completed_at": "..." },
-    { "id": "planning", "status": "complete", "completed_at": "..." },
-    { "id": "executing", "status": "in_progress", "completed_at": null },
-    { "id": "verified", "status": "pending", "completed_at": null },
-    { "id": "archived", "status": "pending", "completed_at": null }
-  ]
-}
-```
+### Regenerate Dashboards
 
-**IMPORTANT:** Use the EXACT schemas from the reference files. Do NOT invent a different format.
+Follow the exact process from `/wxcode:dashboard`:
+
+1. **Read schemas:**
+   - `~/.claude/get-shit-done/references/dashboard-schema-project.md`
+   - `~/.claude/get-shit-done/references/dashboard-schema-milestone.md`
+
+2. **Gather data:**
+   - Project info from PROJECT.md
+   - Conversion stats from MCP: `mcp__wxcode-kb__get_conversion_stats(project_name=PROJECT_NAME)`
+   - Milestone info from folder structure and planning files
+   - Task/plan completion from SUMMARY.md files
+
+3. **Write dashboards:**
+   - `.planning/dashboard.json` (project)
+   - `.planning/dashboard_<milestone>.json` (current milestone)
+
+4. **Emit notifications:**
+   ```
+   [WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
+   [WXCODE:DASHBOARD_UPDATED] .planning/dashboard_<milestone>.json
+   ```
 
 </dashboard_update>

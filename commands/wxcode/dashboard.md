@@ -6,40 +6,114 @@ allowed-tools:
   - Write
   - Bash
   - Glob
+  - Grep
+  - mcp__wxcode-kb__*
 ---
 
 <objective>
 
-Generate a comprehensive JSON snapshot of project progress for external UI rendering.
+Generate comprehensive JSON snapshots of project progress for external UI rendering.
+
+**Usage:**
+- `/wxcode:dashboard` — Regenerate project dashboard only
+- `/wxcode:dashboard --all` — Regenerate project + ALL milestone dashboards
+
+**Two Dashboard Types:**
+
+1. **Project Dashboard** (`.planning/dashboard.json`)
+   - Global view of all milestones
+   - Conversion progress from MCP
+   - Created/updated by this command
+
+2. **Milestone Dashboard** (`.planning/dashboard_<milestone>.json`)
+   - Detailed phases, plans, tasks for ONE milestone
+   - Workflow stages tracking
+   - Created/updated by milestone-specific commands OR `--all` flag
 
 **Output:**
 1. Writes JSON to `.planning/dashboard.json`
-2. Emits watcher notification: `[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json`
+2. With `--all`: Also writes each `.planning/dashboard_<milestone>.json`
+3. Emits watcher notification for each updated file
 
-**Use case:** IDE integrations, dashboards, progress visualization, file watchers
+**Use case:** IDE integrations, dashboards, progress visualization, file watchers, recovery after desync
 
 </objective>
 
 <execution_context>
-@~/.claude/get-shit-done/references/dashboard-schema.md
+@~/.claude/get-shit-done/references/dashboard-schema-project.md
+@~/.claude/get-shit-done/references/dashboard-schema-milestone.md
 </execution_context>
 
-<output_schema>
+<project_dashboard_schema>
 
 ```json
 {
   "project": {
-    "name": "string",
-    "core_value": "string",
-    "current_milestone": "string",
-    "description": "string"
+    "name": "string - from PROJECT.md",
+    "core_value": "string - from PROJECT.md",
+    "description": "string - from PROJECT.md"
+  },
+  "conversion": {
+    "is_conversion_project": "boolean",
+    "elements_converted": "number | null - FROM MCP (source of truth)",
+    "elements_total": "number | null - FROM MCP (source of truth)",
+    "stack": "string | null - from CONVERSION.md"
+  },
+  "milestones": [
+    {
+      "folder_name": "string - e.g., 'v1.0-PAGE_Login'",
+      "mongodb_id": "string | null",
+      "wxcode_version": "string - e.g., 'v1.0'",
+      "element_name": "string - e.g., 'PAGE_Login'",
+      "status": "pending | in_progress | completed | failed",
+      "created_at": "ISO8601 string",
+      "completed_at": "ISO8601 string | null"
+    }
+  ],
+  "current_milestone": "string | null - folder_name of active milestone",
+  "progress": {
+    "milestones_complete": "number",
+    "milestones_total": "number",
+    "milestones_percentage": "number (0-100)"
+  },
+  "meta": {
+    "generated_at": "ISO8601 string",
+    "wxcode_version": "string"
+  }
+}
+```
+
+</project_dashboard_schema>
+
+<milestone_dashboard_schema>
+
+```json
+{
+  "milestone": {
+    "folder_name": "string",
+    "mongodb_id": "string | null",
+    "wxcode_version": "string",
+    "element_name": "string",
+    "status": "pending | in_progress | completed | failed",
+    "created_at": "ISO8601 string",
+    "completed_at": "ISO8601 string | null"
+  },
+  "workflow": {
+    "current_stage": "string",
+    "stages": [
+      { "id": "created", "name": "Milestone Created", "status": "pending|in_progress|complete", "completed_at": "ISO8601|null" },
+      { "id": "requirements", "name": "Requirements Defined", "status": "...", "completed_at": "..." },
+      { "id": "roadmap", "name": "Roadmap Created", "status": "...", "completed_at": "..." },
+      { "id": "planning", "name": "All Phases Planned", "status": "...", "completed_at": "..." },
+      { "id": "executing", "name": "Execution In Progress", "status": "...", "completed_at": "..." },
+      { "id": "verified", "name": "Work Verified", "status": "...", "completed_at": "..." },
+      { "id": "archived", "name": "Milestone Archived", "status": "...", "completed_at": "..." }
+    ]
   },
   "current_position": {
-    "milestone": "string",
     "phase_number": "number | null",
     "phase_name": "string | null",
-    "phase_total": "number",
-    "plan_number": "number | null",
+    "plan_number": "string | null",
     "plan_total": "number | null",
     "status": "not_started | in_progress | complete | blocked"
   },
@@ -47,6 +121,12 @@ Generate a comprehensive JSON snapshot of project progress for external UI rende
     "phases_complete": "number",
     "phases_total": "number",
     "phases_percentage": "number",
+    "plans_complete": "number",
+    "plans_total": "number",
+    "plans_percentage": "number",
+    "tasks_complete": "number",
+    "tasks_total": "number",
+    "tasks_percentage": "number",
     "requirements_complete": "number",
     "requirements_total": "number",
     "requirements_percentage": "number"
@@ -57,15 +137,22 @@ Generate a comprehensive JSON snapshot of project progress for external UI rende
       "name": "string",
       "goal": "string",
       "status": "pending | in_progress | complete",
-      "requirements_covered": ["string"],
+      "requirements_covered": ["REQ-ID"],
       "plans": [
         {
-          "number": "number",
+          "number": "string",
           "name": "string",
           "status": "pending | in_progress | complete",
-          "tasks_complete": "number",
-          "tasks_total": "number",
-          "summary": "string | null"
+          "summary": "string | null",
+          "tasks": [
+            {
+              "id": "string",
+              "name": "string",
+              "file": "string | null",
+              "status": "pending | in_progress | complete",
+              "description": "string"
+            }
+          ]
         }
       ]
     }
@@ -73,47 +160,9 @@ Generate a comprehensive JSON snapshot of project progress for external UI rende
   "requirements": {
     "total": "number",
     "complete": "number",
-    "categories": [
-      {
-        "id": "string",
-        "name": "string",
-        "complete": "number",
-        "total": "number",
-        "percentage": "number",
-        "items": [
-          {
-            "id": "string",
-            "description": "string",
-            "complete": "boolean",
-            "phase": "number | null"
-          }
-        ]
-      }
-    ]
+    "categories": [...]
   },
-  "blockers": ["string"],
-  "todos": [
-    {
-      "id": "string",
-      "subject": "string",
-      "status": "pending | in_progress | complete",
-      "priority": "string | null"
-    }
-  ],
-  "milestones_history": [
-    {
-      "version": "string",
-      "name": "string",
-      "completed_at": "string",
-      "phases_count": "number"
-    }
-  ],
-  "conversion": {
-    "is_conversion_project": "boolean",
-    "elements_converted": "number | null",
-    "elements_total": "number | null",
-    "stack": "string | null"
-  },
+  "blockers": [],
   "meta": {
     "generated_at": "ISO8601 string",
     "wxcode_version": "string"
@@ -121,327 +170,286 @@ Generate a comprehensive JSON snapshot of project progress for external UI rende
 }
 ```
 
-</output_schema>
+</milestone_dashboard_schema>
 
 <process>
+
+## Step 0: Parse Arguments
+
+```bash
+REGEN_ALL=false
+[[ "$ARGUMENTS" == *"--all"* ]] && REGEN_ALL=true
+```
 
 ## Step 1: Check Project Exists
 
 ```bash
-[ -f .planning/PROJECT.md ] || echo '{"error": "No project found. Run /wxcode:new-project first."}' && exit 0
+[ -f .planning/PROJECT.md ] || echo "ERROR: No project found" && exit 1
 ```
 
-If no project, output error JSON and STOP.
+If no project, output error and STOP.
 
-## Step 2: Read All Source Files
-
-Read these files (skip if not exist):
-
-1. `.planning/PROJECT.md` → project info, core value
-2. `.planning/STATE.md` → current position, blockers, todos
-3. `.planning/ROADMAP.md` → phases list with status
-4. `.planning/REQUIREMENTS.md` → requirements with checkboxes
-5. `.planning/config.json` → workflow preferences
-6. `.planning/CONVERSION.md` → conversion project info (if exists)
-7. `.milestones/*.md` → completed milestones history
-
-## Step 3: Read Phase Details
-
-For each phase in ROADMAP.md:
+## Step 2: Detect Project Type
 
 ```bash
-ls .planning/phases/
+IS_CONVERSION=false
+[ -f .planning/CONVERSION.md ] && IS_CONVERSION=true
 ```
 
-For each phase folder (e.g., `01-project-setup/`):
-- Read all `*-PLAN.md` files for plan details
-- Read all `*-SUMMARY.md` files for completion summaries
-- Count tasks from PLAN.md task lists
+## Step 3: Gather Project Data
 
-## Step 4: Parse and Build JSON
-
-### From PROJECT.md:
-- Extract project name (first H1)
+**Read PROJECT.md:**
+- Extract project name (first H1 or "Name:" field)
 - Extract "Core Value" section
 - Extract "What This Is" section for description
 
-### From STATE.md:
-- Extract "Current Position" section
-- Parse phase number, plan number, status
-- Extract "Blockers" section
-- Extract "Pending Todos" section
+## Step 4: Gather Conversion Data (if conversion project)
 
-### From ROADMAP.md:
-- Parse phase table or list
-- For each phase: number, name, goal, status
-- Count complete vs total phases
+**Use MCP as Source of Truth:**
 
-### From REQUIREMENTS.md:
-- Parse v1 Requirements sections
-- For each category (AUTH, PROF, etc.):
-  - Count checked `[x]` vs unchecked `[ ]`
-  - Extract requirement IDs and descriptions
-- Parse Traceability table for phase mapping
+```
+mcp__wxcode-kb__get_conversion_stats(project_name=PROJECT_NAME)
+```
 
-### From Phase Folders:
-- For each PLAN.md:
-  - Extract plan name/objective
-  - Count task checkboxes (complete/total)
-- For each SUMMARY.md:
-  - Extract summary text
+- `elements_converted` → from MCP response
+- `elements_total` → from MCP response
 
-### From .milestones/:
-- List all milestone files
-- Parse version, name, completion date
-- Count phases per milestone
+**Read CONVERSION.md:**
+- Extract `stack` (target stack ID)
 
-### From CONVERSION.md (if exists):
-- Set is_conversion_project = true
-- Extract stack target
-- Extract conversion stats if available
+## Step 5: Find All Milestones
 
-## Step 5: Write JSON and Notify
+**Scan for milestone folders:**
 
-1. **Write JSON to file:**
-   - Use Write tool to save to `.planning/dashboard.json`
-   - Ensure valid JSON (proper escaping, no trailing commas)
+```bash
+# Active milestones (in .planning/milestones/ subfolders with ROADMAP.md)
+find .planning/milestones -name "ROADMAP.md" -type f 2>/dev/null | xargs -I {} dirname {}
 
-2. **Emit watcher notification:**
-   - Output exactly this line (for terminal watchers):
-   ```
-   [WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
-   ```
+# Also check for current milestone folder pattern
+ls -d .planning/v*-* 2>/dev/null
+```
 
-**IMPORTANT:**
-- The notification line must be exactly as shown above
-- No extra formatting or explanation around it
-- This allows external processes to detect dashboard updates
+Build list of milestone folders to process.
+
+## Step 6: Build Milestones Array for Project Dashboard
+
+For each milestone folder found:
+
+1. **Parse folder name:**
+   - `v1.0-PAGE_Login` → wxcode_version=`v1.0`, element_name=`PAGE_Login`
+
+2. **Determine status:**
+   - Check if in `.planning/milestones/` (archived) → `completed`
+   - Check for SUMMARY.md files → `in_progress` or `completed`
+   - Otherwise → `pending`
+
+3. **Get mongodb_id (if available):**
+   - Read existing `dashboard_<milestone>.json` if exists
+   - Or leave as null
+
+4. **Get timestamps:**
+   - `created_at`: folder creation time or first commit
+   - `completed_at`: if status=completed, last modification time
+
+Add to `milestones[]` array.
+
+## Step 7: Determine Current Milestone
+
+**From `.planning/STATE.md`:**
+- Look for "Current Milestone" or "Current Position" section
+- Or find latest `in_progress` milestone
+
+## Step 8: Calculate Project Progress
+
+```
+milestones_complete = count where status == "completed"
+milestones_total = total count
+milestones_percentage = (complete / total) * 100
+```
+
+## Step 9: Get WXCODE Version
+
+```bash
+cat ~/.claude/get-shit-done/VERSION 2>/dev/null || echo "unknown"
+```
+
+## Step 10: Write Project Dashboard
+
+Write to `.planning/dashboard.json` following schema.
+
+Output notification:
+```
+[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
+```
+
+---
+
+## Step 11: Regenerate Milestone Dashboards (if --all)
+
+**If REGEN_ALL=false:** STOP here.
+
+**If REGEN_ALL=true:** Continue for each milestone found.
+
+### For Each Milestone:
+
+#### 11.1: Set Milestone Context
+
+```
+MILESTONE_FOLDER=".planning/milestones/v1.0-PAGE_Login"  # or active path
+MILESTONE_NAME="v1.0-PAGE_Login"
+```
+
+#### 11.2: Detect Workflow Stages
+
+| Stage | Detection |
+|-------|-----------|
+| `created` | Folder exists → complete |
+| `requirements` | REQUIREMENTS.md exists and has content → complete |
+| `roadmap` | ROADMAP.md exists and has phases → complete |
+| `planning` | All phases have at least one PLAN.md → complete |
+| `executing` | At least one SUMMARY.md exists → complete |
+| `verified` | UAT.md exists with status "passed" → complete |
+| `archived` | In `.planning/milestones/` folder → complete |
+
+Set `current_stage` to first incomplete stage.
+
+#### 11.3: Parse ROADMAP.md
+
+Extract phases:
+```markdown
+| # | Phase | Goal | Requirements |
+|---|-------|------|--------------|
+| 1 | login-implementation | ... | AUTH-01, AUTH-02 |
+```
+
+For each phase, gather:
+- number, name, goal
+- requirements_covered (from table)
+- status (based on SUMMARY.md existence)
+
+#### 11.4: Parse PLAN.md Files
+
+For each phase folder in `.planning/phases/`:
+
+```bash
+ls .planning/phases/01-*/
+```
+
+For each `*-PLAN.md` file:
+1. Extract plan number from filename (e.g., `1.1-PLAN.md` → `1.1`)
+2. Extract plan name from first heading
+3. Parse `## Tasks` section for task list
+4. Check if corresponding `*-SUMMARY.md` exists → status=complete
+
+**Task parsing:**
+```markdown
+### Task 1.1.1: Create Model
+**File:** `app/models/user.py`
+**Description:** Create the user model...
+```
+
+#### 11.5: Parse REQUIREMENTS.md
+
+Extract requirements by category:
+```markdown
+### Authentication
+- [x] **AUTH-01**: User can login
+- [ ] **AUTH-02**: User can logout
+```
+
+Build requirements object with completion status.
+
+#### 11.6: Determine Current Position
+
+From STATE.md or by scanning:
+- Find first incomplete phase
+- Find first incomplete plan in that phase
+- Set status accordingly
+
+#### 11.7: Calculate Milestone Progress
+
+```
+phases_complete = count phases where all plans complete
+plans_complete = count all complete plans
+tasks_complete = count all complete tasks
+requirements_complete = count checked [x] items
+```
+
+Calculate percentages.
+
+#### 11.8: Write Milestone Dashboard
+
+Write to `.planning/dashboard_<milestone>.json`
+
+Output notification:
+```
+[WXCODE:DASHBOARD_UPDATED] .planning/dashboard_<milestone>.json
+```
+
+---
+
+## Step 12: Summary
+
+Display summary of what was regenerated:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ WXCODE ► DASHBOARDS REGENERATED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+| Dashboard | Status |
+|-----------|--------|
+| Project | ✓ .planning/dashboard.json |
+| v1.0-PAGE_Login | ✓ .planning/dashboard_v1.0-PAGE_Login.json |
+| v1.1-PAGE_Dashboard | ✓ .planning/dashboard_v1.1-PAGE_Dashboard.json |
+
+Total: [N] dashboards updated
+```
 
 </process>
 
-<example_output>
-
-{
-  "project": {
-    "name": "CommunityApp",
-    "core_value": "Users can share and discuss content with people who share their interests",
-    "current_milestone": "v1.0 MVP",
-    "description": "A community platform for sharing and discussing content"
-  },
-  "current_position": {
-    "milestone": "v1.0",
-    "phase_number": 3,
-    "phase_name": "User Authentication",
-    "phase_total": 5,
-    "plan_number": 2,
-    "plan_total": 3,
-    "status": "in_progress"
-  },
-  "progress": {
-    "phases_complete": 2,
-    "phases_total": 5,
-    "phases_percentage": 40,
-    "requirements_complete": 6,
-    "requirements_total": 20,
-    "requirements_percentage": 30
-  },
-  "phases": [
-    {
-      "number": 1,
-      "name": "Project Setup",
-      "goal": "Initialize project structure and core dependencies",
-      "status": "complete",
-      "requirements_covered": ["AUTH-01", "AUTH-02"],
-      "plans": [
-        {
-          "number": 1,
-          "name": "Initialize project structure",
-          "status": "complete",
-          "tasks_complete": 5,
-          "tasks_total": 5,
-          "summary": "Created project structure with FastAPI, configured database connection"
-        }
-      ]
-    },
-    {
-      "number": 2,
-      "name": "Database Models",
-      "goal": "Create SQLAlchemy models for all entities",
-      "status": "complete",
-      "requirements_covered": ["AUTH-03", "AUTH-04", "PROF-01", "PROF-02"],
-      "plans": [
-        {
-          "number": 1,
-          "name": "User and Profile models",
-          "status": "complete",
-          "tasks_complete": 4,
-          "tasks_total": 4,
-          "summary": "Created User, Profile, and Session models"
-        },
-        {
-          "number": 2,
-          "name": "Content models",
-          "status": "complete",
-          "tasks_complete": 3,
-          "tasks_total": 3,
-          "summary": "Created Post, Comment, and Like models"
-        }
-      ]
-    },
-    {
-      "number": 3,
-      "name": "User Authentication",
-      "goal": "Implement signup, login, and session management",
-      "status": "in_progress",
-      "requirements_covered": [],
-      "plans": [
-        {
-          "number": 1,
-          "name": "Signup endpoint",
-          "status": "complete",
-          "tasks_complete": 4,
-          "tasks_total": 4,
-          "summary": "Implemented /auth/signup with email verification"
-        },
-        {
-          "number": 2,
-          "name": "Login endpoint",
-          "status": "in_progress",
-          "tasks_complete": 2,
-          "tasks_total": 5,
-          "summary": null
-        },
-        {
-          "number": 3,
-          "name": "Session management",
-          "status": "pending",
-          "tasks_complete": 0,
-          "tasks_total": 4,
-          "summary": null
-        }
-      ]
-    },
-    {
-      "number": 4,
-      "name": "Dashboard UI",
-      "goal": "Create user dashboard with profile and feed",
-      "status": "pending",
-      "requirements_covered": [],
-      "plans": []
-    },
-    {
-      "number": 5,
-      "name": "API Integration",
-      "goal": "Connect frontend to backend APIs",
-      "status": "pending",
-      "requirements_covered": [],
-      "plans": []
-    }
-  ],
-  "requirements": {
-    "total": 20,
-    "complete": 6,
-    "categories": [
-      {
-        "id": "AUTH",
-        "name": "Authentication",
-        "complete": 4,
-        "total": 4,
-        "percentage": 100,
-        "items": [
-          {"id": "AUTH-01", "description": "User can sign up with email and password", "complete": true, "phase": 1},
-          {"id": "AUTH-02", "description": "User receives email verification after signup", "complete": true, "phase": 1},
-          {"id": "AUTH-03", "description": "User can reset password via email link", "complete": true, "phase": 2},
-          {"id": "AUTH-04", "description": "User session persists across browser refresh", "complete": true, "phase": 2}
-        ]
-      },
-      {
-        "id": "PROF",
-        "name": "Profiles",
-        "complete": 2,
-        "total": 4,
-        "percentage": 50,
-        "items": [
-          {"id": "PROF-01", "description": "User can create profile with display name", "complete": true, "phase": 2},
-          {"id": "PROF-02", "description": "User can upload avatar image", "complete": true, "phase": 2},
-          {"id": "PROF-03", "description": "User can write bio", "complete": false, "phase": null},
-          {"id": "PROF-04", "description": "User can view other users' profiles", "complete": false, "phase": null}
-        ]
-      },
-      {
-        "id": "CONT",
-        "name": "Content",
-        "complete": 0,
-        "total": 5,
-        "percentage": 0,
-        "items": [
-          {"id": "CONT-01", "description": "User can create text post", "complete": false, "phase": null},
-          {"id": "CONT-02", "description": "User can upload image with post", "complete": false, "phase": null},
-          {"id": "CONT-03", "description": "User can edit own posts", "complete": false, "phase": null},
-          {"id": "CONT-04", "description": "User can delete own posts", "complete": false, "phase": null},
-          {"id": "CONT-05", "description": "User can view feed of posts", "complete": false, "phase": null}
-        ]
-      }
-    ]
-  },
-  "blockers": [
-    "Waiting for SMTP credentials for email verification"
-  ],
-  "todos": [
-    {"id": "1", "subject": "Add rate limiting to auth endpoints", "status": "pending", "priority": null},
-    {"id": "2", "subject": "Write API documentation", "status": "pending", "priority": null}
-  ],
-  "milestones_history": [],
-  "conversion": {
-    "is_conversion_project": false,
-    "elements_converted": null,
-    "elements_total": null,
-    "stack": null
-  },
-  "meta": {
-    "generated_at": "2026-01-29T14:30:00Z",
-    "wxcode_version": "1.1.7"
-  }
-}
-
-</example_output>
-
 <success_criteria>
-- [ ] JSON is valid (parseable)
+
+**Basic (no --all):**
+- [ ] Project dashboard JSON is valid
 - [ ] Written to `.planning/dashboard.json`
-- [ ] Notification emitted: `[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json`
-- [ ] All existing files parsed correctly
-- [ ] Missing files handled gracefully (null values)
-- [ ] Phase details include all plans
-- [ ] Requirements grouped by category
-- [ ] Blockers and todos included
-- [ ] Conversion project info included (if applicable)
+- [ ] Notification emitted
+- [ ] Conversion data from MCP (not inferred)
+- [ ] Milestones array populated from folder scan
+
+**With --all:**
+- [ ] All milestone folders discovered
+- [ ] Each milestone dashboard regenerated from source files
+- [ ] Workflow stages correctly detected
+- [ ] Phases parsed from ROADMAP.md
+- [ ] Plans parsed from PLAN.md files
+- [ ] Tasks extracted from plan files
+- [ ] Requirements parsed with completion status
+- [ ] Progress calculated correctly
+- [ ] Notification emitted for each dashboard
+- [ ] Summary displayed
+
 </success_criteria>
 
 <integration>
 
-## Triggering Dashboard Updates
+## When to Use --all
 
-Other commands should trigger dashboard update after significant state changes.
+Use `/wxcode:dashboard --all` when:
+- Dashboards are out of sync with actual files
+- After manual edits to planning docs
+- After schema migration
+- For troubleshooting/recovery
+- After git operations that modified .planning/
 
-**Add this step to commands that modify project state:**
+## Automatic Updates
 
-```
-## Final Step: Update Dashboard
+Individual commands still update dashboards incrementally:
+- `/wxcode:new-milestone` → creates milestone dashboard
+- `/wxcode:plan-phase` → updates plans/tasks
+- `/wxcode:execute-phase` → updates task status
+- `/wxcode:complete-milestone` → archives milestone
 
-After completing all other steps, update the project dashboard:
-
-1. Generate dashboard JSON (follow /wxcode:dashboard process)
-2. Write to `.planning/dashboard.json`
-3. Output: `[WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json`
-```
-
-**Commands that should trigger dashboard update:**
-- `/wxcode:new-project` (after completion)
-- `/wxcode:new-milestone` (after completion)
-- `/wxcode:plan-phase` (after PLAN.md created)
-- `/wxcode:execute-phase` (after each plan completes)
-- `/wxcode:verify-work` (after verification)
-- `/wxcode:complete-milestone` (after archiving)
+Use `--all` for full regeneration when needed.
 
 </integration>

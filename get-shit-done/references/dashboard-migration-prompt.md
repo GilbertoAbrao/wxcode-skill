@@ -171,7 +171,7 @@ Schema files:
 - `~/.claude/get-shit-done/references/dashboard-schema-project.md`
 - `~/.claude/get-shit-done/references/dashboard-schema-milestone.md`
 
-The old `dashboard-schema.md` is deprecated and should be removed.
+The old `dashboard-schema.md` has been removed.
 
 ---
 

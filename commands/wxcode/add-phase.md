@@ -6,6 +6,7 @@ allowed-tools:
   - Read
   - Write
   - Bash
+  - mcp__wxcode-kb__*
 ---
 
 <objective>
@@ -203,5 +204,37 @@ Phase addition is complete when:
 - [ ] STATE.md updated with roadmap evolution note
 - [ ] New phase appears at end of current milestone
 - [ ] Next phase number calculated correctly (ignoring decimals)
+- [ ] Dashboard updated
 - [ ] User informed of next steps
-      </success_criteria>
+</success_criteria>
+
+<dashboard_update>
+
+## Update Dashboards (Final Step)
+
+**MANDATORY:** After adding a phase, regenerate dashboards following `/wxcode:dashboard` logic.
+
+### Regenerate Dashboards
+
+Follow the exact process from `/wxcode:dashboard`:
+
+1. **Read schemas:**
+   - `~/.claude/get-shit-done/references/dashboard-schema-project.md`
+   - `~/.claude/get-shit-done/references/dashboard-schema-milestone.md`
+
+2. **Gather data:**
+   - Project info from PROJECT.md
+   - Conversion stats from MCP: `mcp__wxcode-kb__get_conversion_stats(project_name=PROJECT_NAME)`
+   - Updated phase list from ROADMAP.md
+
+3. **Write dashboards:**
+   - `.planning/dashboard.json` (project)
+   - `.planning/dashboard_<milestone>.json` (current milestone with new phase)
+
+4. **Emit notifications:**
+   ```
+   [WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
+   [WXCODE:DASHBOARD_UPDATED] .planning/dashboard_<milestone>.json
+   ```
+
+</dashboard_update>
