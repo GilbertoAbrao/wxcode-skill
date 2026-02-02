@@ -10,7 +10,9 @@ allowed-tools:
   - Grep
   - Task
   - AskUserQuestion
+  - WebFetch
   - mcp__wxcode-kb__*
+  - mcp__playwright__*
 ---
 
 <objective>
@@ -559,6 +561,347 @@ This skill will:
   ```
 
 **Only proceed to next phase when server starts and responds.**
+
+## Phase C2.5: Design System Collection
+
+**Display banner:**
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ WXCODE ► DESIGN SYSTEM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**Purpose:** Establish design tokens as the Single Source of Truth for all UI generation.
+These tokens will be automatically used by the `frontend-design` skill during execution.
+
+**Reference files:**
+- Spec: `~/.claude/get-shit-done/.wxcode/conversion/dtcg-spec.md`
+- Flow: `~/.claude/get-shit-done/.wxcode/conversion/design-system-flow.md`
+- Template: `~/.claude/get-shit-done/templates/design-tokens.json`
+
+### Step 1: Choose Collection Method
+
+Use AskUserQuestion:
+
+```
+questions: [
+  {
+    header: "Design Source",
+    question: "How should I capture your design preferences?",
+    multiSelect: false,
+    options: [
+      { label: "Reference URL", description: "Extract colors, typography from an existing website" },
+      { label: "Screenshots", description: "Analyze design mockups or reference images" },
+      { label: "Questionnaire", description: "Answer questions about brand, style preferences" },
+      { label: "Use defaults", description: "Start with WXCODE default tokens (can customize later)" }
+    ]
+  }
+]
+```
+
+### Step 2A: URL Extraction
+
+**If "Reference URL" selected:**
+
+Ask inline: "What URL should I analyze for design patterns?"
+
+**Fetch and analyze:**
+
+```
+WebFetch:
+  url: [user's URL]
+  prompt: "Extract design tokens from this page:
+    1. Colors: primary brand color, secondary colors, text colors, background colors, semantic colors (success, warning, error, info)
+    2. Typography: font families (headings, body, mono), font sizes used, font weights, line heights
+    3. Spacing: padding/margin patterns, gap sizes
+    4. Border radius: button rounding, card rounding, input rounding
+    5. Shadows: elevation levels used
+    Return as structured JSON matching DTCG format."
+```
+
+**If WebFetch fails (403, timeout, JavaScript-rendered):**
+
+Display:
+```
+WebFetch couldn't access this URL. Trying MCP Playwright...
+```
+
+Use MCP Playwright as fallback:
+```
+mcp__playwright__navigate: url=[user's URL]
+mcp__playwright__screenshot: (capture page)
+```
+
+Then analyze screenshot using same extraction logic.
+
+**Confidence check:**
+
+After extraction, categorize confidence:
+- **High (>80%):** Token clearly visible/extracted
+- **Medium (50-80%):** Inferred from patterns
+- **Low (<50%):** Best guess, needs validation
+
+Present extraction results:
+```
+## Extracted Design Tokens
+
+**From:** [URL]
+
+### Colors (High confidence)
+- Primary: #3b82f6 ← extracted from buttons, links
+- Secondary: #1e293b ← extracted from headers
+- Background: #ffffff ← page background
+- Text: #111827 ← body text
+
+### Typography (Medium confidence)
+- Display: Inter ← detected via font-family
+- Body: Inter ← same
+- Sizes: 14px base, scale inferred
+
+### Spacing (Low confidence)
+- Base unit: 4px (inferred from patterns)
+
+---
+Accept these tokens? (yes / adjust / try different URL)
+```
+
+If "adjust" → allow inline edits.
+If "try different URL" → return to Step 2A.
+
+### Step 2B: Screenshot Analysis
+
+**If "Screenshots" selected:**
+
+Ask inline: "Please provide the path(s) to your design mockups or screenshots."
+
+**Read and analyze images:**
+
+For each image path:
+```
+Read: [image_path]
+```
+
+Analyze visually for:
+- Dominant colors and color palette
+- Typography styles (approximate sizes, weights)
+- Spacing patterns
+- Border radius usage
+- Shadow/elevation levels
+- Overall aesthetic (modern, minimal, bold, etc.)
+
+Present findings same as URL extraction (with confidence levels).
+
+### Step 2C: Questionnaire
+
+**If "Questionnaire" selected:**
+
+**Round 1 — Brand personality:**
+
+```
+questions: [
+  {
+    header: "Style",
+    question: "What visual style best describes your brand?",
+    multiSelect: false,
+    options: [
+      { label: "Modern & Minimal", description: "Clean lines, lots of whitespace, subtle colors" },
+      { label: "Bold & Vibrant", description: "Strong colors, high contrast, energetic" },
+      { label: "Professional & Corporate", description: "Trustworthy, structured, conventional" },
+      { label: "Playful & Friendly", description: "Rounded shapes, warm colors, approachable" }
+    ]
+  },
+  {
+    header: "Primary Color",
+    question: "What's your primary brand color?",
+    multiSelect: false,
+    options: [
+      { label: "Blue", description: "Trust, stability (#3b82f6)" },
+      { label: "Green", description: "Growth, nature (#22c55e)" },
+      { label: "Purple", description: "Creative, premium (#8b5cf6)" },
+      { label: "Custom", description: "I'll provide a hex code" }
+    ]
+  }
+]
+```
+
+If "Custom" selected, ask for hex code inline.
+
+**Round 2 — Typography:**
+
+```
+questions: [
+  {
+    header: "Typography",
+    question: "What typography style do you prefer?",
+    multiSelect: false,
+    options: [
+      { label: "Modern Sans-Serif", description: "Inter, system fonts — clean, readable" },
+      { label: "Classic Serif", description: "Georgia, Merriweather — traditional, editorial" },
+      { label: "Technical Mono", description: "JetBrains Mono emphasis — developer-focused" },
+      { label: "Custom fonts", description: "I'll specify font names" }
+    ]
+  }
+]
+```
+
+**Round 3 — Shapes:**
+
+```
+questions: [
+  {
+    header: "Corners",
+    question: "How rounded should UI elements be?",
+    multiSelect: false,
+    options: [
+      { label: "Sharp", description: "0-2px radius — crisp, technical" },
+      { label: "Subtle", description: "4-6px radius — balanced (most common)" },
+      { label: "Rounded", description: "8-12px radius — friendly, modern" },
+      { label: "Pill", description: "Fully rounded — playful, soft" }
+    ]
+  }
+]
+```
+
+Generate tokens from questionnaire responses using style presets.
+
+### Step 2D: Use Defaults
+
+**If "Use defaults" selected:**
+
+Copy template directly:
+```bash
+mkdir -p design
+cp ~/.claude/get-shit-done/templates/design-tokens.json design/tokens.json
+```
+
+Display:
+```
+Created design/tokens.json with WXCODE default tokens.
+You can customize these anytime by editing the file.
+```
+
+Skip to Step 4.
+
+### Step 3: Generate Design Tokens
+
+**Create design directory and tokens file:**
+
+```bash
+mkdir -p design
+```
+
+Write `design/tokens.json` using DTCG format from spec:
+
+```json
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "[Project Name] Design System",
+  "color": {
+    "brand": {
+      "primary": {
+        "$value": "[extracted/selected color]",
+        "$type": "color",
+        "$description": "Main brand color"
+      }
+      // ... all color tokens
+    }
+    // ... semantic, neutral, background, text, border
+  },
+  "typography": {
+    // ... fontFamily, fontSize, fontWeight, lineHeight
+  },
+  "spacing": {
+    // ... spacing scale
+  },
+  "shadow": {
+    // ... shadow definitions
+  },
+  "borderRadius": {
+    // ... radius scale
+  },
+  "transition": {
+    // ... duration and easing
+  },
+  "breakpoint": {
+    // ... responsive breakpoints
+  },
+  "zIndex": {
+    // ... layer stack
+  }
+}
+```
+
+### Step 4: Generate Stack-Specific Config (if applicable)
+
+Based on stack, generate additional config:
+
+**For Tailwind-based stacks (nextjs-*, nuxt3, sveltekit, remix):**
+
+Generate `tailwind.config.js` theme extension that references tokens:
+
+```javascript
+// tailwind.config.js (partial - theme section)
+import tokens from './design/tokens.json';
+
+const theme = {
+  extend: {
+    colors: {
+      primary: tokens.color.brand.primary.$value,
+      secondary: tokens.color.brand.secondary.$value,
+      // ... map all colors
+    },
+    fontFamily: {
+      display: [tokens.typography.fontFamily.display.$value],
+      body: [tokens.typography.fontFamily.body.$value],
+      mono: [tokens.typography.fontFamily.mono.$value],
+    },
+    // ... other mappings
+  }
+};
+```
+
+**For CSS-variable stacks (fastapi-jinja2, fastapi-htmx, django-*, rails-*, laravel-blade):**
+
+Generate `app/static/css/tokens.css` (or equivalent path):
+
+```css
+:root {
+  /* Brand Colors */
+  --color-primary: #3b82f6;
+  --color-secondary: #1e293b;
+
+  /* Typography */
+  --font-display: Inter, system-ui, sans-serif;
+  --font-body: Inter, system-ui, sans-serif;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  /* ... */
+}
+```
+
+### Step 5: Display Summary
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ DESIGN SYSTEM READY ✓
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+| File | Purpose |
+|------|---------|
+| design/tokens.json | DTCG tokens (Source of Truth) |
+| [stack-specific file] | Framework integration |
+
+**Primary:** [color swatch] [hex]
+**Typography:** [font names]
+**Style:** [extracted/selected style]
+
+These tokens will be used automatically when generating UI components.
+```
+
+**Continue to next phase.**
 
 ## Phase C3: Schema Decision
 
@@ -1116,6 +1459,325 @@ Default to "balanced" if not set.
 | wxcode-roadmapper | opus | sonnet | sonnet |
 
 Store resolved models for use in Task calls below.
+
+## Phase 5.6: Design System Collection
+
+**Display banner:**
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ WXCODE ► DESIGN SYSTEM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**Purpose:** Establish design tokens as the Single Source of Truth for all UI generation.
+These tokens will be automatically used by the `frontend-design` skill during execution.
+
+**Reference files:**
+- Spec: `~/.claude/get-shit-done/.wxcode/conversion/dtcg-spec.md`
+- Flow: `~/.claude/get-shit-done/.wxcode/conversion/design-system-flow.md`
+- Template: `~/.claude/get-shit-done/templates/design-tokens.json`
+
+### Step 1: Choose Collection Method
+
+Use AskUserQuestion:
+
+```
+questions: [
+  {
+    header: "Design Source",
+    question: "How should I capture your design preferences?",
+    multiSelect: false,
+    options: [
+      { label: "Reference URL", description: "Extract colors, typography from an existing website" },
+      { label: "Screenshots", description: "Analyze design mockups or reference images" },
+      { label: "Questionnaire", description: "Answer questions about brand, style preferences" },
+      { label: "Use defaults", description: "Start with WXCODE default tokens (can customize later)" }
+    ]
+  }
+]
+```
+
+### Step 2A: URL Extraction
+
+**If "Reference URL" selected:**
+
+Ask inline: "What URL should I analyze for design patterns?"
+
+**Fetch and analyze:**
+
+```
+WebFetch:
+  url: [user's URL]
+  prompt: "Extract design tokens from this page:
+    1. Colors: primary brand color, secondary colors, text colors, background colors, semantic colors (success, warning, error, info)
+    2. Typography: font families (headings, body, mono), font sizes used, font weights, line heights
+    3. Spacing: padding/margin patterns, gap sizes
+    4. Border radius: button rounding, card rounding, input rounding
+    5. Shadows: elevation levels used
+    Return as structured JSON matching DTCG format."
+```
+
+**If WebFetch fails (403, timeout, JavaScript-rendered):**
+
+Display:
+```
+WebFetch couldn't access this URL. Trying MCP Playwright...
+```
+
+Use MCP Playwright as fallback:
+```
+mcp__playwright__navigate: url=[user's URL]
+mcp__playwright__screenshot: (capture page)
+```
+
+Then analyze screenshot using same extraction logic.
+
+**Confidence check:**
+
+After extraction, categorize confidence:
+- **High (>80%):** Token clearly visible/extracted
+- **Medium (50-80%):** Inferred from patterns
+- **Low (<50%):** Best guess, needs validation
+
+Present extraction results:
+```
+## Extracted Design Tokens
+
+**From:** [URL]
+
+### Colors (High confidence)
+- Primary: #3b82f6 ← extracted from buttons, links
+- Secondary: #1e293b ← extracted from headers
+- Background: #ffffff ← page background
+- Text: #111827 ← body text
+
+### Typography (Medium confidence)
+- Display: Inter ← detected via font-family
+- Body: Inter ← same
+- Sizes: 14px base, scale inferred
+
+### Spacing (Low confidence)
+- Base unit: 4px (inferred from patterns)
+
+---
+Accept these tokens? (yes / adjust / try different URL)
+```
+
+If "adjust" → allow inline edits.
+If "try different URL" → return to Step 2A.
+
+### Step 2B: Screenshot Analysis
+
+**If "Screenshots" selected:**
+
+Ask inline: "Please provide the path(s) to your design mockups or screenshots."
+
+**Read and analyze images:**
+
+For each image path:
+```
+Read: [image_path]
+```
+
+Analyze visually for:
+- Dominant colors and color palette
+- Typography styles (approximate sizes, weights)
+- Spacing patterns
+- Border radius usage
+- Shadow/elevation levels
+- Overall aesthetic (modern, minimal, bold, etc.)
+
+Present findings same as URL extraction (with confidence levels).
+
+### Step 2C: Questionnaire
+
+**If "Questionnaire" selected:**
+
+**Round 1 — Brand personality:**
+
+```
+questions: [
+  {
+    header: "Style",
+    question: "What visual style best describes your brand?",
+    multiSelect: false,
+    options: [
+      { label: "Modern & Minimal", description: "Clean lines, lots of whitespace, subtle colors" },
+      { label: "Bold & Vibrant", description: "Strong colors, high contrast, energetic" },
+      { label: "Professional & Corporate", description: "Trustworthy, structured, conventional" },
+      { label: "Playful & Friendly", description: "Rounded shapes, warm colors, approachable" }
+    ]
+  },
+  {
+    header: "Primary Color",
+    question: "What's your primary brand color?",
+    multiSelect: false,
+    options: [
+      { label: "Blue", description: "Trust, stability (#3b82f6)" },
+      { label: "Green", description: "Growth, nature (#22c55e)" },
+      { label: "Purple", description: "Creative, premium (#8b5cf6)" },
+      { label: "Custom", description: "I'll provide a hex code" }
+    ]
+  }
+]
+```
+
+If "Custom" selected, ask for hex code inline.
+
+**Round 2 — Typography:**
+
+```
+questions: [
+  {
+    header: "Typography",
+    question: "What typography style do you prefer?",
+    multiSelect: false,
+    options: [
+      { label: "Modern Sans-Serif", description: "Inter, system fonts — clean, readable" },
+      { label: "Classic Serif", description: "Georgia, Merriweather — traditional, editorial" },
+      { label: "Technical Mono", description: "JetBrains Mono emphasis — developer-focused" },
+      { label: "Custom fonts", description: "I'll specify font names" }
+    ]
+  }
+]
+```
+
+**Round 3 — Shapes:**
+
+```
+questions: [
+  {
+    header: "Corners",
+    question: "How rounded should UI elements be?",
+    multiSelect: false,
+    options: [
+      { label: "Sharp", description: "0-2px radius — crisp, technical" },
+      { label: "Subtle", description: "4-6px radius — balanced (most common)" },
+      { label: "Rounded", description: "8-12px radius — friendly, modern" },
+      { label: "Pill", description: "Fully rounded — playful, soft" }
+    ]
+  }
+]
+```
+
+Generate tokens from questionnaire responses using style presets.
+
+### Step 2D: Use Defaults
+
+**If "Use defaults" selected:**
+
+Copy template directly:
+```bash
+mkdir -p design
+cp ~/.claude/get-shit-done/templates/design-tokens.json design/tokens.json
+```
+
+Display:
+```
+Created design/tokens.json with WXCODE default tokens.
+You can customize these anytime by editing the file.
+```
+
+Skip to Step 4.
+
+### Step 3: Generate Design Tokens
+
+**Create design directory and tokens file:**
+
+```bash
+mkdir -p design
+```
+
+Write `design/tokens.json` using DTCG format from spec:
+
+```json
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "[Project Name] Design System",
+  "color": {
+    "brand": {
+      "primary": {
+        "$value": "[extracted/selected color]",
+        "$type": "color",
+        "$description": "Main brand color"
+      }
+      // ... all color tokens
+    }
+    // ... semantic, neutral, background, text, border
+  },
+  "typography": {
+    // ... fontFamily, fontSize, fontWeight, lineHeight
+  },
+  "spacing": {
+    // ... spacing scale
+  },
+  "shadow": {
+    // ... shadow definitions
+  },
+  "borderRadius": {
+    // ... radius scale
+  },
+  "transition": {
+    // ... duration and easing
+  },
+  "breakpoint": {
+    // ... responsive breakpoints
+  },
+  "zIndex": {
+    // ... layer stack
+  }
+}
+```
+
+### Step 4: Generate Stack-Specific Config (if applicable)
+
+**Note:** Stack may not be determined yet in greenfield flow. If stack is known (from PROJECT.md or questioning), generate config. Otherwise, defer to execution phase.
+
+**For Tailwind-based stacks:**
+
+Generate `tailwind.config.js` theme extension that references tokens.
+
+**For CSS-variable stacks:**
+
+Generate `static/css/tokens.css` (or equivalent path):
+
+```css
+:root {
+  /* Brand Colors */
+  --color-primary: #3b82f6;
+  --color-secondary: #1e293b;
+
+  /* Typography */
+  --font-display: Inter, system-ui, sans-serif;
+  --font-body: Inter, system-ui, sans-serif;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  /* ... */
+}
+```
+
+### Step 5: Display Summary
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ DESIGN SYSTEM READY ✓
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+| File | Purpose |
+|------|---------|
+| design/tokens.json | DTCG tokens (Source of Truth) |
+
+**Primary:** [color swatch] [hex]
+**Typography:** [font names]
+**Style:** [extracted/selected style]
+
+These tokens will be used automatically when generating UI components.
+```
+
+**Continue to next phase.**
 
 ## Phase 6: Research Decision
 
@@ -1702,6 +2364,8 @@ Present completion with next steps:
 - `.planning/REQUIREMENTS.md`
 - `.planning/ROADMAP.md`
 - `.planning/STATE.md`
+- `design/tokens.json` — DTCG design tokens (Source of Truth)
+- Stack-specific config (if stack known)
 
 **Conversion Mode (additional):**
 - `.planning/CONVERSION.md`
@@ -1710,6 +2374,8 @@ Present completion with next steps:
 - Application entry point
 - `start-dev.sh`
 - Database models (if "convert all now" selected)
+- `design/tokens.json` — DTCG design tokens (Source of Truth)
+- Stack-specific design config (tailwind.config.js or tokens.css)
 
 </output>
 
@@ -1722,6 +2388,8 @@ Present completion with next steps:
 - [ ] Deep questioning completed (threads followed, not rushed)
 - [ ] PROJECT.md captures full context → **committed**
 - [ ] config.json has workflow mode, depth, parallelization → **committed**
+- [ ] **Design system collected** (URL, screenshot, questionnaire, or defaults)
+- [ ] **design/tokens.json created** with DTCG format
 - [ ] Research completed (if selected) — 4 parallel agents spawned → **committed**
 - [ ] Requirements gathered (from research or conversation)
 - [ ] User scoped each category (v1/v2/out of scope)
@@ -1743,6 +2411,9 @@ Present completion with next steps:
 - [ ] Entry point created (project can run)
 - [ ] start-dev.sh created and executable
 - [ ] **Development server tested and working** (verified via curl)
+- [ ] **Design system collected** (URL, screenshot, questionnaire, or defaults)
+- [ ] **design/tokens.json created** with DTCG format
+- [ ] **Stack-specific design config generated** (tailwind.config.js or tokens.css)
 - [ ] Schema decision made (all now / on-demand)
 - [ ] Models generated (if "all now" selected)
 - [ ] config.json created with workflow preferences → **committed**

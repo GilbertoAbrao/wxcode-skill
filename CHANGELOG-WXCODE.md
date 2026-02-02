@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-02-02
+
+### Added
+- **DTCG Design System Integration**: Design tokens as Single Source of Truth for UI generation
+  - New phase in `/wxcode:new-project` for design system collection (both Greenfield and Conversion modes)
+  - 3 collection methods: URL extraction, Screenshots analysis, Questionnaire
+  - Generates `design/tokens.json` in DTCG (Design Token Community Group) W3C format
+  - WebFetch for URL extraction with MCP Playwright fallback for JavaScript-rendered pages
+  - Stack-specific config generation (Tailwind theme or CSS variables)
+
+- **Design tokens documentation**:
+  - `.wxcode/conversion/dtcg-spec.md` — Complete DTCG token specification
+  - `.wxcode/conversion/design-system-flow.md` — Design system collection flow documentation
+  - `get-shit-done/templates/design-tokens.json` — Ready-to-use default tokens template
+
+- **wxcode-executor design system integration**:
+  - Automatic design token loading for UI tasks
+  - Mandatory `frontend-design` skill usage for visual components
+  - Quality checks for token usage before commits
+  - Design system usage documentation in SUMMARY.md
+
+### Changed
+- `/wxcode:new-project` now includes design system collection phase (C2.5 for conversion, 5.6 for greenfield)
+- Added `WebFetch` and `mcp__playwright__*` to allowed-tools in new-project command
+
 ## [1.2.16] - 2026-02-02
 
 ### Added
@@ -413,6 +438,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | WXCODE Version | GSD Version | Sync Date | Notes |
 |----------------|-------------|-----------|-------|
+| 1.3.0 | 1.9.13 | 2026-02-02 | DTCG Design System Integration |
+| 1.2.16 | 1.9.13 | 2026-02-02 | `/wxcode:trace` and `@legacy` comments |
 | 1.2.6 | 1.9.13 | 2026-01-30 | MCP Source of Truth for planning/verification agents |
 | 1.2.5 | 1.9.13 | 2026-01-30 | Workflow stages in milestone dashboard |
 | 1.2.4 | 1.9.13 | 2026-01-30 | Tasks in milestone dashboard |

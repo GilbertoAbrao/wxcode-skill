@@ -812,6 +812,104 @@ If you were a continuation agent, include ALL commits (previous + new).
 
 </conversion_context>
 
+<design_system_integration>
+
+## Design System for UI Generation
+
+**Reference:** `~/.claude/get-shit-done/.wxcode/conversion/design-system-flow.md`
+
+**Check for design tokens at execution start:**
+
+```bash
+[ -f design/tokens.json ] && echo "DESIGN TOKENS AVAILABLE"
+```
+
+**If design tokens exist AND task involves UI generation:**
+
+UI generation tasks include:
+- Creating templates (HTML, Jinja2, EJS, ERB, Blade)
+- Creating components (React, Vue, Svelte)
+- Creating pages (Next.js, Nuxt, SvelteKit)
+- Creating stylesheets (CSS, SCSS)
+- Modifying existing UI components
+
+**MANDATORY: Use `frontend-design` skill for UI work.**
+
+When generating any visual component:
+
+1. **Load design tokens:**
+   ```bash
+   cat design/tokens.json
+   ```
+
+2. **Include tokens in skill invocation context:**
+   The `frontend-design` skill should receive:
+   - Design tokens from `design/tokens.json`
+   - Stack-specific config (if exists: `tailwind.config.js` or CSS variables file)
+   - Component requirements from the task
+
+3. **Apply tokens consistently:**
+   - Use token values for colors (never hardcode hex unless token missing)
+   - Use token values for typography (font family, sizes, weights)
+   - Use token values for spacing (padding, margins, gaps)
+   - Use token values for shadows, border-radius, transitions
+
+**Stack-specific token usage:**
+
+**Tailwind stacks (nextjs-*, nuxt3, sveltekit, remix):**
+```jsx
+// Use Tailwind classes that map to tokens
+<div className="bg-primary text-white font-display text-lg p-4 rounded-lg shadow-md">
+```
+
+**CSS Variables stacks (fastapi-jinja2, fastapi-htmx, django-*, rails-*, laravel-blade):**
+```html
+<!-- Use CSS variables from tokens.css -->
+<div style="background: var(--color-primary); font-family: var(--font-display);">
+```
+
+**CSS-in-JS stacks (with styled-components, emotion):**
+```jsx
+// Import tokens and use directly
+import tokens from '../design/tokens.json';
+const Button = styled.button`
+  background: ${tokens.color.brand.primary.$value};
+`;
+```
+
+**When design tokens DON'T exist:**
+
+Continue normal execution but note in SUMMARY.md:
+```markdown
+## Design Notes
+
+No design tokens found (design/tokens.json).
+Used default/inline styles. Consider running design system collection.
+```
+
+**Quality check for UI tasks:**
+
+Before committing UI changes, verify:
+- [ ] Colors match design tokens (no hardcoded hex unless justified)
+- [ ] Typography uses token font families and sizes
+- [ ] Spacing follows token scale
+- [ ] Component is responsive (uses breakpoint tokens)
+- [ ] Interactions use transition tokens
+
+Include in SUMMARY.md for UI tasks:
+```markdown
+## Design System Usage
+
+**Tokens applied:**
+- Colors: primary, secondary, text-primary
+- Typography: font-display for headings, font-body for text
+- Spacing: space-4, space-6, space-8
+
+**Custom values:** [none OR list deviations with justification]
+```
+
+</design_system_integration>
+
 <success_criteria>
 Plan execution complete when:
 
@@ -819,6 +917,8 @@ Plan execution complete when:
 - [ ] Each task committed individually with proper format
 - [ ] All deviations documented
 - [ ] Authentication gates handled and documented
+- [ ] **UI tasks use design tokens** (if design/tokens.json exists)
+- [ ] **frontend-design skill invoked** for visual components
 - [ ] SUMMARY.md created with substantive content
 - [ ] STATE.md updated (position, decisions, issues, session)
 - [ ] Final metadata commit made
