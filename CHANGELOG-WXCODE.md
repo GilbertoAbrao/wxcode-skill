@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.16] - 2026-02-02
+
+### Added
+- **`/wxcode:trace` command**: Bidirectional navigation between legacy and converted code
+  - Trace from legacy element: `/wxcode:trace PAGE_Login` shows converted files, control mappings, procedure mappings
+  - Trace from converted file: `/wxcode:trace app/routes/auth.py` shows legacy origins
+  - Displays deviations from legacy behavior
+  - Shows dependencies and conversion status
+  - Supports `--json` output for tooling integration
+
+- **Mandatory `@legacy` traceability comments**: Updated `structure-preservation.md` with required comment format
+  - File-level headers: `@legacy-element`, `@legacy-type`, `@legacy-controls`, `@legacy-procedures`, `@legacy-tables`
+  - Function-level: `@legacy: {PROCEDURE_NAME}` with optional `@legacy-params` mapping
+  - Inline references: `@legacy: {ELEMENT}` for specific code sections
+  - Deviation documentation: `@legacy-deviation: {description}`
+  - Enables grep-based navigation: `grep -r "@legacy: PAGE_Login" .`
+
 ## [1.2.15] - 2026-01-31
 
 ### Added

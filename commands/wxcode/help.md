@@ -180,6 +180,30 @@ Execute start-dev.sh to start development server(s).
 
 **Usage:** `/wxcode:start-dev`
 
+## Conversion Traceability Commands
+
+### `/wxcode:trace <element|file>`
+
+Navigate bidirectionally between legacy WinDev code and converted code.
+
+- **Legacy → Converted:** Shows all converted files, control mappings, procedure mappings
+- **Converted → Legacy:** Shows all legacy origins for a converted file
+- Displays deviations from legacy behavior
+- Shows conversion status and dependencies
+
+**Usage:**
+- `/wxcode:trace PAGE_Login` — Find converted code for legacy page
+- `/wxcode:trace Global_ValidaCPF` — Find converted function
+- `/wxcode:trace app/routes/auth.py` — Find legacy origins of file
+- `/wxcode:trace PAGE_Login --json` — Output as JSON for tooling
+
+**Output includes:**
+- Converted file locations with line numbers
+- Control mappings (EDT_Usuario → input[name='usuario'])
+- Procedure mappings (Global_ValidaCPF → validar_cpf())
+- Data binding mappings
+- Documented deviations from legacy behavior
+
 ## Workflow
 
 ### Standard Workflow

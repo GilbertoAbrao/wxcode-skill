@@ -10,6 +10,142 @@ The converted code should be recognizable, not alien.
 
 ---
 
+## Traceability Comments (MANDATORY)
+
+Every converted file MUST include `@legacy` comments to enable bidirectional navigation between legacy and converted code.
+
+### Why This Matters
+
+- **Grep-friendly:** `grep -r "@legacy: PAGE_Login" .` finds all related code
+- **IDE navigation:** Tools can parse and provide jump-to-legacy features
+- **Git blame context:** Developers understand the original intent
+- **Validation:** CI can verify all conversions are properly traced
+
+### File-Level Header (Required)
+
+At the top of every converted file:
+
+```python
+# @legacy-element: PAGE_Login
+# @legacy-type: page
+# @legacy-controls: EDT_Usuario, EDT_Senha, BTN_Entrar
+# @legacy-procedures: Local_Login, Global_FazLoginUsuarioInterno
+# @legacy-tables: USUARIO
+```
+
+```html
+<!-- @legacy-element: PAGE_Login -->
+<!-- @legacy-type: page -->
+<!-- @legacy-controls: EDT_Usuario, EDT_Senha, BTN_Entrar -->
+```
+
+### Function/Method Level (Required for converted procedures)
+
+```python
+# @legacy: Global_FazLoginUsuarioInterno
+# @legacy-params: sLogin, sSenha -> login: str, senha: str
+async def fazer_login_usuario_interno(login: str, senha: str, db: Session) -> Usuario:
+    """
+    Authenticates user with login and password.
+
+    Legacy: ServerProcedures.Global_FazLoginUsuarioInterno
+    """
+    ...
+```
+
+### Control Mapping in Templates (Required)
+
+```html
+<form method="post" action="/login">
+    <!-- @legacy: EDT_Usuario | USUARIO.LOGIN -->
+    <input type="text" name="usuario" id="usuario" required>
+
+    <!-- @legacy: EDT_Senha -->
+    <input type="password" name="senha" id="senha" required>
+
+    <!-- @legacy: BTN_Entrar.OnClick -> POST /login -->
+    <button type="submit" id="btn-entrar">Entrar</button>
+</form>
+```
+
+### Inline Code References (When relevant)
+
+```python
+async def login(request: Request, db: Session = Depends(get_db)):
+    form = await request.form()
+    login = form.get("usuario")
+    senha = form.get("senha")
+
+    # @legacy: Global_FazLoginUsuarioInterno
+    usuario = await fazer_login_usuario_interno(login, senha, db)
+
+    if not usuario:
+        # @legacy: PAGE_Login.Local_Login error handling
+        raise HTTPException(status_code=401, detail="Credenciais inválidas")
+
+    # @legacy: Global_SetaTempoSessao
+    request.session["user_id"] = usuario.id
+    request.session["timeout"] = datetime.now() + timedelta(hours=8)
+
+    return RedirectResponse("/dashboard", status_code=303)
+```
+
+### Model/Schema Files
+
+```python
+# @legacy-element: TABLE:USUARIO
+# @legacy-type: table
+
+class Usuario(Base):
+    """
+    User account for system authentication.
+
+    Legacy: USUARIO table from BD.wda
+    """
+    __tablename__ = "usuario"
+
+    # @legacy: USUARIO.ID (auto-increment)
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    # @legacy: USUARIO.LOGIN (unique, indexed)
+    login: Mapped[str] = mapped_column(String(50), unique=True, index=True)
+
+    # @legacy: USUARIO.SENHA (was plaintext, now hashed)
+    senha_hash: Mapped[str] = mapped_column(String(255))
+
+    # @legacy: USUARIO.NOME
+    nome: Mapped[str] = mapped_column(String(100))
+
+    # @legacy: USUARIO.ATIVO
+    ativo: Mapped[bool] = mapped_column(default=True)
+```
+
+### Comment Format Reference
+
+| Tag | Usage | Example |
+|-----|-------|---------|
+| `@legacy-element` | File header - source element name | `PAGE_Login`, `ServerProcedures` |
+| `@legacy-type` | Element type | `page`, `procedure_group`, `table`, `class` |
+| `@legacy-controls` | UI controls in this file | `EDT_Usuario, BTN_Salvar` |
+| `@legacy-procedures` | Procedures called/converted | `Global_ValidaCPF, Local_Salvar` |
+| `@legacy-tables` | Tables accessed | `USUARIO, CLIENTE` |
+| `@legacy` | Inline reference | `@legacy: Global_ValidaCPF` |
+| `@legacy-params` | Parameter mapping | `sNome, nID -> nome: str, id: int` |
+
+### Deviation Comments
+
+When deviating from legacy behavior, document inline:
+
+```python
+# @legacy: Global_FazLoginUsuarioInterno
+# @legacy-deviation: Password now hashed with bcrypt (was plaintext)
+# @legacy-deviation: Returns Usuario object instead of boolean
+async def fazer_login_usuario_interno(login: str, senha: str, db: Session) -> Usuario | None:
+    ...
+```
+
+---
+
 ## Naming Conventions
 
 ### Element Names → File Names
