@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.5] - 2026-02-02
+
+### Added
+- `/wxcode:new-project-greetings` command for MCP warm-up before conversion
+  - Displays project context from CONTEXT.md
+  - Gives MCP servers time to connect in background
+  - Suggests `/wxcode:new-project` as next step
+
 ## [1.3.4] - 2026-02-02
 
 ### Changed
