@@ -117,9 +117,26 @@ questions:
 **If MODE=url:**
 
 1. **Get URL** (if not provided in arguments):
+
+   Use AskUserQuestion with presets AND custom option:
+
+   ```yaml
+   questions:
+     - header: "URL"
+       question: "What URL should I analyze for design patterns?"
+       options:
+         - label: "Enter my own URL"
+           description: "I have a specific website to use as reference"
+         - label: "https://stripe.com"
+           description: "Modern fintech design with clean UI"
+         - label: "https://vercel.com"
+           description: "Developer-focused with dark/light themes"
+         - label: "https://linear.app"
+           description: "Minimal, productivity-focused design"
    ```
-   Ask: "What URL should I analyze for design patterns?"
-   ```
+
+   **IMPORTANT:** "Enter my own URL" must be the FIRST option.
+   When user selects "Other" or "Enter my own URL", ask inline for the URL.
 
 2. **Fetch and analyze:**
    ```
