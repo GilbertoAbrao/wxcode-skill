@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.7] - 2026-02-02
+
+### Fixed
+- **Milestone dashboard shows 0/0 for plans and tasks**
+  - Fixed PLAN.md path discovery: files are in `${MILESTONE_FOLDER}/phases/01-*/`
+  - Fixed task parsing format: uses XML (`<task>`) not Markdown
+  - Added explicit progress calculation from populated phases array
+- **Workflow stage shows "Planning" when executing**
+  - Fixed workflow stage detection: "executing" now shows `in_progress` when some (but not all) phases have SUMMARY.md
+  - `current_stage` now finds first stage with `in_progress` status
+
 ## [1.3.6] - 2026-02-02
 
 ### Fixed
