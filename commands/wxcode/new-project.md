@@ -105,6 +105,12 @@ This is a **Conversion Project**.
 
 **IMPORTANT: Use ONLY the `health_check` tool. Do NOT use `get_conversion_stats` or any other tool.**
 
+**Initial delay:** Wait 5 seconds before first attempt (MCP servers may still be initializing).
+
+```bash
+sleep 5
+```
+
 **Attempt 1:** Call the tool exactly as shown:
 ```
 mcp__wxcode-kb__health_check()
@@ -139,7 +145,31 @@ mcp__wxcode-kb__health_check()
 ✓ WXCODE MCP conectado
 ```
 
-**If fails after 3 attempts:**
+**If fails:** Wait 10 seconds, then **Attempt 4**
+
+**Attempt 4:** Call the tool exactly as shown:
+```
+mcp__wxcode-kb__health_check()
+```
+
+**If success:** Display and continue:
+```
+✓ WXCODE MCP conectado
+```
+
+**If fails:** Wait 10 seconds, then **Attempt 5**
+
+**Attempt 5:** Call the tool exactly as shown:
+```
+mcp__wxcode-kb__health_check()
+```
+
+**If success:** Display and continue:
+```
+✓ WXCODE MCP conectado
+```
+
+**If fails after 5 attempts:**
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
@@ -147,17 +177,19 @@ mcp__wxcode-kb__health_check()
 ╚══════════════════════════════════════════════════════════════╝
 
 Conversion Mode requires the wxcode-kb MCP server.
-Tried 3 times with 10s delay between attempts.
+Tried 5 times with 10s delay between attempts (total ~50s).
 
 **To fix:**
-1. Ensure wxcode-kb MCP server is running
-2. Verify MCP is configured in Claude Code settings
-3. Restart Claude Code if recently configured
+1. Run `/wxcode:mcp-health-check` to test connectivity manually
+2. Ensure wxcode-kb MCP server is running
+3. Verify MCP is configured in Claude Code settings
+4. Restart Claude Code if recently configured
+5. Try running `/wxcode:new-project` again after MCP is confirmed working
 
 **Cannot proceed without MCP.**
 ```
 
-**STOP only after all 3 attempts fail.**
+**STOP only after all 5 attempts fail.**
 
 ---
 

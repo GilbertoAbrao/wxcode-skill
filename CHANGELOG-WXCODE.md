@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.3] - 2026-02-02
+
+### Changed
+- MCP availability check improved: 5s initial delay + 5 attempts (was 3) for ~50s total wait
+- Error message now suggests `/wxcode:mcp-health-check` for manual testing
+
 ## [1.3.2] - 2026-02-02
 
 ### Added
