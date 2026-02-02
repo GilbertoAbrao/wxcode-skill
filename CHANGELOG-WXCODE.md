@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.8] - 2026-02-02
+
+### Fixed
+- **Milestone dashboard not detecting phases in flat structure**
+  - Now supports both nested (`.planning/v1.0-PAGE_Login/phases/`) and flat (`.planning/phases/`) structures
+  - Auto-detects which structure exists and uses correct paths
+  - Fixes ROADMAP.md, REQUIREMENTS.md, and phases directory location
+
 ## [1.3.7] - 2026-02-02
 
 ### Fixed
