@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-02-02
+
+### Fixed
+- MCP availability check now explicitly uses `health_check` tool instead of potentially using `get_conversion_stats`
+
 ## [1.3.0] - 2026-02-02
 
 ### Added

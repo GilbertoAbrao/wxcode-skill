@@ -103,7 +103,12 @@ This is a **Conversion Project**.
 
 **Before proceeding, verify MCP wxcode-kb is available.**
 
-**Attempt 1:** Call `mcp__wxcode-kb__health_check`
+**IMPORTANT: Use ONLY the `health_check` tool. Do NOT use `get_conversion_stats` or any other tool.**
+
+**Attempt 1:** Call the tool exactly as shown:
+```
+mcp__wxcode-kb__health_check()
+```
 
 **If success:** Display and continue:
 ```
@@ -112,7 +117,10 @@ This is a **Conversion Project**.
 
 **If fails:** Wait 10 seconds, then **Attempt 2**
 
-**Attempt 2:** Call `mcp__wxcode-kb__health_check`
+**Attempt 2:** Call the tool exactly as shown:
+```
+mcp__wxcode-kb__health_check()
+```
 
 **If success:** Display and continue:
 ```
@@ -121,7 +129,10 @@ This is a **Conversion Project**.
 
 **If fails:** Wait 10 seconds, then **Attempt 3**
 
-**Attempt 3:** Call `mcp__wxcode-kb__health_check`
+**Attempt 3:** Call the tool exactly as shown:
+```
+mcp__wxcode-kb__health_check()
+```
 
 **If success:** Display and continue:
 ```
