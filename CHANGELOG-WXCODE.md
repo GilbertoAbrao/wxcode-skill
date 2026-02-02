@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-02-02
+
+### Added
+- `/wxcode:mcp-health-check` command to test wxcode-kb MCP server connectivity
+
 ## [1.3.1] - 2026-02-02
 
 ### Fixed
