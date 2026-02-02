@@ -169,7 +169,67 @@ mcp__wxcode-kb__health_check()
 ✓ WXCODE MCP conectado
 ```
 
-**If fails after 5 attempts:**
+**If fails:** Wait 10 seconds, then **Attempt 6**
+
+**Attempt 6:** Call the tool exactly as shown:
+```
+mcp__wxcode-kb__health_check()
+```
+
+**If success:** Display and continue:
+```
+✓ WXCODE MCP conectado
+```
+
+**If fails:** Wait 10 seconds, then **Attempt 7**
+
+**Attempt 7:** Call the tool exactly as shown:
+```
+mcp__wxcode-kb__health_check()
+```
+
+**If success:** Display and continue:
+```
+✓ WXCODE MCP conectado
+```
+
+**If fails:** Wait 10 seconds, then **Attempt 8**
+
+**Attempt 8:** Call the tool exactly as shown:
+```
+mcp__wxcode-kb__health_check()
+```
+
+**If success:** Display and continue:
+```
+✓ WXCODE MCP conectado
+```
+
+**If fails:** Wait 10 seconds, then **Attempt 9**
+
+**Attempt 9:** Call the tool exactly as shown:
+```
+mcp__wxcode-kb__health_check()
+```
+
+**If success:** Display and continue:
+```
+✓ WXCODE MCP conectado
+```
+
+**If fails:** Wait 10 seconds, then **Attempt 10**
+
+**Attempt 10:** Call the tool exactly as shown:
+```
+mcp__wxcode-kb__health_check()
+```
+
+**If success:** Display and continue:
+```
+✓ WXCODE MCP conectado
+```
+
+**If fails after 10 attempts:**
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
@@ -177,7 +237,7 @@ mcp__wxcode-kb__health_check()
 ╚══════════════════════════════════════════════════════════════╝
 
 Conversion Mode requires the wxcode-kb MCP server.
-Tried 5 times with 10s delay between attempts (total ~50s).
+Tried 10 times with 10s delay between attempts (total ~100s).
 
 **To fix:**
 1. Run `/wxcode:mcp-health-check` to test connectivity manually
@@ -189,7 +249,7 @@ Tried 5 times with 10s delay between attempts (total ~50s).
 **Cannot proceed without MCP.**
 ```
 
-**STOP only after all 5 attempts fail.**
+**STOP only after all 10 attempts fail.**
 
 ---
 
