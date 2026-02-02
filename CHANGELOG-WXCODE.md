@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.9] - 2026-02-02
+
+### Fixed
+- **`--all` flag not forcing regeneration**
+  - Added explicit instruction that `--all` means REGENERATE from source files
+  - Prevents "already updated" skip behavior
+- **PLAN.md file naming pattern incorrect**
+  - Fixed: `01-01-PLAN.md` (actual) not `1.1-PLAN.md` (documented)
+- **Milestone dashboard missing nested plans/tasks structure**
+  - Added critical requirement for nested `phases[].plans[].tasks[]` structure
+  - Prevents simplified structure without task details
+
 ## [1.3.8] - 2026-02-02
 
 ### Fixed
