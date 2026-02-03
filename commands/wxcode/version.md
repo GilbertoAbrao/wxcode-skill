@@ -1,46 +1,26 @@
 ---
 name: wxcode:version
-description: Display current WXCODE version and upstream info
+description: Display WXCODE version
 allowed-tools:
   - Read
-  - Bash
 ---
 
 <objective>
-Display the current WXCODE version, upstream GSD version, and installation path.
+Display the current WXCODE version.
 </objective>
 
 <process>
 
-## Read Version Info
+Read and display version:
 
 ```bash
-VERSION=$(cat ~/.claude/get-shit-done/VERSION 2>/dev/null || echo "unknown")
+cat ~/.claude/get-shit-done/VERSION
 ```
 
-## Display Version
-
-Output this directly (not as code block):
+Output format:
 
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- WXCODE v${VERSION}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Based on GSD (Get Shit Done) v1.9.13
-Upstream: github.com/glittercowboy/get-shit-done
-
-Installation: ~/.claude/
-
-Commands:   ~/.claude/commands/wxcode/
-Agents:     ~/.claude/agents/wxcode-*.md
-Reference:  ~/.claude/get-shit-done/
-Bin:        ~/.claude/get-shit-done/bin/
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-/wxcode:update — check for updates
-/wxcode:help   — show all commands
+WXCODE v{VERSION}
 ```
 
 </process>
