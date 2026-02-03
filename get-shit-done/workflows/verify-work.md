@@ -340,11 +340,37 @@ Present summary:
 **If issues > 0:** Proceed to `diagnose_issues`
 
 **If issues == 0:**
+
+Check if this is the last phase in the milestone:
+
+```bash
+# Get current phase number and highest phase number from ROADMAP.md
+CURRENT_PHASE={phase_number}
+HIGHEST_PHASE=$(grep -E "^## Phase [0-9]+" .planning/ROADMAP.md | tail -1 | grep -o '[0-9]\+')
+```
+
+**If CURRENT_PHASE < HIGHEST_PHASE (more phases remain):**
+
 ```
 All tests passed. Ready to continue.
 
-- `/wxcode:plan-phase {next}` — Plan next phase
-- `/wxcode:execute-phase {next}` — Execute next phase
+- `/wxcode:discuss-phase {next}` — Gather context for next phase
+- `/wxcode:plan-phase {next}` — Plan next phase directly
+```
+
+**If CURRENT_PHASE >= HIGHEST_PHASE (milestone complete):**
+
+```
+All tests passed. Milestone complete!
+
+## ▶ Next Up
+
+**Audit milestone** — verify requirements, cross-phase integration, E2E flows
+
+`/wxcode:audit-milestone`
+
+**Also available:**
+- `/wxcode:complete-milestone` — skip audit, archive directly
 ```
 </step>
 

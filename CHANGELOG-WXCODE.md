@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.7] - 2026-02-03
+
+### Fixed
+- **`/wxcode:verify-work` not suggesting audit-milestone after last phase**
+  - Workflow was always suggesting "plan-phase next" without checking if milestone complete
+  - Now detects if current phase is last phase and routes to `/wxcode:audit-milestone`
+  - Consistent with Route B in verify-work.md command
+
+### Changed
+- **Synced with upstream GSD v1.11.1**
+  - Git branching strategy configuration (none/phase/milestone)
+  - Squash merge option at milestone completion
+  - Context compliance verification in plan checker
+  - CONTEXT.md flow fix to downstream agents
+  - Native Gemini CLI support
+
 ## [1.4.6] - 2026-02-02
 
 ### Added
