@@ -36,7 +36,7 @@ allowed-tools: [Read, Write, Bash, Glob, Grep, AskUserQuestion]
 
 **Commands are thin wrappers.** Delegate detailed logic to workflows.
 
-### Workflows (`get-shit-done/workflows/*.md`)
+### Workflows (`wxcode/workflows/*.md`)
 
 No YAML frontmatter. Structure varies by workflow.
 
@@ -55,7 +55,7 @@ Some workflows use domain-specific tags like `<philosophy>`, `<references>`, `<p
 
 **Key principle:** Match the style of the specific workflow you're editing.
 
-### Templates (`get-shit-done/templates/*.md`)
+### Templates (`wxcode/templates/*.md`)
 
 Structure varies. Common patterns:
 - Most start with `# [Name] Template` header
@@ -66,7 +66,7 @@ Structure varies. Common patterns:
 - Square brackets: `[Project Name]`, `[Description]`
 - Curly braces: `{phase}-{plan}-PLAN.md`
 
-### References (`get-shit-done/references/*.md`)
+### References (`wxcode/references/*.md`)
 
 Typically use outer XML containers related to filename, but structure varies.
 
@@ -164,7 +164,7 @@ Build authentication system
 
 **Static references** (always load):
 ```
-@~/.claude/get-shit-done/workflows/execute-phase.md
+@~/.claude/wxcode/workflows/execute-phase.md
 @.planning/PROJECT.md
 ```
 
@@ -215,6 +215,17 @@ Present: Factual statements, verification results, direct answers
 **Good one-liner:** "JWT auth with refresh rotation using jose library"
 
 **Bad one-liner:** "Phase complete" or "Authentication implemented"
+
+### Character Preservation
+
+**ALWAYS preserve diacritics and special characters in text content.**
+
+- ą, ę, ć, ź, ż, ó, ł, ń, ś (Polish)
+- ü, ö, ä, ß (German)
+- é, è, ê, ç (French)
+- and all other language-specific characters
+
+**User's typing style ≠ output style.**
 
 ---
 
@@ -313,7 +324,7 @@ Use subagents for autonomous work. Reserve main context for user interaction.
 
 ## UX Patterns
 
-**Visual patterns:** `get-shit-done/references/ui-brand.md`
+**Visual patterns:** `wxcode/references/ui-brand.md`
 
 Orchestrators @-reference ui-brand.md for stage banners, checkpoint boxes, status symbols, and completion displays.
 

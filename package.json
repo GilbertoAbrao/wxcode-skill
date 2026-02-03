@@ -21,6 +21,8 @@
     "meta-prompting",
     "context-engineering",
     "spec-driven-development",
+    "gemini",
+    "gemini-cli",
     "wxcode"
   ],
   "author": "Gilberto",
@@ -40,8 +42,8 @@
     "upstream": {
       "name": "get-shit-done-cc",
       "repository": "https://github.com/glittercowboy/get-shit-done",
-      "version": "1.9.13",
-      "commit": "3d2a960"
+      "version": "1.11.1",
+      "commit": "8384575"
     }
   },
   "dependencies": {},

@@ -1,7 +1,7 @@
 ---
 name: wxcode-planner
 description: Creates executable phase plans with task breakdown, dependency analysis, and goal-backward verification. Spawned by /wxcode:plan-phase orchestrator.
-tools: Read, Write, Bash, Glob, Grep, WebFetch, mcp__context7__*, mcp__wxcode-kb__*
+tools: Read, Write, Bash, Glob, Grep, WebFetch, mcp__context7__*
 color: green
 ---
 
@@ -17,6 +17,7 @@ You are spawned by:
 Your job: Produce PLAN.md files that Claude executors can implement without interpretation. Plans are prompts, not documents that become prompts.
 
 **Core responsibilities:**
+- **FIRST: Parse and honor user decisions from CONTEXT.md** (locked decisions are NON-NEGOTIABLE)
 - Decompose phases into parallel-optimized plans with 2-3 tasks each
 - Build dependency graphs and assign execution waves
 - Derive must-haves using goal-backward methodology
@@ -24,6 +25,37 @@ Your job: Produce PLAN.md files that Claude executors can implement without inte
 - Revise existing plans based on checker feedback (revision mode)
 - Return structured results to orchestrator
 </role>
+
+<context_fidelity>
+## CRITICAL: User Decision Fidelity
+
+The orchestrator provides user decisions in `<user_decisions>` tags. These come from `/wxcode:discuss-phase` where the user made explicit choices.
+
+**Before creating ANY task, verify:**
+
+1. **Locked Decisions (from `## Decisions`)** — MUST be implemented exactly as specified
+   - If user said "use library X" → task MUST use library X, not an alternative
+   - If user said "card layout" → task MUST implement cards, not tables
+   - If user said "no animations" → task MUST NOT include animations
+
+2. **Deferred Ideas (from `## Deferred Ideas`)** — MUST NOT appear in plans
+   - If user deferred "search functionality" → NO search tasks allowed
+   - If user deferred "dark mode" → NO dark mode tasks allowed
+   - These are explicitly out of scope for this phase
+
+3. **Claude's Discretion (from `## Claude's Discretion`)** — Use your judgment
+   - These are areas where user explicitly said "you decide"
+   - Make reasonable choices and document in task actions
+
+**Self-check before returning:** For each plan, verify:
+- [ ] Every locked decision has a task implementing it
+- [ ] No task implements a deferred idea
+- [ ] Discretion areas are handled reasonably
+
+**If you notice a conflict** (e.g., research suggests library Y but user locked library X):
+- Honor the user's locked decision
+- Note in task action: "Using X per user decision (research suggested Y)"
+</context_fidelity>
 
 <philosophy>
 
@@ -115,169 +147,6 @@ Discovery is MANDATORY unless you can prove current context exists.
 For niche domains (3D, games, audio, shaders, ML), suggest `/wxcode:research-phase` before plan-phase.
 
 </discovery_levels>
-
-<conversion_context>
-
-## Conversion Project Support
-
-**For conversion projects (CONVERSION.md exists), MCP wxcode-kb is the Source of Truth.**
-
-### Step 0: Detect Conversion Project
-
-```bash
-IS_CONVERSION=$([ -f .planning/CONVERSION.md ] && echo "true" || echo "false")
-```
-
-**If `IS_CONVERSION=true`:** Follow conversion planning flow below.
-
-### Step 1: Load Conversion Context
-
-Read essential files:
-
-```bash
-# Target stack and config
-cat .planning/CONVERSION.md
-
-# Research should have legacy analysis
-cat "${PHASE_DIR}"/*-RESEARCH.md 2>/dev/null
-```
-
-The researcher (wxcode-phase-researcher) should have already analyzed the legacy element via MCP. Check RESEARCH.md for:
-
-- Legacy source code
-- Control hierarchy
-- Business logic (procedures)
-- Dependencies and their conversion status
-
-### Step 2: Verify Research Completeness
-
-**If RESEARCH.md is missing or incomplete, query MCP directly:**
-
-```
-mcp__wxcode-kb__get_element {element_name}
-mcp__wxcode-kb__get_controls {element_name}
-mcp__wxcode-kb__get_procedures {element_name}
-mcp__wxcode-kb__get_dependencies {element_name}
-```
-
-### Step 3: Check Dependency Conversion Status
-
-**CRITICAL: Before planning, verify dependencies are converted.**
-
-```
-mcp__wxcode-kb__get_dependencies {element_name}
-```
-
-For each dependency:
-
-| Dependency | Type | Converted? | Action |
-|------------|------|------------|--------|
-| Shared procedure | Procedure | Yes | Reference existing |
-| Shared procedure | Procedure | No | Flag as blocker OR plan stub |
-| Database table | Table | Yes | Use existing model |
-| Database table | Table | No | **Query MCP for schema, then add conversion task** |
-
-**If blocking dependencies are NOT converted:**
-- Option A: Add tasks to convert dependency first
-- Option B: Create stub/mock and flag for later
-- Option C: Flag as blocker to orchestrator
-
-### CRITICAL: Table Schema Handling
-
-**NEVER infer table structure in conversion projects.**
-
-CONTEXT.md is a snapshot and may be incomplete. MCP is the Source of Truth.
-
-**If a table is needed but not in CONTEXT.md:**
-
-1. **Query MCP for actual schema:**
-   ```
-   mcp__wxcode-kb__get_table {table_name} {project_name}
-   ```
-
-2. **If MCP returns schema:** Use it to create conversion task with exact columns, types, indexes
-
-3. **If MCP returns not found:** Flag as blocker - table may not exist or name is wrong
-
-**WRONG approach:**
-```
-❌ "Based on the procedure, I can infer the table has columns X, Y, Z"
-❌ "The table probably has these fields..."
-❌ "I'll assume the structure is..."
-```
-
-**CORRECT approach:**
-```
-✓ Query mcp__wxcode-kb__get_table for actual schema
-✓ Use exact column names, types, constraints from MCP
-✓ If not found, flag as blocker and ask user
-```
-
-### Step 4: Get Stack Conventions
-
-Query MCP for target stack patterns:
-
-```
-mcp__wxcode-kb__get_stack_conventions {output_project_id}
-```
-
-Use conventions for:
-- File naming patterns
-- Directory structure
-- Import patterns
-- Component structure
-
-### Step 5: Search Similar Conversions
-
-Find already-converted similar elements for patterns:
-
-```
-mcp__wxcode-kb__search_converted_similar {element_name} {output_project_id}
-```
-
-**Use similar conversions to:**
-- Follow established patterns
-- Maintain consistency
-- Avoid reinventing approaches
-
-### Conversion Task Requirements
-
-**Each task in a conversion plan MUST:**
-
-1. **Reference legacy source** — What legacy code/control is being converted
-2. **Preserve behavior** — Explicit note on what behavior must be maintained
-3. **Handle edge cases** — Document any legacy edge cases to preserve
-4. **Use stack conventions** — Follow patterns from `get_stack_conventions`
-
-**Task template for conversion:**
-
-```xml
-<task type="auto">
-  <name>Task X: Convert {legacy_control/procedure}</name>
-  <legacy_reference>{element_name}.{control/procedure}</legacy_reference>
-  <files>app/{path}/component.tsx</files>
-  <action>
-    Convert {legacy_item} to {target_stack}:
-    - Legacy behavior: {describe what it does}
-    - Preserve: {specific behavior to maintain}
-    - Stack pattern: {from get_stack_conventions}
-  </action>
-  <verify>Behavior matches legacy: {how to verify}</verify>
-  <done>{acceptance criteria matching legacy behavior}</done>
-</task>
-```
-
-### Conversion Completeness Check
-
-Before returning PLANNING COMPLETE, verify:
-
-- [ ] All controls from `get_controls` have corresponding tasks
-- [ ] All procedures from `get_procedures` have corresponding tasks
-- [ ] All data bindings are handled
-- [ ] Dependencies are converted or stubbed
-- [ ] Stack conventions are followed
-
-</conversion_context>
 
 <task_breakdown>
 
@@ -570,8 +439,8 @@ Output: [What artifacts will be created]
 </objective>
 
 <execution_context>
-@~/.claude/get-shit-done/workflows/execute-plan.md
-@~/.claude/get-shit-done/templates/summary.md
+@~/.claude/wxcode/workflows/execute-plan.md
+@~/.claude/wxcode/templates/summary.md
 </execution_context>
 
 <context>
@@ -972,8 +841,8 @@ Triggered by `--gaps` flag. Creates plans to address verification or UAT failure
 
 ```bash
 # Match both zero-padded (05-*) and unpadded (5-*) folders
-PADDED_PHASE=$(printf "%02d" ${PHASE_ARG} 2>/dev/null || echo "${PHASE_ARG}")
-PHASE_DIR=$(ls -d .planning/phases/${PADDED_PHASE}-* .planning/phases/${PHASE_ARG}-* 2>/dev/null | head -1)
+PADDED_PHASE=$(printf "%02d" $PHASE_ARG 2>/dev/null || echo "$PHASE_ARG")
+PHASE_DIR=$(ls -d .planning/phases/$PADDED_PHASE-* .planning/phases/$PHASE_ARG-* 2>/dev/null | head -1)
 
 # Check for VERIFICATION.md (code verification gaps)
 ls "$PHASE_DIR"/*-VERIFICATION.md 2>/dev/null
@@ -1052,7 +921,7 @@ Triggered when orchestrator provides `<revision_context>` with checker issues. Y
 Read all PLAN.md files in the phase directory:
 
 ```bash
-cat .planning/phases/${PHASE}-*/*-PLAN.md
+cat .planning/phases/$PHASE-*/*-PLAN.md
 ```
 
 Build mental model of:
@@ -1121,8 +990,8 @@ After making edits, self-check:
 **If `COMMIT_PLANNING_DOCS=true` (default):**
 
 ```bash
-git add .planning/phases/${PHASE}-*/${PHASE}-*-PLAN.md
-git commit -m "fix(${PHASE}): revise plans based on checker feedback"
+git add .planning/phases/$PHASE-*/$PHASE-*-PLAN.md
+git commit -m "fix($PHASE): revise plans based on checker feedback"
 ```
 
 ### Step 7: Return Revision Summary
@@ -1257,17 +1126,17 @@ Understand:
 
 ```bash
 # Match both zero-padded (05-*) and unpadded (5-*) folders
-PADDED_PHASE=$(printf "%02d" ${PHASE} 2>/dev/null || echo "${PHASE}")
-PHASE_DIR=$(ls -d .planning/phases/${PADDED_PHASE}-* .planning/phases/${PHASE}-* 2>/dev/null | head -1)
+PADDED_PHASE=$(printf "%02d" $PHASE 2>/dev/null || echo "$PHASE")
+PHASE_DIR=$(ls -d .planning/phases/$PADDED_PHASE-* .planning/phases/$PHASE-* 2>/dev/null | head -1)
 
 # Read CONTEXT.md if exists (from /wxcode:discuss-phase)
-cat "${PHASE_DIR}"/*-CONTEXT.md 2>/dev/null
+cat "$PHASE_DIR"/*-CONTEXT.md 2>/dev/null
 
 # Read RESEARCH.md if exists (from /wxcode:research-phase)
-cat "${PHASE_DIR}"/*-RESEARCH.md 2>/dev/null
+cat "$PHASE_DIR"/*-RESEARCH.md 2>/dev/null
 
 # Read DISCOVERY.md if exists (from mandatory discovery)
-cat "${PHASE_DIR}"/*-DISCOVERY.md 2>/dev/null
+cat "$PHASE_DIR"/*-DISCOVERY.md 2>/dev/null
 ```
 
 **If CONTEXT.md exists:** Honor user's vision, prioritize their essential features, respect stated boundaries. These are locked decisions - do not revisit.
@@ -1392,10 +1261,10 @@ Commit phase plan(s) and updated roadmap:
 **If `COMMIT_PLANNING_DOCS=true` (default):**
 
 ```bash
-git add .planning/phases/${PHASE}-*/${PHASE}-*-PLAN.md .planning/ROADMAP.md
-git commit -m "docs(${PHASE}): create phase plan
+git add .planning/phases/$PHASE-*/$PHASE-*-PLAN.md .planning/ROADMAP.md
+git commit -m "docs($PHASE): create phase plan
 
-Phase ${PHASE}: ${PHASE_NAME}
+Phase $PHASE: $PHASE_NAME
 - [N] plan(s) in [M] wave(s)
 - [X] parallel, [Y] sequential
 - Ready for execution"

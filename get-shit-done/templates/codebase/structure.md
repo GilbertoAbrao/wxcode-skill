@@ -15,7 +15,7 @@ Template for `.planning/codebase/STRUCTURE.md` - captures physical file organiza
 
 ## Directory Layout
 
-[ASCII tree of top-level directories with purpose]
+[ASCII box-drawing tree of top-level directories with purpose - use ├── └── │ characters for tree structure only]
 
 ```
 [project-root]/
@@ -123,11 +123,11 @@ Template for `.planning/codebase/STRUCTURE.md` - captures physical file organiza
 ## Directory Layout
 
 ```
-get-shit-done/
+wxcode/
 ├── bin/                # Executable entry points
 ├── commands/           # Slash command definitions
 │   └── gsd/           # WXCODE-specific commands
-├── get-shit-done/     # Skill resources
+├── wxcode/     # Skill resources
 │   ├── references/    # Principle documents
 │   ├── templates/     # File templates
 │   └── workflows/     # Multi-step procedures
@@ -151,19 +151,19 @@ get-shit-done/
 - Key files: new-project.md, plan-phase.md, execute-plan.md
 - Subdirectories: None (flat structure)
 
-**get-shit-done/references/**
+**wxcode/references/**
 - Purpose: Core philosophy and guidance documents
 - Contains: principles.md, questioning.md, plan-format.md
 - Key files: principles.md - system philosophy
 - Subdirectories: None
 
-**get-shit-done/templates/**
+**wxcode/templates/**
 - Purpose: Document templates for .planning/ files
 - Contains: Template definitions with frontmatter
 - Key files: project.md, roadmap.md, plan.md, summary.md
 - Subdirectories: codebase/ (new - for stack/architecture/structure templates)
 
-**get-shit-done/workflows/**
+**wxcode/workflows/**
 - Purpose: Reusable multi-step procedures
 - Contains: Workflow definitions called by commands
 - Key files: execute-plan.md, research-phase.md
@@ -211,15 +211,15 @@ get-shit-done/
 - Documentation: Update `README.md` with new command
 
 **New Template:**
-- Implementation: `get-shit-done/templates/{name}.md`
+- Implementation: `wxcode/templates/{name}.md`
 - Documentation: Template is self-documenting (includes guidelines)
 
 **New Workflow:**
-- Implementation: `get-shit-done/workflows/{name}.md`
-- Usage: Reference from command with `@~/.claude/get-shit-done/workflows/{name}.md`
+- Implementation: `wxcode/workflows/{name}.md`
+- Usage: Reference from command with `@~/.claude/wxcode/workflows/{name}.md`
 
 **New Reference Document:**
-- Implementation: `get-shit-done/references/{name}.md`
+- Implementation: `wxcode/references/{name}.md`
 - Usage: Reference from commands/workflows as needed
 
 **Utilities:**
@@ -228,7 +228,7 @@ get-shit-done/
 
 ## Special Directories
 
-**get-shit-done/**
+**wxcode/**
 - Purpose: Resources installed to ~/.claude/
 - Source: Copied by bin/install.js during installation
 - Committed: Yes (source of truth)
@@ -247,7 +247,7 @@ get-shit-done/
 
 <guidelines>
 **What belongs in STRUCTURE.md:**
-- Directory layout (ASCII tree)
+- Directory layout (ASCII box-drawing tree for structure visualization)
 - Purpose of each directory
 - Key file locations (entry points, configs, core logic)
 - Naming conventions
@@ -267,7 +267,7 @@ get-shit-done/
 - Locate entry points, configs, and main logic areas
 - Keep directory tree concise (max 2-3 levels)
 
-**ASCII tree format:**
+**Tree format (ASCII box-drawing characters for structure only):**
 ```
 root/
 ├── dir1/           # Purpose

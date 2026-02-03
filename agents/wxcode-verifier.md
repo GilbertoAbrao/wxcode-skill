@@ -1,7 +1,7 @@
 ---
 name: wxcode-verifier
 description: Verifies phase goal achievement through goal-backward analysis. Checks codebase delivers what phase promised, not just that tasks completed. Creates VERIFICATION.md report.
-tools: Read, Bash, Grep, Glob, mcp__wxcode-kb__*
+tools: Read, Bash, Grep, Glob
 color: green
 ---
 
@@ -61,87 +61,13 @@ ls "$PHASE_DIR"/*-PLAN.md 2>/dev/null
 ls "$PHASE_DIR"/*-SUMMARY.md 2>/dev/null
 
 # Phase goal from ROADMAP
-grep -A 5 "Phase ${PHASE_NUM}" .planning/ROADMAP.md
+grep -A 5 "Phase $PHASE_NUM" .planning/ROADMAP.md
 
 # Requirements mapped to this phase
-grep -E "^| ${PHASE_NUM}" .planning/REQUIREMENTS.md 2>/dev/null
+grep -E "^| $PHASE_NUM" .planning/REQUIREMENTS.md 2>/dev/null
 ```
 
 Extract phase goal from ROADMAP.md. This is the outcome to verify, not the tasks.
-
-## Step 1.5: Load Conversion Context (Conversion Projects Only)
-
-**For conversion projects, MCP wxcode-kb is the Source of Truth for expected behavior.**
-
-```bash
-IS_CONVERSION=$([ -f .planning/CONVERSION.md ] && echo "true" || echo "false")
-```
-
-**If `IS_CONVERSION=true`:**
-
-### 1.5.1: Identify Element Being Verified
-
-From phase description, ROADMAP, or CONVERSION.md, identify:
-- Element name (e.g., `PAGE_Login`)
-- Output project ID (from CONVERSION.md)
-
-### 1.5.2: Load Legacy Element Definition
-
-Query MCP for the Source of Truth:
-
-```
-mcp__wxcode-kb__get_element {element_name}
-mcp__wxcode-kb__get_controls {element_name}
-mcp__wxcode-kb__get_procedures {element_name}
-mcp__wxcode-kb__get_data_bindings {element_name}
-```
-
-**Document:**
-- All controls that should exist in converted code
-- All procedures that should be implemented
-- All data bindings that should work
-- Expected behaviors from legacy code
-
-### 1.5.3: Build Conversion Verification Matrix
-
-For each legacy item, define what to verify in converted code:
-
-| Legacy Item | Type | Expected in Converted | How to Verify |
-|-------------|------|----------------------|---------------|
-| EDT_Login | Control | Input field for username | grep for input element |
-| EDT_Senha | Control | Password field | grep for password input |
-| BTN_Entrar | Control | Submit button | grep for button/submit |
-| ValidaLogin | Procedure | Auth validation logic | grep for validation function |
-| OnClick(BTN_Entrar) | Event | Form submit handler | grep for onSubmit/handleSubmit |
-
-### 1.5.4: Define Conversion Must-Haves
-
-Derive truths from legacy behavior:
-
-```yaml
-conversion_must_haves:
-  truths:
-    - "User can enter username (maps to EDT_Login)"
-    - "User can enter password (maps to EDT_Senha)"
-    - "User can submit form (maps to BTN_Entrar click)"
-    - "Invalid credentials show error (maps to legacy error handling)"
-
-  artifacts:
-    - path: "app/templates/auth/login.html"
-      must_contain: ["input", "password", "submit"]
-      legacy_maps_to: ["EDT_Login", "EDT_Senha", "BTN_Entrar"]
-
-    - path: "app/services/auth.py"
-      must_contain: ["validate", "authenticate"]
-      legacy_maps_to: ["ValidaLogin procedure"]
-
-  behaviors:
-    - legacy: "BTN_Entrar.OnClick validates then redirects"
-      converted: "Form submit validates then redirects"
-      verify: "Check onSubmit calls auth service"
-```
-
-**These conversion must-haves are ADDITIONAL to standard must-haves from Step 2.**
 
 ## Step 2: Establish Must-Haves (Initial Mode Only)
 
@@ -446,7 +372,7 @@ verify_state_render_link() {
 If REQUIREMENTS.md exists and has requirements mapped to this phase:
 
 ```bash
-grep -E "Phase ${PHASE_NUM}" .planning/REQUIREMENTS.md 2>/dev/null
+grep -E "Phase $PHASE_NUM" .planning/REQUIREMENTS.md 2>/dev/null
 ```
 
 For each requirement:
@@ -460,87 +386,6 @@ For each requirement:
 - ✓ SATISFIED: All supporting truths verified
 - ✗ BLOCKED: One or more supporting truths failed
 - ? NEEDS HUMAN: Can't verify requirement programmatically
-
-## Step 6.5: Verify Conversion Completeness (Conversion Projects Only)
-
-**If `IS_CONVERSION=true` (from Step 1.5):**
-
-### 6.5.1: Verify All Controls Converted
-
-Compare legacy controls (from MCP) with converted code:
-
-```bash
-# For each control from get_controls, verify it has a modern equivalent
-# Example: EDT_Login -> input field exists in template/component
-```
-
-**Check matrix:**
-
-| Legacy Control | Type | Expected Location | Found | Status |
-|----------------|------|-------------------|-------|--------|
-| EDT_Login | Input | login.html | Yes | ✓ |
-| EDT_Senha | Input | login.html | Yes | ✓ |
-| BTN_Entrar | Button | login.html | Yes | ✓ |
-| LBL_Erro | Label | login.html | No | ✗ MISSING |
-
-### 6.5.2: Verify All Procedures Converted
-
-Compare legacy procedures (from MCP) with converted code:
-
-```bash
-# For each procedure from get_procedures, verify logic exists
-grep -r "function_name\|method_name" {output_project}/
-```
-
-**Check matrix:**
-
-| Legacy Procedure | Purpose | Expected Location | Found | Status |
-|------------------|---------|-------------------|-------|--------|
-| ValidaLogin | Auth validation | services/auth.py | Yes | ✓ |
-| OnClick_BTN_Entrar | Form submit | routes/auth.py | Yes | ✓ |
-
-### 6.5.3: Verify Data Bindings Preserved
-
-Check that data bindings from legacy are preserved:
-
-```
-mcp__wxcode-kb__get_data_bindings {element_name}
-```
-
-For each binding:
-- Form field -> database field mapping should work
-- CRUD operations should use correct fields
-
-### 6.5.4: Verify Behavior Equivalence
-
-**Key behaviors to check:**
-
-| Legacy Behavior | How Verified | Status |
-|-----------------|--------------|--------|
-| Login validates credentials | Auth service has validation | ✓ |
-| Error shows on invalid login | Error handling exists | ✓ |
-| Success redirects to dashboard | Redirect logic exists | ✓ |
-
-### 6.5.5: Conversion Gaps
-
-If conversion items are missing, add to gaps:
-
-```yaml
-conversion_gaps:
-  - type: control
-    legacy_item: "LBL_Erro"
-    description: "Error label not converted"
-    impact: "User won't see error messages"
-    fix: "Add error display element to login template"
-
-  - type: procedure
-    legacy_item: "LogAcesso"
-    description: "Access logging procedure not implemented"
-    impact: "No audit trail for logins"
-    fix: "Add logging to auth service"
-```
-
-**These gaps are added to the standard gaps output for `/wxcode:plan-phase --gaps`.**
 
 ## Step 7: Scan for Anti-Patterns
 

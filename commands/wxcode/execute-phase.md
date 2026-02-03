@@ -12,7 +12,6 @@ allowed-tools:
   - Task
   - TodoWrite
   - AskUserQuestion
-  - mcp__wxcode-kb__*
 ---
 
 <objective>
@@ -24,8 +23,8 @@ Context budget: ~15% orchestrator, 100% fresh per subagent.
 </objective>
 
 <execution_context>
-@~/.claude/get-shit-done/references/ui-brand.md
-@~/.claude/get-shit-done/workflows/execute-phase.md
+@~/.claude/wxcode/references/ui-brand.md
+@~/.claude/wxcode/workflows/execute-phase.md
 </execution_context>
 
 <context>
@@ -39,48 +38,6 @@ Phase: $ARGUMENTS
 </context>
 
 <process>
-
-## MCP Health Check (Precondition)
-
-**Before proceeding, verify MCP wxcode-kb is available.**
-
-**Attempt 1:** Call `mcp__wxcode-kb__health_check`
-
-**If success:** Continue to step 0.
-
-**If fails:** Wait 10 seconds, then **Attempt 2**
-
-**Attempt 2:** Call `mcp__wxcode-kb__health_check`
-
-**If success:** Continue to step 0.
-
-**If fails:** Wait 10 seconds, then **Attempt 3**
-
-**Attempt 3:** Call `mcp__wxcode-kb__health_check`
-
-**If success:** Continue to step 0.
-
-**If fails after 3 attempts:**
-
-```
-╔══════════════════════════════════════════════════════════════╗
-║  ERROR: MCP wxcode-kb not available                          ║
-╚══════════════════════════════════════════════════════════════╝
-
-This command requires the wxcode-kb MCP server.
-
-**To fix:**
-1. Ensure wxcode-kb MCP server is running
-2. Verify MCP is configured in Claude Code settings
-3. Restart Claude Code if recently configured
-
-**Cannot proceed without MCP.**
-```
-
-**STOP and abort command.**
-
----
-
 0. **Resolve Model Profile**
 
    Read model profile for agent spawning:
@@ -132,9 +89,13 @@ This command requires the wxcode-kb MCP server.
    git status --porcelain
    ```
 
-   **If changes exist:** Orchestrator made corrections between executor completions. Commit them:
+   **If changes exist:** Orchestrator made corrections between executor completions. Stage and commit them individually:
    ```bash
-   git add -u && git commit -m "fix({phase}): orchestrator corrections"
+   # Stage each modified file individually (never use git add -u, git add ., or git add -A)
+   git status --porcelain | grep '^ M' | cut -c4- | while read file; do
+     git add "$file"
+   done
+   git commit -m "fix({phase}): orchestrator corrections"
    ```
 
    **If clean:** Continue to verification.
@@ -325,7 +286,7 @@ Plans with `autonomous: false` have checkpoints. The execute-phase.md workflow h
 - Orchestrator presents to user, collects response
 - Spawns fresh continuation agent (not resume)
 
-See `@~/.claude/get-shit-done/workflows/execute-phase.md` step `checkpoint_handling` for complete details.
+See `@~/.claude/wxcode/workflows/execute-phase.md` step `checkpoint_handling` for complete details.
 </checkpoint_handling>
 
 <deviation_rules>
@@ -378,26 +339,5 @@ After all plans in phase complete (step 7):
 - [ ] STATE.md reflects phase completion
 - [ ] ROADMAP.md updated
 - [ ] REQUIREMENTS.md updated (phase requirements marked Complete)
-- [ ] Dashboard updated (see below)
 - [ ] User informed of next steps
 </success_criteria>
-
-<dashboard_update>
-
-## Update Dashboards (Final Step)
-
-**MANDATORY:** After state changes, regenerate dashboards using the Python script.
-
-```bash
-python3 ~/.claude/get-shit-done/bin/generate-dashboard.py --all --project-dir .
-```
-
-This script:
-- Parses all `.planning/` files deterministically
-- Extracts tasks from PLAN.md XML blocks
-- Generates proper nested `phases[].plans[].tasks[]` structure
-- Outputs `[WXCODE:DASHBOARD_UPDATED]` notifications
-
-**Do NOT generate dashboard JSON manually via LLM.**
-
-</dashboard_update>

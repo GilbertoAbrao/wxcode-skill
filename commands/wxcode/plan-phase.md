@@ -12,11 +12,10 @@ allowed-tools:
   - Task
   - WebFetch
   - mcp__context7__*
-  - mcp__wxcode-kb__*
 ---
 
 <execution_context>
-@~/.claude/get-shit-done/references/ui-brand.md
+@~/.claude/wxcode/references/ui-brand.md
 </execution_context>
 
 <objective>
@@ -42,47 +41,6 @@ Normalize phase input in step 2 before any directory lookups.
 </context>
 
 <process>
-
-## 0. MCP Health Check (Precondition)
-
-**Before proceeding, verify MCP wxcode-kb is available.**
-
-**Attempt 1:** Call `mcp__wxcode-kb__health_check`
-
-**If success:** Continue to step 1.
-
-**If fails:** Wait 10 seconds, then **Attempt 2**
-
-**Attempt 2:** Call `mcp__wxcode-kb__health_check`
-
-**If success:** Continue to step 1.
-
-**If fails:** Wait 10 seconds, then **Attempt 3**
-
-**Attempt 3:** Call `mcp__wxcode-kb__health_check`
-
-**If success:** Continue to step 1.
-
-**If fails after 3 attempts:**
-
-```
-╔══════════════════════════════════════════════════════════════╗
-║  ERROR: MCP wxcode-kb not available                          ║
-╚══════════════════════════════════════════════════════════════╝
-
-This command requires the wxcode-kb MCP server.
-
-**To fix:**
-1. Ensure wxcode-kb MCP server is running
-2. Verify MCP is configured in Claude Code settings
-3. Restart Claude Code if recently configured
-
-**Cannot proceed without MCP.**
-```
-
-**STOP and abort command.**
-
----
 
 ## 1. Validate Environment and Resolve Model Profile
 
@@ -148,7 +106,7 @@ grep -A5 "Phase ${PHASE}:" .planning/ROADMAP.md 2>/dev/null
 
 **If not found:** Error with available phases. **If found:** Extract phase number, name, description.
 
-## 4. Ensure Phase Directory Exists
+## 4. Ensure Phase Directory Exists and Load CONTEXT.md
 
 ```bash
 # PHASE is already normalized (08, 02.1, etc.) from step 2
@@ -159,7 +117,18 @@ if [ -z "$PHASE_DIR" ]; then
   mkdir -p ".planning/phases/${PHASE}-${PHASE_NAME}"
   PHASE_DIR=".planning/phases/${PHASE}-${PHASE_NAME}"
 fi
+
+# Load CONTEXT.md immediately - this informs ALL downstream agents
+CONTEXT_CONTENT=$(cat "${PHASE_DIR}"/*-CONTEXT.md 2>/dev/null)
 ```
+
+**CRITICAL:** Store `CONTEXT_CONTENT` now. It must be passed to:
+- **Researcher** — constrains what to research (locked decisions vs Claude's discretion)
+- **Planner** — locked decisions must be honored, not revisited
+- **Checker** — verifies plans respect user's stated vision
+- **Revision** — context for targeted fixes
+
+If CONTEXT.md exists, display: `Using phase context from: ${PHASE_DIR}/*-CONTEXT.md`
 
 ## 5. Handle Research
 
@@ -202,7 +171,7 @@ Proceed to spawn researcher
 
 ### Spawn wxcode-phase-researcher
 
-Gather context for research prompt:
+Gather additional context for research prompt:
 
 ```bash
 # Get phase description from roadmap
@@ -214,8 +183,7 @@ REQUIREMENTS=$(cat .planning/REQUIREMENTS.md 2>/dev/null | grep -A100 "## Requir
 # Get prior decisions from STATE.md
 DECISIONS=$(grep -A20 "### Decisions Made" .planning/STATE.md 2>/dev/null)
 
-# Get phase context if exists
-PHASE_CONTEXT=$(cat "${PHASE_DIR}"/*-CONTEXT.md 2>/dev/null)
+# CONTEXT_CONTENT already loaded in step 4
 ```
 
 Fill research prompt and spawn:
@@ -227,19 +195,26 @@ Research how to implement Phase {phase_number}: {phase_name}
 Answer: "What do I need to know to PLAN this phase well?"
 </objective>
 
-<context>
+<phase_context>
+**IMPORTANT:** If CONTEXT.md exists below, it contains user decisions from /wxcode:discuss-phase.
+
+- **Decisions section** = Locked choices — research THESE deeply, don't explore alternatives
+- **Claude's Discretion section** = Your freedom areas — research options, make recommendations
+- **Deferred Ideas section** = Out of scope — ignore completely
+
+{context_content}
+</phase_context>
+
+<additional_context>
 **Phase description:**
 {phase_description}
 
 **Requirements (if any):**
 {requirements}
 
-**Prior decisions:**
+**Prior decisions from STATE.md:**
 {decisions}
-
-**Phase context (if any):**
-{phase_context}
-</context>
+</additional_context>
 
 <output>
 Write research findings to: {phase_dir}/{phase}-RESEARCH.md
@@ -285,7 +260,7 @@ ROADMAP_CONTENT=$(cat .planning/ROADMAP.md)
 
 # Read optional files (empty string if missing)
 REQUIREMENTS_CONTENT=$(cat .planning/REQUIREMENTS.md 2>/dev/null)
-CONTEXT_CONTENT=$(cat "${PHASE_DIR}"/*-CONTEXT.md 2>/dev/null)
+# CONTEXT_CONTENT already loaded in step 4
 RESEARCH_CONTENT=$(cat "${PHASE_DIR}"/*-RESEARCH.md 2>/dev/null)
 
 # Gap closure files (only if --gaps mode)
@@ -322,6 +297,12 @@ Fill prompt with inlined content and spawn:
 {requirements_content}
 
 **Phase Context (if exists):**
+
+IMPORTANT: If phase context exists below, it contains USER DECISIONS from /wxcode:discuss-phase.
+- **Decisions** = LOCKED — honor these exactly, do not revisit or suggest alternatives
+- **Claude's Discretion** = Your freedom — make implementation choices here
+- **Deferred Ideas** = Out of scope — do NOT include in this phase
+
 {context_content}
 
 **Research (if exists):**
@@ -394,14 +375,14 @@ Display:
 ◆ Spawning plan checker...
 ```
 
-Read plans and requirements for the checker:
+Read plans for the checker:
 
 ```bash
 # Read all plans in phase directory
 PLANS_CONTENT=$(cat "${PHASE_DIR}"/*-PLAN.md 2>/dev/null)
 
-# Read requirements (reuse from step 7 if available)
-REQUIREMENTS_CONTENT=$(cat .planning/REQUIREMENTS.md 2>/dev/null)
+# CONTEXT_CONTENT already loaded in step 4
+# REQUIREMENTS_CONTENT already loaded in step 7
 ```
 
 Fill checker prompt with inlined content and spawn:
@@ -417,6 +398,17 @@ Fill checker prompt with inlined content and spawn:
 
 **Requirements (if exists):**
 {requirements_content}
+
+**Phase Context (if exists):**
+
+IMPORTANT: If phase context exists below, it contains USER DECISIONS from /wxcode:discuss-phase.
+Plans MUST honor these decisions. Flag as issue if plans contradict user's stated vision.
+
+- **Decisions** = LOCKED — plans must implement these exactly
+- **Claude's Discretion** = Freedom areas — plans can choose approach
+- **Deferred Ideas** = Out of scope — plans must NOT include these
+
+{context_content}
 
 </verification_context>
 
@@ -460,6 +452,7 @@ Read current plans for revision context:
 
 ```bash
 PLANS_CONTENT=$(cat "${PHASE_DIR}"/*-PLAN.md 2>/dev/null)
+# CONTEXT_CONTENT already loaded in step 4
 ```
 
 Spawn wxcode-planner with revision prompt:
@@ -476,11 +469,18 @@ Spawn wxcode-planner with revision prompt:
 **Checker issues:**
 {structured_issues_from_checker}
 
+**Phase Context (if exists):**
+
+IMPORTANT: If phase context exists, revisions MUST still honor user decisions.
+
+{context_content}
+
 </revision_context>
 
 <instructions>
 Make targeted updates to address checker issues.
 Do NOT replan from scratch unless issues are fundamental.
+Revisions must still honor all locked decisions from Phase Context.
 Return what changed.
 </instructions>
 ```
@@ -555,34 +555,14 @@ Verification: {Passed | Passed with override | Skipped}
 - [ ] .planning/ directory validated
 - [ ] Phase validated against roadmap
 - [ ] Phase directory created if needed
+- [ ] CONTEXT.md loaded early (step 4) and passed to ALL agents
 - [ ] Research completed (unless --skip-research or --gaps or exists)
-- [ ] wxcode-phase-researcher spawned if research needed
+- [ ] wxcode-phase-researcher spawned with CONTEXT.md (constrains research scope)
 - [ ] Existing plans checked
-- [ ] wxcode-planner spawned with context (including RESEARCH.md if available)
+- [ ] wxcode-planner spawned with context (CONTEXT.md + RESEARCH.md)
 - [ ] Plans created (PLANNING COMPLETE or CHECKPOINT handled)
-- [ ] wxcode-plan-checker spawned (unless --skip-verify)
+- [ ] wxcode-plan-checker spawned with CONTEXT.md (verifies context compliance)
 - [ ] Verification passed OR user override OR max iterations with user decision
-- [ ] Dashboard updated (see below)
 - [ ] User sees status between agent spawns
 - [ ] User knows next steps (execute or review)
 </success_criteria>
-
-<dashboard_update>
-
-## Update Dashboards (Final Step)
-
-**MANDATORY:** After state changes, regenerate dashboards using the Python script.
-
-```bash
-python3 ~/.claude/get-shit-done/bin/generate-dashboard.py --all --project-dir .
-```
-
-This script:
-- Parses all `.planning/` files deterministically
-- Extracts tasks from PLAN.md XML blocks
-- Generates proper nested `phases[].plans[].tasks[]` structure
-- Outputs `[WXCODE:DASHBOARD_UPDATED]` notifications
-
-**Do NOT generate dashboard JSON manually via LLM.**
-
-</dashboard_update>
