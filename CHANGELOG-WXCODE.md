@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.3] - 2026-02-02
+
+### Changed
+- **All commands now use Python script for dashboard updates**
+  - Replaced LLM-based dashboard generation in 9 commands
+  - Commands affected: add-phase, complete-milestone, execute-phase, insert-phase, new-milestone, new-project, plan-phase, remove-phase, verify-work
+  - All now call `python3 ~/.claude/get-shit-done/bin/generate-dashboard.py --all`
+  - Ensures consistent, deterministic dashboard JSON with tasks
+
 ## [1.4.2] - 2026-02-02
 
 ### Changed
