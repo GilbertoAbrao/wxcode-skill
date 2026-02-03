@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.5] - 2026-02-02
+
+### Fixed
+- **`/wxcode:new-milestone` not calling MCP create_milestone**
+  - Added emphatic CRITICAL markers and visual box around MCP call requirement
+  - Added Phase 1.7 gate check to verify MCP was called before Phase 2
+  - Added checkpoint verification to prevent skipping the MCP tool call
+  - Updated success criteria with explicit CRITICAL tags
+
 ## [1.4.4] - 2026-02-02
 
 ### Fixed

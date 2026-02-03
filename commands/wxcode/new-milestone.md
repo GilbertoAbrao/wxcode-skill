@@ -181,9 +181,15 @@ Display:
 ✓ Milestone folder: .planning/milestones/${MILESTONE_FOLDER_NAME}
 ```
 
-### Step 4: Create Milestone in MongoDB (immediately after folder)
+### Step 4: Create Milestone in MongoDB (CRITICAL - DO NOT SKIP)
 
-**This MUST happen immediately after creating the folder.**
+**╔══════════════════════════════════════════════════════════════╗**
+**║  MANDATORY: Call MCP tool IMMEDIATELY after creating folder  ║**
+**╚══════════════════════════════════════════════════════════════╝**
+
+**This is a BLOCKING requirement. DO NOT proceed to Phase 2 without completing this step.**
+
+Call the MCP tool NOW:
 
 ```
 mcp__wxcode-kb__create_milestone(
@@ -195,12 +201,12 @@ mcp__wxcode-kb__create_milestone(
 )
 ```
 
-Store the returned ID:
+**After MCP call succeeds**, store the returned ID:
 ```
 MONGODB_MILESTONE_ID=[returned milestone_id]
 ```
 
-Display:
+Display confirmation:
 ```
 ✓ Milestone created in MongoDB: ${MONGODB_MILESTONE_ID}
 ✓ Version: ${WXCODE_VERSION}
@@ -208,8 +214,10 @@ Display:
 ```
 
 **If MCP call fails:**
-- Remove the created folder
+- Remove the created folder: `rm -rf .planning/milestones/${MILESTONE_FOLDER_NAME}`
 - Display error and **STOP**
+
+**CHECKPOINT: Verify MCP was called before continuing.**
 
 ### Step 5: Store for later phases
 
@@ -219,6 +227,31 @@ These values are used in later phases:
 - `WXCODE_VERSION` — for dashboard and STATE.md
 - `MILESTONE_FOLDER_NAME` — for dashboard filename
 - `MONGODB_MILESTONE_ID` — for dashboard content
+
+---
+
+## Phase 1.7: Verify Milestone Creation (Conversion Projects Only)
+
+**GATE CHECK before Phase 2:**
+
+For conversion projects, verify:
+1. ✓ Milestone folder exists: `.planning/milestones/${MILESTONE_FOLDER_NAME}`
+2. ✓ `MONGODB_MILESTONE_ID` is set (from MCP call in Step 4)
+
+**If `MONGODB_MILESTONE_ID` is NOT set:**
+```
+╔══════════════════════════════════════════════════════════════╗
+║  ERROR: MCP create_milestone was not called                   ║
+╚══════════════════════════════════════════════════════════════╝
+
+Go back to Phase 1.6 Step 4 and call:
+  mcp__wxcode-kb__create_milestone(...)
+
+Cannot continue without MongoDB milestone record.
+```
+**STOP and go back to Step 4.**
+
+---
 
 ## Phase 2: Gather Milestone Goals
 
@@ -872,7 +905,8 @@ Present completion with next steps:
 - [ ] **(Conversion projects)** Arguments parsed: --element and --output-project
 - [ ] **(Conversion projects)** Version determined automatically (v1.0, v1.1, etc.)
 - [ ] **(Conversion projects)** Milestone folder created: `.planning/milestones/<folder>`
-- [ ] **(Conversion projects)** Milestone created in MongoDB via MCP (immediately after folder)
+- [ ] **(Conversion projects - CRITICAL)** `mcp__wxcode-kb__create_milestone` called with confirm=true
+- [ ] **(Conversion projects - CRITICAL)** MONGODB_MILESTONE_ID stored from MCP response
 - [ ] PROJECT.md updated with Current Milestone section
 - [ ] STATE.md reset for new milestone
 - [ ] MILESTONE-CONTEXT.md consumed and deleted (if existed)
