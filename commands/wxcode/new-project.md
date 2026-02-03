@@ -2536,30 +2536,20 @@ Present completion with next steps:
 
 <dashboard_update>
 
-## Update Dashboard (Final Step)
+## Update Dashboards (Final Step)
 
-**MANDATORY:** After project initialization, create project dashboard following `/wxcode:dashboard` logic.
+**MANDATORY:** After state changes, regenerate dashboards using the Python script.
 
-Milestone dashboards are created later by `/wxcode:new-milestone`.
+```bash
+python3 ~/.claude/get-shit-done/bin/generate-dashboard.py --all --project-dir .
+```
 
-### Create Project Dashboard
+This script:
+- Parses all `.planning/` files deterministically
+- Extracts tasks from PLAN.md XML blocks
+- Generates proper nested `phases[].plans[].tasks[]` structure
+- Outputs `[WXCODE:DASHBOARD_UPDATED]` notifications
 
-Follow the exact process from `/wxcode:dashboard`:
-
-1. **Read schema:**
-   - `~/.claude/get-shit-done/references/dashboard-schema-project.md`
-
-2. **Gather data:**
-   - Project info from PROJECT.md (name, core_value, description)
-   - Conversion stats from MCP: `mcp__wxcode-kb__get_conversion_stats(project_name=PROJECT_NAME)`
-   - Stack from CONVERSION.md (if conversion project)
-
-3. **Write dashboard:**
-   - `.planning/dashboard.json` (initial state - empty milestones array)
-
-4. **Emit notification:**
-   ```
-   [WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
-   ```
+**Do NOT generate dashboard JSON manually via LLM.**
 
 </dashboard_update>

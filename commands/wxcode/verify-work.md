@@ -266,42 +266,18 @@ Review the issues above and either:
 
 ## Update Dashboards (Final Step)
 
-**MANDATORY:** After verification completes, regenerate dashboards following `/wxcode:dashboard` logic.
+**MANDATORY:** After state changes, regenerate dashboards using the Python script.
 
-### Workflow Stage Update (verify-work specific)
+```bash
+python3 ~/.claude/get-shit-done/bin/generate-dashboard.py --all --project-dir .
+```
 
-Before regenerating, update workflow stages based on verification result:
+This script:
+- Parses all `.planning/` files deterministically
+- Extracts tasks from PLAN.md XML blocks
+- Generates proper nested `phases[].plans[].tasks[]` structure
+- Outputs `[WXCODE:DASHBOARD_UPDATED]` notifications
 
-**If UAT passed:**
-1. Set `workflow.stages[5]` (verified) to `"status": "complete"`, `"completed_at": "<now>"`
-2. Update `workflow.current_stage` to `"verified"`
-
-**If UAT failed (gaps found):**
-1. Keep verified stage as `"status": "pending"`
-2. Keep `workflow.current_stage` as `"executing"` (need more work)
-
-### Regenerate Dashboards
-
-Follow the exact process from `/wxcode:dashboard`:
-
-1. **Read schemas:**
-   - `~/.claude/get-shit-done/references/dashboard-schema-project.md`
-   - `~/.claude/get-shit-done/references/dashboard-schema-milestone.md`
-
-2. **Gather data:**
-   - Project info from PROJECT.md
-   - Conversion stats from MCP: `mcp__wxcode-kb__get_conversion_stats(project_name=PROJECT_NAME)`
-   - Milestone info from folder structure and planning files
-   - Verification results from UAT
-
-3. **Write dashboards:**
-   - `.planning/dashboard.json` (project)
-   - `.planning/dashboard_<milestone>.json` (current milestone)
-
-4. **Emit notifications:**
-   ```
-   [WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
-   [WXCODE:DASHBOARD_UPDATED] .planning/dashboard_<milestone>.json
-   ```
+**Do NOT generate dashboard JSON manually via LLM.**
 
 </dashboard_update>

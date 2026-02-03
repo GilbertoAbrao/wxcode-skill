@@ -384,41 +384,20 @@ After all plans in phase complete (step 7):
 
 <dashboard_update>
 
-## Update Dashboards (After Each Plan or Phase Completion)
+## Update Dashboards (Final Step)
 
-**MANDATORY:** After each plan completes, regenerate dashboards following `/wxcode:dashboard` logic.
+**MANDATORY:** After state changes, regenerate dashboards using the Python script.
 
-### Workflow Stage Update (execute-phase specific)
+```bash
+python3 ~/.claude/get-shit-done/bin/generate-dashboard.py --all --project-dir .
+```
 
-Before regenerating, update workflow stages in the milestone:
+This script:
+- Parses all `.planning/` files deterministically
+- Extracts tasks from PLAN.md XML blocks
+- Generates proper nested `phases[].plans[].tasks[]` structure
+- Outputs `[WXCODE:DASHBOARD_UPDATED]` notifications
 
-1. Set `workflow.stages[4]` (executing) to `"status": "in_progress"`
-2. Update `workflow.current_stage` to `"executing"`
-3. Check if ALL plans in ALL phases now have SUMMARY.md:
-   - If yes: Set executing stage to `"status": "complete"`, `"completed_at": "<now>"`
-
-### Regenerate Dashboards
-
-Follow the exact process from `/wxcode:dashboard`:
-
-1. **Read schemas:**
-   - `~/.claude/get-shit-done/references/dashboard-schema-project.md`
-   - `~/.claude/get-shit-done/references/dashboard-schema-milestone.md`
-
-2. **Gather data:**
-   - Project info from PROJECT.md
-   - Conversion stats from MCP: `mcp__wxcode-kb__get_conversion_stats(project_name=PROJECT_NAME)`
-   - Milestone info from folder structure and planning files
-   - Task/plan completion from SUMMARY.md files
-
-3. **Write dashboards:**
-   - `.planning/dashboard.json` (project)
-   - `.planning/dashboard_<milestone>.json` (current milestone)
-
-4. **Emit notifications:**
-   ```
-   [WXCODE:DASHBOARD_UPDATED] .planning/dashboard.json
-   [WXCODE:DASHBOARD_UPDATED] .planning/dashboard_<milestone>.json
-   ```
+**Do NOT generate dashboard JSON manually via LLM.**
 
 </dashboard_update>
