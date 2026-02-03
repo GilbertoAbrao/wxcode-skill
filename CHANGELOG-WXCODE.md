@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.4] - 2026-02-02
+
+### Fixed
+- **Python dashboard script not installed**
+  - Installer now copies `bin/` folder to `~/.claude/get-shit-done/bin/`
+  - `generate-dashboard.py` now available after installation
+  - Fixes "No such file or directory" error for dashboard commands
+
 ## [1.4.3] - 2026-02-02
 
 ### Changed

@@ -960,6 +960,27 @@ function install(isGlobal, runtime = 'claude') {
     failures.push('VERSION');
   }
 
+  // Copy bin scripts (dashboard generator, etc.)
+  const binSrc = path.join(src, 'bin');
+  const binDest = path.join(targetDir, 'get-shit-done', 'bin');
+  if (fs.existsSync(binSrc)) {
+    fs.mkdirSync(binDest, { recursive: true });
+    const binEntries = fs.readdirSync(binSrc);
+    let copiedCount = 0;
+    for (const entry of binEntries) {
+      const srcFile = path.join(binSrc, entry);
+      // Only copy non-installer files (install.js is the installer itself)
+      if (fs.statSync(srcFile).isFile() && entry !== 'install.js') {
+        const destFile = path.join(binDest, entry);
+        fs.copyFileSync(srcFile, destFile);
+        copiedCount++;
+      }
+    }
+    if (copiedCount > 0) {
+      console.log(`  ${green}✓${reset} Installed bin scripts (${copiedCount} files)`);
+    }
+  }
+
   // Copy hooks from dist/ (bundled with dependencies)
   const hooksSrc = path.join(src, 'hooks', 'dist');
   if (fs.existsSync(hooksSrc)) {
