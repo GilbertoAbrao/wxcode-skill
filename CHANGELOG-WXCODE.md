@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.6] - 2026-02-02
+
+### Added
+- **`/wxcode:version`** — Display current WXCODE version and installation paths
+
 ## [1.4.5] - 2026-02-02
 
 ### Fixed
