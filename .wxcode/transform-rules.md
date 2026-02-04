@@ -38,6 +38,9 @@ These patterns are preserved as-is:
 | `glittercowboy/get-shit-done` | Credit to original project |
 | Comments mentioning "forked from GSD" | Attribution |
 | `upstream` remote references | Git configuration |
+| `path.join(..., 'get-shit-done')` | Folder path in installer - folder keeps original name |
+| `targetDir, 'get-shit-done'` | Installation target folder |
+| `'get-shit-done/` followed by path | Reference folder paths |
 
 ## File Type Scope
 

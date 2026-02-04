@@ -823,12 +823,12 @@ function uninstall(isGlobal, runtime = 'claude') {
     }
   }
 
-  // 2. Remove wxcode directory
-  const gsdDir = path.join(targetDir, 'wxcode');
+  // 2. Remove get-shit-done directory
+  const gsdDir = path.join(targetDir, 'get-shit-done');
   if (fs.existsSync(gsdDir)) {
     fs.rmSync(gsdDir, { recursive: true });
     removedCount++;
-    console.log(`  ${green}✓${reset} Removed wxcode/`);
+    console.log(`  ${green}✓${reset} Removed get-shit-done/`);
   }
 
   // 3. Remove WXCODE agents (wxcode-*.md files only)
@@ -1131,14 +1131,14 @@ function install(isGlobal, runtime = 'claude') {
     }
   }
 
-  // Copy wxcode skill with path replacement
-  const skillSrc = path.join(src, 'wxcode');
-  const skillDest = path.join(targetDir, 'wxcode');
+  // Copy get-shit-done references/templates with path replacement
+  const skillSrc = path.join(src, 'get-shit-done');
+  const skillDest = path.join(targetDir, 'get-shit-done');
   copyWithPathReplacement(skillSrc, skillDest, pathPrefix, runtime);
-  if (verifyInstalled(skillDest, 'wxcode')) {
-    console.log(`  ${green}✓${reset} Installed wxcode`);
+  if (verifyInstalled(skillDest, 'get-shit-done')) {
+    console.log(`  ${green}✓${reset} Installed get-shit-done`);
   } else {
-    failures.push('wxcode');
+    failures.push('get-shit-done');
   }
 
   // Copy agents to agents directory
@@ -1183,7 +1183,7 @@ function install(isGlobal, runtime = 'claude') {
 
   // Copy CHANGELOG.md
   const changelogSrc = path.join(src, 'CHANGELOG.md');
-  const changelogDest = path.join(targetDir, 'wxcode', 'CHANGELOG.md');
+  const changelogDest = path.join(targetDir, 'get-shit-done', 'CHANGELOG.md');
   if (fs.existsSync(changelogSrc)) {
     fs.copyFileSync(changelogSrc, changelogDest);
     if (verifyFileInstalled(changelogDest, 'CHANGELOG.md')) {
@@ -1194,7 +1194,7 @@ function install(isGlobal, runtime = 'claude') {
   }
 
   // Write VERSION file
-  const versionDest = path.join(targetDir, 'wxcode', 'VERSION');
+  const versionDest = path.join(targetDir, 'get-shit-done', 'VERSION');
   fs.writeFileSync(versionDest, pkg.version);
   if (verifyFileInstalled(versionDest, 'VERSION')) {
     console.log(`  ${green}✓${reset} Wrote VERSION (${pkg.version})`);

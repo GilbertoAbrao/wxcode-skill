@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.9] - 2026-02-03
+
+### Fixed
+- **Installer broken after GSD sync**
+  - Sync incorrectly transformed `'get-shit-done'` folder paths to `'wxcode'`
+  - The `get-shit-done/` folder (references/templates) keeps its original name
+  - Fixed paths in install.js: skillSrc, skillDest, changelogDest, versionDest
+  - Added exclusions to transform-rules.md for folder paths
+
 ## [1.4.8] - 2026-02-03
 
 ### Fixed
