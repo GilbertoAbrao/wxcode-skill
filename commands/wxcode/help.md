@@ -3,8 +3,17 @@ name: wxcode:help
 description: Show available WXCODE fork management commands
 ---
 
+<structured_output>
+**At command start (emit before reference content):**
+```
+<!-- WXCODE:HEADER:{"command":"help","args":"","title":"WXCODE ▶ COMMAND REFERENCE"} -->
+```
+</structured_output>
+
 <objective>
 Display the complete WXCODE command reference.
+
+**First emit the structured header, then output the reference content.**
 
 Output ONLY the reference content below. Do NOT add:
 

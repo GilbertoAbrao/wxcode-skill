@@ -40,6 +40,27 @@ Generate comprehensive JSON snapshots of project progress for external UI render
 @~/.claude/get-shit-done/references/dashboard-schema-milestone.md
 </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"dashboard","args":"$ARGUMENTS","title":"WXCODE ▶ GENERATING DASHBOARD"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"progress","args":"","description":"Check project progress","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <process>
 
 ## Step 1: Parse Arguments

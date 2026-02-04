@@ -20,6 +20,27 @@ Output: Conversational output only (no file creation) - ends with "What do you t
 @~/.claude/get-shit-done/workflows/list-phase-assumptions.md
 </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"list-phase-assumptions","args":"$ARGUMENTS","title":"WXCODE ▶ PHASE ASSUMPTIONS"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"discuss-phase","args":"","description":"Discuss assumptions","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <context>
 Phase number: $ARGUMENTS (required)
 

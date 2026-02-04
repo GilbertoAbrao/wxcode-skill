@@ -5,6 +5,13 @@ allowed-tools:
   - mcp__wxcode-kb__health_check
 ---
 
+<structured_output>
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"mcp-health-check","args":"$ARGUMENTS","title":"WXCODE ▶ MCP HEALTH CHECK"} -->
+```
+</structured_output>
+
 <objective>
 Test the wxcode-kb MCP server connectivity and display health status.
 

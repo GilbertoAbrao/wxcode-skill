@@ -9,6 +9,25 @@ allowed-tools:
   - AskUserQuestion
 ---
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"debug","args":"$ARGUMENTS","title":"WXCODE ▶ DEBUG SESSION"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"progress","args":"","description":"Check project progress","priority":"recommended"} -->
+```
+</structured_output>
+
 <objective>
 Debug issues using scientific method with subagent isolation.
 

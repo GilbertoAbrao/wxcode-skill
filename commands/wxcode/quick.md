@@ -29,6 +29,27 @@ Use when: You know exactly what to do and the task is small enough to not need r
 Orchestration is inline - no separate workflow file. Quick mode is deliberately simpler than full WXCODE.
 </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"quick","args":"$ARGUMENTS","title":"WXCODE ▶ QUICK TASK"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"progress","args":"","description":"Check project progress","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <context>
 @.planning/STATE.md
 </context>

@@ -23,8 +23,9 @@ Context budget: ~15% orchestrator, 100% fresh per subagent.
 </objective>
 
 <execution_context>
-@~/.claude/wxcode/references/ui-brand.md
-@~/.claude/wxcode/workflows/execute-phase.md
+@~/.claude/get-shit-done/references/ui-brand.md
+@~/.claude/get-shit-done/references/structured-output.md
+@~/.claude/get-shit-done/workflows/execute-phase.md
 </execution_context>
 
 <context>
@@ -37,8 +38,51 @@ Phase: $ARGUMENTS
 @.planning/STATE.md
 </context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+Emit structured markers alongside human-readable output. Reference: structured-output.md
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"execute-phase","args":"$ARGUMENTS","title":"WXCODE ▶ EXECUTING PHASE $ARGUMENTS"} -->
+```
+
+**Before each significant tool call:**
+```
+<!-- WXCODE:TOOL:{"tool":"Bash","description":"Get model profile from config"} -->
+```
+
+**After tool completes:**
+```
+<!-- WXCODE:TOOL_RESULT:{"tool":"Bash","success":true,"output":"balanced"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"Executing wave 1 of 2","progress":25} -->
+```
+
+**At command end (in offer_next):**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"discuss-phase","args":"4","description":"Gather context for next phase","priority":"recommended"} -->
+```
+
+**On errors:**
+```
+<!-- WXCODE:ERROR:{"code":"PHASE_NOT_FOUND","message":"Phase 99 does not exist in roadmap","recoverable":false} -->
+```
+</structured_output>
+
 <process>
-0. **Resolve Model Profile**
+0. **Emit header and resolve Model Profile**
+
+   First emit the structured header:
+   ```
+   <!-- WXCODE:HEADER:{"command":"execute-phase","args":"$ARGUMENTS","title":"WXCODE ▶ EXECUTING PHASE $ARGUMENTS"} -->
+   ```
+
+   Then display visual header and resolve model:
 
    Read model profile for agent spawning:
    ```bash
@@ -138,7 +182,9 @@ Phase: $ARGUMENTS
 </process>
 
 <offer_next>
-Output this markdown directly (not as a code block). Route based on status:
+Output this markdown directly (not as a code block). Route based on status.
+
+**IMPORTANT:** Always emit structured markers BEFORE the visual output.
 
 | Status | Route |
 |--------|-------|
@@ -150,6 +196,11 @@ Output this markdown directly (not as a code block). Route based on status:
 ---
 
 **Route A: Phase verified, more phases remain**
+
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Phase {Z} complete","progress":100,"phase":{Z}} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"discuss-phase","args":"{Z+1}","description":"Gather context for next phase","priority":"recommended"} -->
+```
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  WXCODE ► PHASE {Z} COMPLETE ✓
@@ -182,6 +233,11 @@ Goal verified ✓
 
 **Route B: Phase verified, milestone complete**
 
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Milestone complete","progress":100} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"audit-milestone","args":"","description":"Verify requirements and cross-phase integration","priority":"recommended"} -->
+```
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  WXCODE ► MILESTONE COMPLETE 🎉
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -212,6 +268,11 @@ All phase goals verified ✓
 ---
 
 **Route C: Gaps found — need additional planning**
+
+```
+<!-- WXCODE:STATUS:{"status":"failed","message":"Phase {Z} has gaps","progress":75,"phase":{Z}} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"plan-phase","args":"{Z} --gaps","description":"Create plans to close the gaps","priority":"required"} -->
+```
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  WXCODE ► PHASE {Z} GAPS FOUND ⚠

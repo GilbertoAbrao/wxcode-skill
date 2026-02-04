@@ -57,6 +57,27 @@ This is the most leveraged moment in any project. Deep questioning here means be
 
 </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"new-project","args":"$ARGUMENTS","title":"WXCODE ▶ INITIALIZING PROJECT"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"plan-phase","args":"1","description":"Plan the first phase","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <process>
 
 ## Phase 1: Setup

@@ -14,6 +14,25 @@ allowed-tools:
   - mcp__wxcode-kb__get_conversion_stats
 ---
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"trace","args":"$ARGUMENTS","title":"WXCODE ▶ TRACING ELEMENT"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"progress","args":"","description":"Continue with project","priority":"recommended"} -->
+```
+</structured_output>
+
 <command-name>trace</command-name>
 
 # /wxcode:trace - Legacy ↔ Converted Navigation

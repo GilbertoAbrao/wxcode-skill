@@ -6,6 +6,13 @@ allowed-tools:
   - Bash
 ---
 
+<structured_output>
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"history","args":"$ARGUMENTS","title":"WXCODE ▶ HISTORY"} -->
+```
+</structured_output>
+
 <objective>
 
 Display the complete history of:

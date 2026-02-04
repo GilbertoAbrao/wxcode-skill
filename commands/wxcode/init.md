@@ -8,6 +8,25 @@ allowed-tools:
   - AskUserQuestion
 ---
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"init","args":"$ARGUMENTS","title":"WXCODE ▶ INITIALIZING WXCODE"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"help","args":"","description":"See available commands","priority":"recommended"} -->
+```
+</structured_output>
+
 <objective>
 
 Initialize the WXCODE fork management system.

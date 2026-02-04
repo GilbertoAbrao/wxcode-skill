@@ -7,6 +7,25 @@ allowed-tools:
   - Bash
 ---
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"pause-work","args":"$ARGUMENTS","title":"WXCODE ▶ PAUSING WORK"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"resume-work","args":"","description":"Resume when ready","priority":"recommended"} -->
+```
+</structured_output>
+
 <objective>
 Create `.continue-here.md` handoff file to preserve complete work state across sessions.
 

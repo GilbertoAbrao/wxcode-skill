@@ -32,6 +32,27 @@ Examples:
 
 </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"customize","args":"$ARGUMENTS","title":"WXCODE ▶ CUSTOMIZING WXCODE"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"status","args":"","description":"Check customizations","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <process>
 
 ## Phase 1: Identify Target

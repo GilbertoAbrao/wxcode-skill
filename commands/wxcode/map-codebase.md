@@ -23,6 +23,27 @@ Output: .planning/codebase/ folder with 7 structured documents about the codebas
 @~/.claude/get-shit-done/workflows/map-codebase.md
 </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"map-codebase","args":"$ARGUMENTS","title":"WXCODE ▶ MAPPING CODEBASE"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"progress","args":"","description":"Continue with project","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <context>
 Focus area: $ARGUMENTS (optional - if provided, tells agents to focus on specific subsystem)
 

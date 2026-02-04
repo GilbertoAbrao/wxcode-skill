@@ -22,6 +22,27 @@ One command creates all fix phases — no manual `/wxcode:add-phase` per gap.
 <!-- Spawns wxcode-planner agent which has all planning expertise baked in -->
 </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"plan-milestone-gaps","args":"$ARGUMENTS","title":"WXCODE ▶ PLANNING GAP CLOSURE"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"execute-phase","args":"","description":"Execute gap closure","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <context>
 **Audit results:**
 Glob: .planning/v*-MILESTONE-AUDIT.md (use most recent)

@@ -6,6 +6,13 @@ allowed-tools:
   - Bash
 ---
 
+<structured_output>
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"status","args":"$ARGUMENTS","title":"WXCODE ▶ STATUS"} -->
+```
+</structured_output>
+
 <objective>
 
 Display the current state of your WXCODE fork:

@@ -31,6 +31,27 @@ This command conducts deep questioning to understand what you want, then designs
 
 </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"discuss","args":"$ARGUMENTS","title":"WXCODE ▶ DISCUSSION"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"progress","args":"","description":"Continue with project","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <process>
 
 ## Phase 1: Entry Point

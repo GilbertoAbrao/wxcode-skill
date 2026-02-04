@@ -10,6 +10,25 @@ allowed-tools:
   - AskUserQuestion
 ---
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"check-todos","args":"$ARGUMENTS","title":"WXCODE ▶ CHECKING TODOS"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"progress","args":"","description":"Continue with project","priority":"recommended"} -->
+```
+</structured_output>
+
 <objective>
 List all pending todos, allow selection, load full context for the selected todo, and route to appropriate action.
 

@@ -36,6 +36,27 @@ This command:
 
 </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"sync","args":"$ARGUMENTS","title":"WXCODE ▶ SYNCING WITH UPSTREAM"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"status","args":"","description":"Check sync status","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <process>
 
 ## Phase 1: Pre-flight Checks

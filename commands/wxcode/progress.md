@@ -9,6 +9,39 @@ allowed-tools:
   - SlashCommand
 ---
 
+<execution_context>
+@~/.claude/get-shit-done/references/structured-output.md
+</execution_context>
+
+<structured_output>
+## Structured Output (MANDATORY)
+
+Emit structured markers alongside human-readable output.
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"progress","args":"","title":"WXCODE ▶ PROJECT PROGRESS"} -->
+```
+
+**With status report (emit after loading context):**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"Phase 3 of 5","progress":60,"phase":3} -->
+```
+
+**At command end (based on route):**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"execute-phase","args":"3","description":"Execute planned tasks","priority":"recommended"} -->
+```
+or
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"plan-phase","args":"3","description":"Create execution plan","priority":"recommended"} -->
+```
+or
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"complete-milestone","args":"","description":"Archive milestone","priority":"recommended"} -->
+```
+</structured_output>
+
 <objective>
 Check project progress, summarize recent work and what's ahead, then intelligently route to the next action - either executing an existing plan or creating the next one.
 

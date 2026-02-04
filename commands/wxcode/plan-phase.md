@@ -15,8 +15,38 @@ allowed-tools:
 ---
 
 <execution_context>
-@~/.claude/wxcode/references/ui-brand.md
+@~/.claude/get-shit-done/references/ui-brand.md
+@~/.claude/get-shit-done/references/structured-output.md
 </execution_context>
+
+<structured_output>
+## Structured Output (MANDATORY)
+
+Emit structured markers alongside human-readable output. Reference: structured-output.md
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"plan-phase","args":"$ARGUMENTS","title":"WXCODE ▶ PLANNING PHASE $PHASE"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"Researching phase requirements","progress":25} -->
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"Creating plan","progress":50} -->
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"Verifying plan","progress":75} -->
+<!-- WXCODE:STATUS:{"status":"completed","message":"Plan created","progress":100} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"execute-phase","args":"$PHASE","description":"Execute the planned tasks","priority":"recommended"} -->
+```
+
+**On errors:**
+```
+<!-- WXCODE:ERROR:{"code":"PHASE_NOT_FOUND","message":"Phase does not exist in roadmap","recoverable":false} -->
+```
+</structured_output>
 
 <objective>
 Create executable phase prompts (PLAN.md files) for a roadmap phase with integrated research and verification.
