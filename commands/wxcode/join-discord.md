@@ -3,6 +3,13 @@ name: wxcode:join-discord
 description: Join the WXCODE Discord community
 ---
 
+<structured_output>
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"join-discord","args":"$ARGUMENTS","title":"WXCODE ▶ JOIN DISCORD"} -->
+```
+</structured_output>
+
 <objective>
 Display the Discord invite link for the WXCODE community server.
 </objective>

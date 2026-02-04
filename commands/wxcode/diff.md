@@ -6,6 +6,13 @@ allowed-tools:
   - Bash
 ---
 
+<structured_output>
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"diff","args":"$ARGUMENTS","title":"WXCODE ▶ DIFF"} -->
+```
+</structured_output>
+
 <objective>
 
 Show the difference between your local WXCODE file and the upstream WXCODE version.

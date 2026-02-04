@@ -28,6 +28,27 @@ Extract implementation decisions that downstream agents need — researcher and 
 @~/.claude/get-shit-done/templates/context.md
 </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"discuss-phase","args":"$ARGUMENTS","title":"WXCODE ▶ DISCUSSING PHASE $ARGUMENTS"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"plan-phase","args":"$ARGUMENTS","description":"Create execution plan","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <context>
 Phase number: $ARGUMENTS (required)
 

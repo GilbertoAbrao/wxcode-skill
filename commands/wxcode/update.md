@@ -3,6 +3,25 @@ name: wxcode:update
 description: Update WXCODE to latest version with changelog display
 ---
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"update","args":"$ARGUMENTS","title":"WXCODE ▶ UPDATING WXCODE"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"version","args":"","description":"Verify version","priority":"recommended"} -->
+```
+</structured_output>
+
 <objective>
 Check for WXCODE updates, install if available, and display what changed.
 

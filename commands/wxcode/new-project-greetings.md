@@ -5,6 +5,20 @@ allowed-tools:
   - Read
 ---
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"new-project-greetings","args":"$ARGUMENTS","title":"WXCODE ▶ WELCOME"} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"new-project","args":"","description":"Initialize project","priority":"recommended"} -->
+```
+</structured_output>
+
 <objective>
 Display a welcome message with project context extracted from CONTEXT.md.
 

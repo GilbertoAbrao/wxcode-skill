@@ -7,6 +7,13 @@ arguments:
     required: true
 ---
 
+<structured_output>
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"set-profile","args":"$ARGUMENTS","title":"WXCODE ▶ SET PROFILE"} -->
+```
+</structured_output>
+
 <objective>
 Switch the model profile used by WXCODE agents. This controls which Claude model each agent uses, balancing quality vs token spend.
 </objective>

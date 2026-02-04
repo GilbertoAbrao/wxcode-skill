@@ -5,6 +5,13 @@ allowed-tools:
   - Read
 ---
 
+<structured_output>
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"version","args":"$ARGUMENTS","title":"WXCODE ▶ VERSION"} -->
+```
+</structured_output>
+
 <objective>
 Display the current WXCODE version.
 </objective>

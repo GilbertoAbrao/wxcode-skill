@@ -25,6 +25,27 @@ Routes to the resume-project workflow which handles:
 @~/.claude/get-shit-done/workflows/resume-project.md
 </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"resume-work","args":"$ARGUMENTS","title":"WXCODE ▶ RESUMING WORK"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"progress","args":"","description":"Check what's next","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <process>
 **Follow the resume-project workflow** from `@~/.claude/get-shit-done/workflows/resume-project.md`.
 

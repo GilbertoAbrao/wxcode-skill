@@ -33,6 +33,27 @@ This is the brownfield equivalent of new-project. The project exists, PROJECT.md
 @~/.claude/get-shit-done/templates/requirements.md
 </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"new-milestone","args":"$ARGUMENTS","title":"WXCODE ▶ NEW MILESTONE"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"plan-phase","args":"1","description":"Plan the first phase","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <context>
 **Arguments parsing:**
 

@@ -22,6 +22,27 @@ Output: Phase deleted, all subsequent phases renumbered, git commit as historica
 @.planning/STATE.md
 </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"remove-phase","args":"$ARGUMENTS","title":"WXCODE ▶ REMOVING PHASE"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"progress","args":"","description":"Check project progress","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <process>
 
 <step name="parse_arguments">

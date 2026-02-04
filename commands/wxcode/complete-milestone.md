@@ -25,6 +25,27 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
 - @~/.claude/get-shit-done/templates/milestone-archive.md (archive template)
   </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"complete-milestone","args":"$ARGUMENTS","title":"WXCODE ▶ COMPLETING MILESTONE $ARGUMENTS"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"new-milestone","args":"","description":"Start next milestone","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <context>
 **Project files:**
 - `.planning/ROADMAP.md`

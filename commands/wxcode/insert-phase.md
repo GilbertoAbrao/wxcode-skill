@@ -22,6 +22,27 @@ Purpose: Handle urgent work discovered during execution without renumbering enti
 @.planning/STATE.md
 </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"insert-phase","args":"$ARGUMENTS","title":"WXCODE ▶ INSERTING PHASE"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"plan-phase","args":"","description":"Plan the new phase","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <process>
 
 <step name="parse_arguments">

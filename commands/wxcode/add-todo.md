@@ -9,6 +9,25 @@ allowed-tools:
   - Glob
 ---
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"add-todo","args":"$ARGUMENTS","title":"WXCODE ▶ ADDING TODO"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"check-todos","args":"","description":"View all todos","priority":"recommended"} -->
+```
+</structured_output>
+
 <objective>
 Capture an idea, task, or issue that surfaces during a WXCODE session as a structured todo for later work.
 

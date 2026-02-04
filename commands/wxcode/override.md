@@ -9,6 +9,13 @@ allowed-tools:
   - AskUserQuestion
 ---
 
+<structured_output>
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"override","args":"$ARGUMENTS","title":"WXCODE ▶ OVERRIDE"} -->
+```
+</structured_output>
+
 <objective>
 
 Manage override files — files that should be completely ignored during upstream sync.

@@ -9,6 +9,25 @@ allowed-tools:
   - mcp__wxcode-kb__*
 ---
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"create-start-dev","args":"$ARGUMENTS","title":"WXCODE ▶ CREATING START-DEV"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"start-dev","args":"","description":"Start development server","priority":"recommended"} -->
+```
+</structured_output>
+
 <objective>
 
 Generate a `start-dev.sh` script for the current project based on its stack configuration stored in MongoDB.

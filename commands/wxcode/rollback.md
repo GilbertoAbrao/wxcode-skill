@@ -8,6 +8,13 @@ allowed-tools:
   - AskUserQuestion
 ---
 
+<structured_output>
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"rollback","args":"$ARGUMENTS","title":"WXCODE ▶ ROLLBACK"} -->
+```
+</structured_output>
+
 <objective>
 
 Revert the last `/wxcode:sync` operation.

@@ -24,7 +24,33 @@ Output: {phase}-UAT.md tracking all test results. If issues found: diagnosed gap
 <execution_context>
 @~/.claude/get-shit-done/workflows/verify-work.md
 @~/.claude/get-shit-done/templates/UAT.md
+@~/.claude/get-shit-done/references/structured-output.md
 </execution_context>
+
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"verify-work","args":"$ARGUMENTS","title":"WXCODE ▶ VERIFYING PHASE $ARGUMENTS"} -->
+```
+
+**Per test result:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"Testing: Login flow","progress":33} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"3/4 tests passed, 1 gap found"} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"execute-phase","args":"3 --gaps-only","description":"Execute gap fix plans","priority":"required"} -->
+```
+
+**On issues found:**
+```
+<!-- WXCODE:ERROR:{"code":"UAT_GAPS_FOUND","message":"1 test failed: Login redirect broken","recoverable":true,"suggestion":"Run /wxcode:execute-phase with --gaps-only"} -->
+```
+</structured_output>
 
 <context>
 Phase: $ARGUMENTS (optional)

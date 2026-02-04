@@ -46,6 +46,27 @@ design/
 @~/.claude/get-shit-done/templates/design-tokens.json
 </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"design-system","args":"$ARGUMENTS","title":"WXCODE ▶ DESIGN SYSTEM"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"progress","args":"","description":"Continue with project","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <process>
 
 ## Step 1: Parse Arguments

@@ -8,6 +8,25 @@ allowed-tools:
   - Task
 ---
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"research-phase","args":"$ARGUMENTS","title":"WXCODE ▶ RESEARCHING PHASE $ARGUMENTS"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"plan-phase","args":"$ARGUMENTS","description":"Create execution plan","priority":"recommended"} -->
+```
+</structured_output>
+
 <objective>
 Research how to implement a phase. Spawns wxcode-phase-researcher agent with phase context.
 

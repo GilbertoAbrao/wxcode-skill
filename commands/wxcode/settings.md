@@ -7,6 +7,13 @@ allowed-tools:
   - AskUserQuestion
 ---
 
+<structured_output>
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"settings","args":"$ARGUMENTS","title":"WXCODE ▶ SETTINGS"} -->
+```
+</structured_output>
+
 <objective>
 Allow users to toggle workflow agents on/off and select model profile via interactive settings.
 

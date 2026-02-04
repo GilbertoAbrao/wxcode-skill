@@ -21,6 +21,27 @@ Verify milestone achieved its definition of done. Check requirements coverage, c
 <!-- Spawns wxcode-integration-checker agent which has all audit expertise baked in -->
 </execution_context>
 
+<structured_output>
+## Structured Output (MANDATORY)
+
+**At command start:**
+```
+<!-- WXCODE:HEADER:{"command":"audit-milestone","args":"$ARGUMENTS","title":"WXCODE ▶ AUDITING MILESTONE"} -->
+```
+
+**On status changes:**
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"[current step]","progress":[0-100]} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"complete-milestone","args":"","description":"Archive the milestone","priority":"recommended"} -->
+```
+</structured_output>
+
+
+
 <context>
 Version: $ARGUMENTS (optional — defaults to current milestone)
 
