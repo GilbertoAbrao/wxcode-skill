@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.13] - 2026-02-04
+
+### Added
+- **Structured Output for UI Parsing**
+  - All 44 WXCODE commands now emit structured markers (`<!-- WXCODE:TYPE:JSON -->`)
+  - Enables chat UIs to parse and render: headers, status/progress, tool calls, errors, next actions
+  - Created `get-shit-done/references/structured-output.md` specification
+  - Created `docs/STRUCTURED-OUTPUT-SPEC.md` with complete parsing guide (TypeScript/Python examples)
+  - Format uses HTML comments (invisible in markdown rendering)
+
+### Event Types
+- `HEADER` — Command title and context
+- `STATUS` — Progress updates with percentage
+- `TOOL` — Tool call notifications
+- `TOOL_RESULT` — Tool completion results
+- `NEXT_ACTION` — Suggested next command with priority
+- `ERROR` — Error details with recovery suggestions
+
 ## [1.4.12] - 2026-02-04
 
 ### Added
