@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.12] - 2026-02-04
+
+### Added
+- **`/wxcode:complete-milestone` MCP integration**
+  - Added `mcp__wxcode-kb__update_milestone_status` to allowed-tools
+  - New step 8 to update milestone status in KB after commit/tag
+  - Marks milestone as `completed` in MongoDB via MCP tool
+
 ## [1.4.11] - 2026-02-04
 
 ### Changed

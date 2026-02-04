@@ -8,6 +8,7 @@ allowed-tools:
   - Write
   - Bash
   - mcp__wxcode-kb__get_conversion_stats
+  - mcp__wxcode-kb__update_milestone_status
 ---
 
 <objective>
@@ -108,7 +109,22 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
    - Tag: `git tag -a v{{version}} -m "[milestone summary]"`
    - Ask about pushing tag
 
-8. **Regenerate dashboards (MANDATORY):**
+8. **Update milestone status in KB:**
+
+   - Find the milestone ID from `.milestones/` context files or CONTEXT.md
+   - Call MCP tool to mark milestone as completed:
+
+   ```
+   mcp__wxcode-kb__update_milestone_status(
+       milestone_id="<milestone_id>",
+       status="completed",
+       confirm=True
+   )
+   ```
+
+   - This updates the MongoDB record to reflect completion
+
+9. **Regenerate dashboards (MANDATORY):**
 
    ```bash
    python3 ~/.claude/get-shit-done/bin/generate-dashboard.py --all --project-dir .
@@ -118,8 +134,8 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
    - `.planning/dashboard.json` — project dashboard
    - `.planning/dashboard_v{{version}}-*.json` — milestone dashboard with archived status
 
-9. **Offer next steps:**
-   - `/wxcode:new-milestone` — start next milestone (questioning → research → requirements → roadmap)
+10. **Offer next steps:**
+    - `/wxcode:new-milestone` — start next milestone (questioning → research → requirements → roadmap)
 
 </process>
 
@@ -132,6 +148,7 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
 - PROJECT.md updated with current state
 - Git tag v{{version}} created
 - Commit successful
+- Milestone status updated in KB via MCP (`status="completed"`)
 - Dashboard updated
 - User knows next steps (including need for fresh requirements)
 </success_criteria>
