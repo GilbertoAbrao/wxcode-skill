@@ -108,7 +108,17 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
    - Tag: `git tag -a v{{version}} -m "[milestone summary]"`
    - Ask about pushing tag
 
-8. **Offer next steps:**
+8. **Regenerate dashboards (MANDATORY):**
+
+   ```bash
+   python3 ~/.claude/get-shit-done/bin/generate-dashboard.py --all --project-dir .
+   ```
+
+   This updates:
+   - `.planning/dashboard.json` — project dashboard
+   - `.planning/dashboard_v{{version}}-*.json` — milestone dashboard with archived status
+
+9. **Offer next steps:**
    - `/wxcode:new-milestone` — start next milestone (questioning → research → requirements → roadmap)
 
 </process>

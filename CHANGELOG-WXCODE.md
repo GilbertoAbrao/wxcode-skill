@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.8] - 2026-02-03
+
+### Fixed
+- **Dashboard generation for archived milestones**
+  - Archived milestones now correctly show all workflow stages as "complete"
+  - Requirements progress shows 100% for archived milestones (not 0%)
+  - Script now finds archived files with version prefix (e.g., `v1.0-REQUIREMENTS.md`)
+  - Fixed file path detection for nested milestone structures
+- **`/wxcode:complete-milestone` not regenerating dashboards**
+  - Added explicit step 8 to process to run `generate-dashboard.py`
+  - Dashboard regeneration is now part of the workflow, not just a footnote
+
 ## [1.4.7] - 2026-02-03
 
 ### Fixed

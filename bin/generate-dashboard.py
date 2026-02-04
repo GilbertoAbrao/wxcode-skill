@@ -310,8 +310,24 @@ def parse_requirements(requirements_path: Path) -> dict:
     }
 
 
-def detect_workflow_stages(planning_dir: Path, phases_dir: Optional[Path], phases: list) -> dict:
-    """Detect workflow stage status."""
+def detect_workflow_stages(
+    planning_dir: Path,
+    phases_dir: Optional[Path],
+    phases: list,
+    is_archived: bool = False,
+    milestone_name: str = ""
+) -> dict:
+    """Detect workflow stage status.
+
+    Args:
+        planning_dir: The directory to check for files
+        phases_dir: The phases directory
+        phases: List of parsed phases
+        is_archived: Whether this is an archived milestone
+        milestone_name: Name like "v1.0-PAGE_Login" for finding archived files
+    """
+    now = datetime.now().isoformat() + "Z"
+
     stages = [
         {"id": "created", "name": "Milestone Created", "status": "pending", "completed_at": None},
         {"id": "requirements", "name": "Requirements Defined", "status": "pending", "completed_at": None},
@@ -322,22 +338,40 @@ def detect_workflow_stages(planning_dir: Path, phases_dir: Optional[Path], phase
         {"id": "archived", "name": "Milestone Archived", "status": "pending", "completed_at": None},
     ]
 
+    # For archived milestones, all stages are complete by definition
+    if is_archived:
+        for stage in stages:
+            stage["status"] = "complete"
+            stage["completed_at"] = now
+        return {
+            "current_stage": "archived",
+            "stages": stages
+        }
+
     # Check created (folder exists)
     if planning_dir.exists():
         stages[0]["status"] = "complete"
         stages[0]["completed_at"] = datetime.fromtimestamp(planning_dir.stat().st_ctime).isoformat() + "Z"
 
-    # Check requirements
-    req_path = planning_dir / "REQUIREMENTS.md"
-    if req_path.exists() and req_path.stat().st_size > 100:
-        stages[1]["status"] = "complete"
-        stages[1]["completed_at"] = datetime.fromtimestamp(req_path.stat().st_mtime).isoformat() + "Z"
+    # Check requirements - try multiple locations
+    req_paths = [
+        planning_dir / "REQUIREMENTS.md",
+    ]
+    for req_path in req_paths:
+        if req_path.exists() and req_path.stat().st_size > 100:
+            stages[1]["status"] = "complete"
+            stages[1]["completed_at"] = datetime.fromtimestamp(req_path.stat().st_mtime).isoformat() + "Z"
+            break
 
-    # Check roadmap
-    roadmap_path = planning_dir / "ROADMAP.md"
-    if roadmap_path.exists() and roadmap_path.stat().st_size > 100:
-        stages[2]["status"] = "complete"
-        stages[2]["completed_at"] = datetime.fromtimestamp(roadmap_path.stat().st_mtime).isoformat() + "Z"
+    # Check roadmap - try multiple locations
+    roadmap_paths = [
+        planning_dir / "ROADMAP.md",
+    ]
+    for roadmap_path in roadmap_paths:
+        if roadmap_path.exists() and roadmap_path.stat().st_size > 100:
+            stages[2]["status"] = "complete"
+            stages[2]["completed_at"] = datetime.fromtimestamp(roadmap_path.stat().st_mtime).isoformat() + "Z"
+            break
 
     # Check planning (all phases have at least one PLAN.md)
     if phases:
@@ -355,16 +389,22 @@ def detect_workflow_stages(planning_dir: Path, phases_dir: Optional[Path], phase
         elif phases_complete > 0:
             stages[4]["status"] = "in_progress"
 
-    # Check verified (UAT.md exists with passed status)
-    uat_path = planning_dir / "UAT.md"
-    if uat_path.exists():
-        uat_content = uat_path.read_text().lower()
-        if "passed" in uat_content or "status: complete" in uat_content:
-            stages[5]["status"] = "complete"
+    # Check verified - look for UAT files in phases or planning dir
+    verified = False
+    if phases_dir and phases_dir.exists():
+        uat_files = list(phases_dir.glob("**/*-UAT.md"))
+        for uat_file in uat_files:
+            uat_content = uat_file.read_text().lower()
+            if "status: complete" in uat_content:
+                verified = True
+                break
 
-    # Check archived
-    if "milestones" in str(planning_dir):
-        stages[6]["status"] = "complete"
+    # Also check for phase verification markers
+    if not verified and phases:
+        verified = all(p.get("verified", False) for p in phases)
+
+    if verified:
+        stages[5]["status"] = "complete"
 
     # Determine current stage
     current_stage = "created"
@@ -428,7 +468,8 @@ def generate_milestone_dashboard(
     planning_dir: Path,
     milestone_name: str,
     wxcode_version: str,
-    root_planning_dir: Optional[Path] = None
+    root_planning_dir: Optional[Path] = None,
+    is_archived: bool = False
 ) -> dict:
     """Generate a complete milestone dashboard.
 
@@ -437,6 +478,7 @@ def generate_milestone_dashboard(
         milestone_name: Name of the milestone (e.g., v1.0-PAGE_Login)
         wxcode_version: WXCODE version string
         root_planning_dir: The root .planning directory (for fallback phases lookup)
+        is_archived: Whether this milestone is archived
     """
 
     # Parse milestone info from folder name
@@ -461,12 +503,27 @@ def generate_milestone_dashboard(
         phase_dirs = sorted([d for d in phases_dir.iterdir() if d.is_dir() and re.match(r'\d+-', d.name)])
         phases = [parse_phase_directory(pd) for pd in phase_dirs]
 
+    # For archived milestones, files may be prefixed with version (e.g., v1.0-REQUIREMENTS.md)
+    # in the milestones/ directory
+    milestones_dir = root_planning_dir / "milestones" if root_planning_dir else None
+
     # Parse roadmap for goals and requirements
-    # Try milestone folder first, then root
-    roadmap_path = planning_dir / "ROADMAP.md"
-    if not roadmap_path.exists() and root_planning_dir:
-        roadmap_path = root_planning_dir / "ROADMAP.md"
-    roadmap_info = parse_roadmap(roadmap_path)
+    roadmap_path = None
+    roadmap_candidates = [
+        planning_dir / "ROADMAP.md",
+    ]
+    if root_planning_dir:
+        roadmap_candidates.append(root_planning_dir / "ROADMAP.md")
+    if milestones_dir and milestones_dir.exists():
+        # Archived milestones use version-prefixed files
+        roadmap_candidates.append(milestones_dir / f"{version}-ROADMAP.md")
+
+    for candidate in roadmap_candidates:
+        if candidate.exists():
+            roadmap_path = candidate
+            break
+
+    roadmap_info = parse_roadmap(roadmap_path) if roadmap_path else {}
 
     # Enrich phases with roadmap info
     for phase in phases:
@@ -475,30 +532,77 @@ def generate_milestone_dashboard(
             phase["goal"] = roadmap_info[phase_num].get("goal", "")
             phase["requirements_covered"] = roadmap_info[phase_num].get("requirements", [])
 
-    # Parse requirements
-    # Try milestone folder first, then root
-    requirements_path = planning_dir / "REQUIREMENTS.md"
-    if not requirements_path.exists() and root_planning_dir:
-        requirements_path = root_planning_dir / "REQUIREMENTS.md"
-    requirements = parse_requirements(requirements_path)
+    # Parse requirements - check multiple locations
+    requirements_path = None
+    req_candidates = [
+        planning_dir / "REQUIREMENTS.md",
+    ]
+    if root_planning_dir:
+        req_candidates.append(root_planning_dir / "REQUIREMENTS.md")
+    if milestones_dir and milestones_dir.exists():
+        # Archived milestones use version-prefixed files
+        req_candidates.append(milestones_dir / f"{version}-REQUIREMENTS.md")
 
-    # Detect workflow stages (use root for file lookups)
-    workflow = detect_workflow_stages(root_planning_dir or planning_dir, phases_dir, phases)
+    for candidate in req_candidates:
+        if candidate.exists():
+            requirements_path = candidate
+            break
+
+    requirements = parse_requirements(requirements_path) if requirements_path else {"total": 0, "complete": 0, "by_category": {}}
+
+    # Detect workflow stages
+    workflow = detect_workflow_stages(
+        root_planning_dir or planning_dir,
+        phases_dir,
+        phases,
+        is_archived=is_archived,
+        milestone_name=milestone_name
+    )
+
+    # For archived milestones, mark all requirements as complete
+    if is_archived and requirements.get("total", 0) > 0:
+        requirements["complete"] = requirements["total"]
+        for cat in requirements.get("by_category", {}).values():
+            cat["complete"] = cat["total"]
 
     # Calculate progress
     progress = calculate_progress(phases, requirements)
 
+    # For archived milestones, ensure all progress is 100%
+    if is_archived:
+        if progress["phases_total"] > 0:
+            progress["phases_complete"] = progress["phases_total"]
+            progress["phases_percentage"] = 100
+        if progress["plans_total"] > 0:
+            progress["plans_complete"] = progress["plans_total"]
+            progress["plans_percentage"] = 100
+        if progress["tasks_total"] > 0:
+            progress["tasks_complete"] = progress["tasks_total"]
+            progress["tasks_percentage"] = 100
+        if progress["requirements_total"] > 0:
+            progress["requirements_complete"] = progress["requirements_total"]
+            progress["requirements_percentage"] = 100
+
     # Determine current position
     current_phase = None
     current_plan = None
-    for phase in phases:
-        if phase["status"] != "complete":
-            current_phase = phase["number"]
-            for plan in phase.get("plans", []):
-                if plan["status"] != "complete":
-                    current_plan = plan["number"]
-                    break
-            break
+    if not is_archived:
+        for phase in phases:
+            if phase["status"] != "complete":
+                current_phase = phase["number"]
+                for plan in phase.get("plans", []):
+                    if plan["status"] != "complete":
+                        current_plan = plan["number"]
+                        break
+                break
+
+    # Determine milestone status
+    if is_archived:
+        milestone_status = "completed"
+    elif any(p["status"] != "complete" for p in phases):
+        milestone_status = "in_progress"
+    else:
+        milestone_status = "completed"
 
     # Build dashboard
     dashboard = {
@@ -507,9 +611,9 @@ def generate_milestone_dashboard(
             "mongodb_id": None,  # Would need MCP to get this
             "wxcode_version": version,
             "element_name": element,
-            "status": "in_progress" if any(p["status"] != "complete" for p in phases) else "completed",
+            "status": milestone_status,
             "created_at": datetime.now().isoformat() + "Z",
-            "completed_at": None
+            "completed_at": datetime.now().isoformat() + "Z" if is_archived else None
         },
         "workflow": workflow,
         "current_position": {
@@ -517,7 +621,7 @@ def generate_milestone_dashboard(
             "phase_name": next((p["name"] for p in phases if p["number"] == current_phase), None),
             "plan_number": current_plan,
             "plan_total": progress["plans_total"],
-            "status": "in_progress" if current_phase else "complete"
+            "status": "complete" if is_archived or not current_phase else "in_progress"
         },
         "progress": progress,
         "phases": phases,
@@ -720,7 +824,8 @@ def main():
                 milestone["path"],
                 milestone["folder_name"],
                 wxcode_version,
-                root_planning_dir=planning_dir  # Pass root for fallback phases lookup
+                root_planning_dir=planning_dir,  # Pass root for fallback phases lookup
+                is_archived=milestone["archived"]
             )
 
             dashboard_filename = f"dashboard_{milestone['folder_name']}.json"
