@@ -106,16 +106,16 @@ function getGlobalDir(runtime, explicitDir = null) {
 }
 
 const banner = '\n' +
-  cyan + '   ██████╗ ███████╗██████╗\n' +
-  '  ██╔════╝ ██╔════╝██╔══██╗\n' +
-  '  ██║  ███╗███████╗██║  ██║\n' +
-  '  ██║   ██║╚════██║██║  ██║\n' +
-  '  ╚██████╔╝███████║██████╔╝\n' +
-  '   ╚═════╝ ╚══════╝╚═════╝' + reset + '\n' +
+  cyan + '  ██╗    ██╗██╗  ██╗ ██████╗ ██████╗ ██████╗ ███████╗\n' +
+  '  ██║    ██║╚██╗██╔╝██╔════╝██╔═══██╗██╔══██╗██╔════╝\n' +
+  '  ██║ █╗ ██║ ╚███╔╝ ██║     ██║   ██║██║  ██║█████╗\n' +
+  '  ██║███╗██║ ██╔██╗ ██║     ██║   ██║██║  ██║██╔══╝\n' +
+  '  ╚███╔███╔╝██╔╝ ██╗╚██████╗╚██████╔╝██████╔╝███████╗\n' +
+  '   ╚══╝╚══╝ ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝' + reset + '\n' +
   '\n' +
-  '  WXCODE ' + dim + 'v' + pkg.version + reset + '\n' +
+  '  ' + dim + 'v' + pkg.version + reset + '\n' +
   '  A meta-prompting, context engineering and spec-driven\n' +
-  '  development system for Claude Code, OpenCode, and Gemini by TÂCHES.\n';
+  '  development system for Claude Code, OpenCode, and Gemini.\n';
 
 // Parse --config-dir argument
 function parseConfigDirArg() {

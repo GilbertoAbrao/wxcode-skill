@@ -7,6 +7,7 @@ Files listed here are completely managed locally and will NOT be updated from up
 | File | Reason | Added |
 |------|--------|-------|
 | `commands/wxcode/update.md` | Points to GilbertoAbrao/get-shit-done#main-wxcode instead of upstream | 2026-01-27 |
+| `bin/install.js` (banner section) | WXCODE ASCII art logo instead of GSD | 2026-02-04 |
 
 ## How Overrides Work
 

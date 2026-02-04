@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.11] - 2026-02-04
+
+### Changed
+- **WXCODE ASCII art banner**
+  - Replaced GSD ASCII logo with WXCODE logo in installer
+  - Added `bin/install.js` banner section to overrides.md
+  - Future syncs will preserve WXCODE branding
+
 ## [1.4.10] - 2026-02-04
 
 ### Changed
