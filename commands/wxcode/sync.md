@@ -202,26 +202,49 @@ Return structured classification.
 For each deterministic file:
 
 1. Get content from upstream
-2. Apply path transformation (gsd/ → wxcode/, wxcode- → wxcode-)
+2. Apply path transformation (gsd/ → wxcode/, gsd- → wxcode-)
 3. Apply text transformations (from transform-rules.md)
-4. Write to local file
+4. **Verify folder paths preserved** (CRITICAL)
+5. Write to local file
 
 ```bash
 # Example for a command file
 git show upstream/main:commands/gsd/help.md > /tmp/upstream-file.md
 
-# Apply transformations
+# Apply transformations - NOTE: DO NOT transform 'get-shit-done' folder paths!
 sed -i '' \
-  -e 's/wxcode:/wxcode:/g' \
-  -e 's/wxcode-/wxcode-/g' \
-  -e 's/WXCODE/WXCODE/g' \
-  -e 's/get-shit-done/wxcode/g' \
+  -e 's/gsd:/wxcode:/g' \
+  -e 's/gsd-/wxcode-/g' \
+  -e 's/GSD/WXCODE/g' \
   -e 's/Get Shit Done/WXCODE/g' \
   /tmp/upstream-file.md
 
 # Write to correct location
 mv /tmp/upstream-file.md commands/wxcode/help.md
 ```
+
+**CRITICAL: For bin/install.js specifically:**
+
+The `get-shit-done/` folder keeps its original name. After transforming `bin/install.js`:
+
+```bash
+# Verify these paths still reference 'get-shit-done', NOT 'wxcode':
+grep -n "path.join.*'get-shit-done'" bin/install.js
+
+# If incorrectly transformed, fix them:
+# - skillSrc/skillDest should use 'get-shit-done'
+# - changelogDest/versionDest should use 'get-shit-done'
+# - gsdDir (uninstall) should use 'get-shit-done'
+```
+
+**Patterns that must NEVER be transformed:**
+
+| Pattern | Reason |
+|---------|--------|
+| `path.join(..., 'get-shit-done')` | Folder path - folder keeps name |
+| `targetDir, 'get-shit-done'` | Installation target |
+| `~/.claude/get-shit-done/` | Installed folder reference |
+| GitHub URLs to upstream | Credit/attribution |
 
 **4.3 Process NEW_FEATURE changes:**
 
@@ -389,9 +412,41 @@ Update upstream-state.md with commit hash.
 - [ ] Upstream fetched successfully
 - [ ] All changes classified
 - [ ] Deterministic changes applied with transformations
+- [ ] **CRITICAL: bin/install.js folder paths verified**
+  - [ ] `'get-shit-done'` folder references NOT transformed to `'wxcode'`
+  - [ ] skillSrc/skillDest use `'get-shit-done'`
+  - [ ] changelogDest/versionDest use `'get-shit-done'`
 - [ ] User decisions collected for non-deterministic changes
 - [ ] State files updated
 - [ ] Git commit created
 - [ ] User informed of changes
 
 </success_criteria>
+
+<post_sync_verification>
+
+## MANDATORY: Verify Installer After Sync
+
+If `bin/install.js` was updated, run this verification:
+
+```bash
+# Check for incorrectly transformed folder paths
+grep -n "path.join.*'wxcode'" bin/install.js
+```
+
+**If any results:** The sync incorrectly transformed folder paths. Fix them:
+
+```bash
+# These MUST use 'get-shit-done', NOT 'wxcode':
+# - skillSrc = path.join(src, 'get-shit-done')
+# - skillDest = path.join(targetDir, 'get-shit-done')
+# - gsdDir = path.join(targetDir, 'get-shit-done')
+# - changelogDest = path.join(targetDir, 'get-shit-done', 'CHANGELOG.md')
+# - versionDest = path.join(targetDir, 'get-shit-done', 'VERSION')
+```
+
+**Why:** The `get-shit-done/` folder keeps its original name. It contains
+references, templates, and workflows. Only command prefixes (`gsd:` → `wxcode:`)
+and agent prefixes (`gsd-` → `wxcode-`) are transformed.
+
+</post_sync_verification>

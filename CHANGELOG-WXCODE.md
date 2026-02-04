@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.10] - 2026-02-04
+
+### Changed
+- **`/wxcode:sync` folder path protection**
+  - Added explicit verification step for bin/install.js after transformation
+  - Added post_sync_verification section with mandatory folder path checks
+  - Updated success_criteria to include folder path verification
+- **`wxcode-sync-agent` transformation rules**
+  - Updated transformation function to explicitly exclude `'get-shit-done'` folder paths
+  - Added CRITICAL: Folder Path Exclusions table with patterns that must NOT be transformed
+  - Added verification commands after transformation
+
 ## [1.4.9] - 2026-02-03
 
 ### Fixed

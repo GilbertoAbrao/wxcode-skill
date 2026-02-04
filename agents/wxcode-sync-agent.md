@@ -183,15 +183,55 @@ transform_file() {
   local file="$1"
 
   # Text substitutions (order matters)
+  # CRITICAL: Some patterns must NOT be transformed:
+  #   - 'get-shit-done' as folder path (the folder keeps its name)
+  #   - GitHub URLs to upstream repo
+  #   - Attribution comments
+
   sed -i '' \
-    -e 's/wxcode:/wxcode:/g' \
-    -e 's/wxcode-/wxcode-/g' \
-    -e 's/WXCODE/WXCODE/g' \
-    -e 's/get-shit-done/wxcode/g' \
+    -e 's/gsd:/wxcode:/g' \
+    -e 's/gsd-/wxcode-/g' \
+    -e 's/GSD/WXCODE/g' \
     -e 's/Get Shit Done/WXCODE/g' \
     "$file"
+
+  # NOTE: DO NOT transform 'get-shit-done' blindly!
+  # The get-shit-done/ folder keeps its original name.
+  # Only transform in specific contexts (URLs in display text, etc.)
 }
 ```
+
+**CRITICAL: Folder Path Exclusions**
+
+The `get-shit-done/` folder (references, templates, workflows) keeps its original name.
+**DO NOT** transform these patterns:
+
+| Pattern | Example | Reason |
+|---------|---------|--------|
+| `path.join(..., 'get-shit-done')` | `path.join(src, 'get-shit-done')` | Folder path in JS |
+| `targetDir, 'get-shit-done'` | Installation target folder |
+| `'get-shit-done/'` | Directory reference in strings |
+| `~/.claude/get-shit-done/` | Installed folder path |
+
+**DO transform** these patterns:
+
+| Pattern | Transform To | Reason |
+|---------|--------------|--------|
+| `gsd:` | `wxcode:` | Command prefix |
+| `gsd-` | `wxcode-` | Agent/file prefix |
+| `GSD` | `WXCODE` | Display name |
+| `Get Shit Done` | `WXCODE` | Human-readable title |
+
+**Verification after transformation:**
+
+After transforming a file, verify these folder paths are PRESERVED:
+```bash
+# These should still say 'get-shit-done', NOT 'wxcode':
+grep -n "path.join.*'get-shit-done'" "$file"
+grep -n "targetDir.*'get-shit-done'" "$file"
+```
+
+If any were incorrectly transformed, revert them manually.
 
 **3.2 New Features (Questioning)**
 
