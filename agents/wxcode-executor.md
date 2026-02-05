@@ -842,13 +842,48 @@ When generating any visual component:
    cat design/tokens.json
    ```
 
-2. **Include tokens in skill invocation context:**
+2. **Get legacy screenshot (Conversion Projects Only):**
+
+   For conversion projects, fetch the legacy element's screenshot to understand control layout:
+
+   ```
+   mcp__wxcode-kb__get_element_pdf_slice(element_name, output_project_id)
+   ```
+
+   This returns paths to:
+   - **PDF documentation** — detailed WinDev technical docs
+   - **Screenshot** — visual appearance of the legacy page
+
+   **Read the screenshot using the Read tool** to see how controls are arranged.
+
+   > **⚠️ IMPORTANT: WinDev/WebDev Planes**
+   >
+   > WinDev/WebDev pages often use **multiple planes** (layers) to implement:
+   > - Tabbed interfaces
+   > - Wizard steps
+   > - Conditional views
+   > - Show/hide sections
+   >
+   > **The screenshot shows only ONE plane** (usually plane 0 or the default visible state).
+   > Other planes with different controls are NOT visible in the screenshot but ARE
+   > present in the code.
+   >
+   > **Always check the element's planes via MCP:**
+   > ```
+   > mcp__wxcode-kb__get_element_planes(element_name)
+   > ```
+   >
+   > This reveals all planes and suggests modern equivalents (tabs, stepper, etc.).
+
+3. **Include context in skill invocation:**
    The `frontend-design` skill should receive:
    - Design tokens from `design/tokens.json`
    - Stack-specific config (if exists: `tailwind.config.js` or CSS variables file)
    - Component requirements from the task
+   - **Legacy screenshot** (for conversion: visual reference of original layout)
+   - **Planes analysis** (for conversion: navigation pattern suggestion)
 
-3. **Apply tokens consistently:**
+4. **Apply tokens consistently:**
    - Use token values for colors (never hardcode hex unless token missing)
    - Use token values for typography (font family, sizes, weights)
    - Use token values for spacing (padding, margins, gaps)

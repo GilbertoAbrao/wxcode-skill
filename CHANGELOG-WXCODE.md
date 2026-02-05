@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.24] - 2026-02-05
+
+### Changed
+- **`wxcode-executor` frontend-design directive now fetches legacy screenshots**
+  - For conversion projects, uses `get_element_pdf_slice` MCP tool to get legacy page screenshot
+  - Screenshot provides visual reference of original control layout
+  - Added warning about WinDev/WebDev planes: screenshot shows only one plane
+  - Instructs to check `get_element_planes` for multi-plane pages (tabs, wizards, etc.)
+  - Planes analysis passed to frontend-design skill for modern equivalent suggestions
+
 ## [1.4.23] - 2026-02-05
 
 ### Added
