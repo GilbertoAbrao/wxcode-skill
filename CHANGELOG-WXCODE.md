@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.14] - 2026-02-04
+
+### Fixed
+- **100% Structured Output Coverage**
+  - Fixed 12 commands missing inline STATUS/NEXT_ACTION markers
+  - All 44 WXCODE commands now emit parseable structured output
+  - Commands fixed: diff, help, history, join-discord, mcp-health-check, new-project-greetings, override, rollback, set-profile, settings, status, version
+  - Added ERROR markers for failure scenarios
+  - Terminal commands (help, version, etc.) correctly emit STATUS without NEXT_ACTION
+
 ## [1.4.13] - 2026-02-04
 
 ### Added
