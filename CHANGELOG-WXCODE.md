@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.20] - 2026-02-05
+
+### Added
+- **New command: `/wxcode:validate-schema`**
+  - Validates database models against legacy schema via MCP
+  - Reports missing models and mapping issues
+  - `--fix` flag to auto-generate missing models
+  - `--table=NAME` flag to validate specific table
+  - Only works for conversion projects
+
+### Changed
+- **`/wxcode:new-milestone` Phase 1.8: Ensure Database Models**
+  - Gets element's table dependencies via MCP
+  - Checks which models already exist
+  - Spawns wxcode-schema-generator for missing models
+  - Ensures all required tables have models before milestone work begins
+
+- **`/wxcode:execute-phase` Step 1.5: Check database model requirements**
+  - For conversion projects, validates models before phase execution
+  - Detects database-related phases by name pattern
+  - Spawns wxcode-schema-generator to validate/generate missing models
+  - Blocks execution if required models cannot be generated
+
 ## [1.4.19] - 2026-02-05
 
 ### Changed

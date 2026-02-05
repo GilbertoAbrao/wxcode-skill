@@ -274,6 +274,76 @@ Cannot continue without MongoDB milestone record.
 
 ---
 
+## Phase 1.8: Ensure Database Models (Conversion Projects Only)
+
+**Purpose:** The new application accesses the EXISTING legacy database. Before converting an element, ensure all required table models exist.
+
+**Step 1: Get element's table dependencies**
+
+```
+mcp__wxcode-kb__get_dependencies(element_name, direction="uses")
+```
+
+Filter for TABLE dependencies:
+```python
+table_deps = [dep for dep in dependencies if dep.type == "TABLE"]
+```
+
+**Step 2: Check which models already exist**
+
+Based on stack conventions:
+- **Python/SQLAlchemy:** Check `app/models/*.py` for `__tablename__ = "TABLE_NAME"`
+- **Prisma:** Check `prisma/schema.prisma` for `@@map("TABLE_NAME")`
+- **TypeORM:** Check `src/models/*.ts` for `@Entity({ name: "TABLE_NAME" })`
+
+```bash
+# Example for SQLAlchemy
+grep -r "__tablename__" app/models/ 2>/dev/null | grep -oE '"[A-Z_]+"' | tr -d '"' | sort -u
+```
+
+**Step 3: Generate missing models**
+
+If tables are missing models:
+
+```
+◆ Element ${ELEMENT_NAME} needs tables: [TABLE_A, TABLE_B, ...]
+  Missing models: [TABLE_A]
+  Generating...
+```
+
+Spawn schema generator:
+
+```
+Task(wxcode-schema-generator):
+  prompt: |
+    Generate database models for specific tables.
+
+    Output Project ID: ${OUTPUT_PROJECT_ID}
+    Tables needed: [TABLE_A, TABLE_B, ...]
+
+    Use capability: generate_specific_models
+
+    Requirements:
+    - Preserve EXACT legacy table/column names
+    - Only generate models that don't exist yet
+    - Update index/barrel file with new exports
+
+    Validate generated models against MCP schema.
+  subagent_type: wxcode-schema-generator
+```
+
+**Step 4: Confirm models ready**
+
+```
+✓ Database models ready for ${ELEMENT_NAME}
+  - Existing: [N] tables
+  - Generated: [M] tables
+```
+
+**If no table dependencies:** Skip to Phase 2.
+
+---
+
 ## Phase 2: Gather Milestone Goals
 
 **If MILESTONE-CONTEXT.md exists:**

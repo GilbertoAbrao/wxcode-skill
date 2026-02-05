@@ -105,6 +105,57 @@ Emit structured markers alongside human-readable output. Reference: structured-o
    - Count PLAN.md files
    - Error if no plans found
 
+1.5. **Check database model requirements (Conversion Projects)**
+
+   **Skip if:** `.planning/CONVERSION.md` does not exist (greenfield project).
+
+   **For conversion projects:**
+
+   Check if this phase involves database models by examining the phase name and plan contents:
+
+   ```bash
+   PHASE_NAME=$(basename .planning/phases/*-${PHASE_NUMBER}-*)
+   IS_DB_PHASE=$(echo "$PHASE_NAME" | grep -iE "database|model|schema" && echo "yes" || echo "no")
+   ```
+
+   **If IS_DB_PHASE="yes" OR plans reference table operations:**
+
+   Get tables needed for this phase from PLAN.md files:
+   ```bash
+   grep -h "table\|TABLE\|model" .planning/phases/*-${PHASE_NUMBER}-*/*-PLAN.md 2>/dev/null
+   ```
+
+   **If tables are referenced and models might be missing:**
+
+   Spawn schema generator to validate/generate:
+
+   ```
+   Task(wxcode-schema-generator):
+     prompt: |
+       Validate and generate any missing database models for phase execution.
+
+       Output Project ID: [from .planning/CONVERSION.md]
+       Phase: ${PHASE_NUMBER}
+
+       Use capability: validate_models first, then generate_specific_models if needed.
+
+       Steps:
+       1. Check which table models already exist
+       2. Identify tables referenced in phase plans
+       3. Generate any missing models (preserving exact legacy names)
+       4. Return summary of models ready
+
+     subagent_type: wxcode-schema-generator
+   ```
+
+   Display result:
+   ```
+   ✓ Database models verified for phase ${PHASE_NUMBER}
+     [N] models exist, [M] generated
+   ```
+
+   **If validation fails:** Stop and report - cannot execute phase without required models.
+
 2. **Discover plans**
    - List all *-PLAN.md files in phase directory
    - Check which have *-SUMMARY.md (already complete)
