@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.16] - 2026-02-04
+
+### Added
+- **Output Language Internationalization**
+  - Commands now check `.planning/config.json` for `output_language` setting
+  - Supported languages: `en` (English), `pt-BR` (Portuguese), `es` (Spanish)
+  - Human-readable outputs localized; command names and technical terms stay in English
+  - Added language preference question in `/wxcode:new-project` workflow (Phase 5, Round 1.5)
+  - Added language setting in `/wxcode:settings` command (6 settings now: profile, language, 3 workflow toggles, branching)
+  - Added quick command: `/wxcode:settings language pt-BR`
+  - Updated `structured-output.md` with "Output Language" section and best practice #7
+
 ## [1.4.15] - 2026-02-05
 
 ### Fixed

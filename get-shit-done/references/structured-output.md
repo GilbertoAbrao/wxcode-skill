@@ -225,6 +225,40 @@ def parse_wxcode_output(markdown: str) -> list[dict]:
 
 ---
 
+## Output Language
+
+Commands should check `.planning/config.json` for the `output_language` setting.
+If set, output all human-readable text in that language.
+
+**What changes:**
+- Status messages ("Phase 10 Complete" → "Fase 10 Completa")
+- Descriptions ("Recent Work" → "Trabalho Recente")
+- Headers and banners
+- Error messages and suggestions
+- User-facing explanations
+
+**What stays in English:**
+- Command names (`/wxcode:execute-phase`)
+- Technical terms (JSON keys, file paths, code)
+- Structured output JSON payloads (parsers expect English)
+- Git commit messages (convention)
+
+**Example config:**
+```json
+{
+  "output_language": "pt-BR"
+}
+```
+
+**Supported values:**
+- `"en"` — English (default)
+- `"pt-BR"` — Portuguese (Brazil)
+- `"es"` — Spanish
+
+If `output_language` is not set or is `"en"`, use English.
+
+---
+
 ## Best Practices
 
 1. **Always emit both** - Structured output AND human-readable markdown
@@ -233,6 +267,7 @@ def parse_wxcode_output(markdown: str) -> list[dict]:
 4. **Use consistent status values** - pending, in_progress, completed, failed, paused
 5. **Include timing** - `duration_ms` helps with performance tracking
 6. **Emit HEADER first** - Every command should start with a HEADER
+7. **Respect output_language** - Check config for language preference
 
 ---
 

@@ -49,6 +49,7 @@ This is the most leveraged moment in any project. Deep questioning here means be
 
 @~/.claude/get-shit-done/references/questioning.md
 @~/.claude/get-shit-done/references/ui-brand.md
+@~/.claude/get-shit-done/references/structured-output.md
 @~/.claude/get-shit-done/templates/project.md
 @~/.claude/get-shit-done/templates/requirements.md
 @~/.claude/get-shit-done/.wxcode/conversion/injection-points.md
@@ -1469,6 +1470,28 @@ questions: [
 ]
 ```
 
+**Round 1.5 — Output language:**
+
+```
+questions: [
+  {
+    header: "Language",
+    question: "Which language for WXCODE outputs?",
+    multiSelect: false,
+    options: [
+      { label: "Português (pt-BR) (Recommended)", description: "Mensagens e status em português brasileiro" },
+      { label: "English (en)", description: "Messages and status in English" },
+      { label: "Español (es)", description: "Mensajes y estados en español" }
+    ]
+  }
+]
+```
+
+Save the selection to config.json as `output_language`:
+- "Português (pt-BR)" → `"pt-BR"`
+- "English (en)" → `"en"`
+- "Español (es)" → `"es"`
+
 **Round 2 — Workflow agents:**
 
 These spawn additional agents during planning/execution. They add tokens and time but improve quality.
@@ -1531,6 +1554,7 @@ Create `.planning/config.json` with all settings:
   "depth": "quick|standard|comprehensive",
   "parallelization": true|false,
   "commit_docs": true|false,
+  "output_language": "en|pt-BR|es",
   "model_profile": "quality|balanced|budget",
   "workflow": {
     "research": true|false,

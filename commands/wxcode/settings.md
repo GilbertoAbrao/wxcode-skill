@@ -35,6 +35,32 @@ Updates `.planning/config.json` with workflow preferences and model profile sele
 
 <process>
 
+## 0. Check for Quick Command
+
+If argument is `language <code>` (e.g., `language pt-BR`):
+
+**Supported codes:** `en`, `pt-BR`, `es`
+
+1. Read current config
+2. Update `output_language` field only
+3. Display confirmation and exit
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ WXCODE ► LANGUAGE UPDATED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Output language set to: {language name}
+
+All future command outputs will be in {language name}.
+```
+
+**If invalid language code:** Show error with valid options.
+
+**If no arguments or other arguments:** Continue to full settings flow below.
+
+---
+
 ## 1. Validate Environment
 
 ```bash
@@ -54,6 +80,7 @@ Parse current values (default to `true` if not present):
 - `workflow.plan_check` — spawn plan checker during plan-phase
 - `workflow.verifier` — spawn verifier during execute-phase
 - `model_profile` — which model each agent uses (default: `balanced`)
+- `output_language` — language for human-readable output (default: `"en"`)
 - `git.branching_strategy` — branching approach (default: `"none"`)
 
 ## 3. Present Settings
@@ -70,6 +97,16 @@ AskUserQuestion([
       { label: "Quality", description: "Opus everywhere except verification (highest cost)" },
       { label: "Balanced (Recommended)", description: "Opus for planning, Sonnet for execution/verification" },
       { label: "Budget", description: "Sonnet for writing, Haiku for research/verification (lowest cost)" }
+    ]
+  },
+  {
+    question: "Which language for WXCODE outputs?",
+    header: "Language",
+    multiSelect: false,
+    options: [
+      { label: "Português (pt-BR)", description: "Mensagens e status em português brasileiro" },
+      { label: "English (en)", description: "Messages and status in English" },
+      { label: "Español (es)", description: "Mensajes y estados en español" }
     ]
   },
   {
@@ -118,10 +155,16 @@ AskUserQuestion([
 
 Merge new settings into existing config.json:
 
+**Language mapping:**
+- "Português (pt-BR)" → `"pt-BR"`
+- "English (en)" → `"en"`
+- "Español (es)" → `"es"`
+
 ```json
 {
   ...existing_config,
   "model_profile": "quality" | "balanced" | "budget",
+  "output_language": "en" | "pt-BR" | "es",
   "workflow": {
     "research": true/false,
     "plan_check": true/false,
@@ -147,6 +190,7 @@ Display:
 | Setting              | Value |
 |----------------------|-------|
 | Model Profile        | {quality/balanced/budget} |
+| Output Language      | {en/pt-BR/es} |
 | Plan Researcher      | {On/Off} |
 | Plan Checker         | {On/Off} |
 | Execution Verifier   | {On/Off} |
@@ -156,6 +200,7 @@ These settings apply to future /wxcode:plan-phase and /wxcode:execute-phase runs
 
 Quick commands:
 - /wxcode:set-profile <profile> — switch model profile
+- /wxcode:settings language pt-BR — change output language
 - /wxcode:plan-phase --research — force research
 - /wxcode:plan-phase --skip-research — skip research
 - /wxcode:plan-phase --skip-verify — skip plan check
@@ -168,7 +213,7 @@ Quick commands:
 
 <success_criteria>
 - [ ] Current config read
-- [ ] User presented with 5 settings (profile + 3 workflow toggles + git branching)
-- [ ] Config updated with model_profile, workflow, and git sections
+- [ ] User presented with 6 settings (profile + language + 3 workflow toggles + git branching)
+- [ ] Config updated with model_profile, output_language, workflow, and git sections
 - [ ] Changes confirmed to user
 </success_criteria>
