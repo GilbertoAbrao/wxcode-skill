@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.15] - 2026-02-05
+
+### Fixed
+- **install.js not copying commands/wxcode/ directory**
+  - Added copy logic for `commands/wxcode/` in Claude Code & Gemini installs
+  - Added copy logic for `commands/wxcode/` in OpenCode flat structure
+  - Added uninstall cleanup for `commands/wxcode/` directory
+  - This fixes `/wxcode:update` not updating wxcode commands
+
 ## [1.4.14] - 2026-02-04
 
 ### Fixed

@@ -821,6 +821,14 @@ function uninstall(isGlobal, runtime = 'claude') {
       removedCount++;
       console.log(`  ${green}✓${reset} Removed commands/gsd/`);
     }
+
+    // Claude Code & Gemini: remove commands/wxcode/ directory
+    const wxcodeCommandsDir = path.join(targetDir, 'commands', 'wxcode');
+    if (fs.existsSync(wxcodeCommandsDir)) {
+      fs.rmSync(wxcodeCommandsDir, { recursive: true });
+      removedCount++;
+      console.log(`  ${green}✓${reset} Removed commands/wxcode/`);
+    }
   }
 
   // 2. Remove get-shit-done directory
@@ -1106,12 +1114,17 @@ function install(isGlobal, runtime = 'claude') {
     // OpenCode: flat structure in command/ directory
     const commandDir = path.join(targetDir, 'command');
     fs.mkdirSync(commandDir, { recursive: true });
-    
-    // Copy commands/gsd/*.md as command/wxcode-*.md (flatten structure)
+
+    // Copy commands/gsd/*.md as command/gsd-*.md (flatten structure)
     const gsdSrc = path.join(src, 'commands', 'gsd');
     copyFlattenedCommands(gsdSrc, commandDir, 'gsd', pathPrefix, runtime);
+
+    // Copy commands/wxcode/*.md as command/wxcode-*.md (flatten structure)
+    const wxcodeSrc = path.join(src, 'commands', 'wxcode');
+    copyFlattenedCommands(wxcodeSrc, commandDir, 'wxcode', pathPrefix, runtime);
+
     if (verifyInstalled(commandDir, 'command/wxcode-*')) {
-      const count = fs.readdirSync(commandDir).filter(f => f.startsWith('wxcode-')).length;
+      const count = fs.readdirSync(commandDir).filter(f => f.startsWith('wxcode-') || f.startsWith('gsd-')).length;
       console.log(`  ${green}✓${reset} Installed ${count} commands to command/`);
     } else {
       failures.push('command/wxcode-*');
@@ -1128,6 +1141,16 @@ function install(isGlobal, runtime = 'claude') {
       console.log(`  ${green}✓${reset} Installed commands/gsd`);
     } else {
       failures.push('commands/gsd');
+    }
+
+    // Copy wxcode commands
+    const wxcodeSrc = path.join(src, 'commands', 'wxcode');
+    const wxcodeDest = path.join(commandsDir, 'wxcode');
+    copyWithPathReplacement(wxcodeSrc, wxcodeDest, pathPrefix, runtime);
+    if (verifyInstalled(wxcodeDest, 'commands/wxcode')) {
+      console.log(`  ${green}✓${reset} Installed commands/wxcode`);
+    } else {
+      failures.push('commands/wxcode');
     }
   }
 
