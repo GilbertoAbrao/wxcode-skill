@@ -104,6 +104,35 @@ fi
 
 Update `.planning/dashboard.json` with these values in the `conversion` object.
 
+## Step 3.5: Regenerate Schema Dashboard (Conversion Projects + --all)
+
+**If `--all` flag AND `.planning/CONVERSION.md` exists:**
+
+The schema dashboard provides a stack-agnostic view of all database models.
+
+```bash
+# Check conditions
+if [[ "$REGEN_ALL" == "--all" ]] && [ -f .planning/CONVERSION.md ]; then
+  echo "Regenerating schema dashboard..."
+fi
+```
+
+Invoke the schema dashboard command:
+
+```
+Use Skill tool: /wxcode:schema-dashboard
+```
+
+This will:
+1. Parse all ORM model files (SQLAlchemy, Prisma, TypeORM, etc.)
+2. Compare against legacy schema from MCP
+3. Generate `.planning/schema-dashboard.json` (for UI datamodel panel)
+4. Generate `.planning/SCHEMA-STATUS.md` (human-readable)
+
+**Output files:**
+- `.planning/schema-dashboard.json` — Stack-agnostic model data for UI
+- `.planning/SCHEMA-STATUS.md` — Coverage summary
+
 ## Step 4: Display Summary
 
 ```
@@ -115,9 +144,12 @@ Update `.planning/dashboard.json` with these values in the `conversion` object.
 |-----------|--------|
 | Project | ✓ .planning/dashboard.json |
 | v1.0-PAGE_Login | ✓ .planning/dashboard_v1.0-PAGE_Login.json |
+| Schema (datamodel) | ✓ .planning/schema-dashboard.json |
 
 Total: [N] dashboards updated
 ```
+
+**Note:** Schema dashboard only appears for conversion projects with `--all` flag.
 
 </process>
 
@@ -134,6 +166,12 @@ Total: [N] dashboards updated
 - [ ] Plans have nested `tasks[]` arrays
 - [ ] Progress calculated correctly
 - [ ] Notification emitted for each dashboard
+
+**With --all (conversion projects):**
+- [ ] Schema dashboard regenerated
+- [ ] `.planning/schema-dashboard.json` created/updated
+- [ ] `.planning/SCHEMA-STATUS.md` created/updated
+- [ ] Coverage compared against legacy MCP schema
 
 </success_criteria>
 
@@ -163,6 +201,8 @@ Use `/wxcode:dashboard --all` when:
 - After schema migration
 - For troubleshooting/recovery
 - After git operations that modified .planning/
+- After adding/modifying database models (regenerates schema dashboard)
+- UI datamodel panel needs refresh
 
 ## Automatic Updates
 

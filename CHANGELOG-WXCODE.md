@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.22] - 2026-02-05
+
+### Changed
+- **`/wxcode:dashboard --all` now regenerates schema dashboard**
+  - For conversion projects, invokes `/wxcode:schema-dashboard`
+  - Generates `.planning/schema-dashboard.json` for UI datamodel panel
+  - Generates `.planning/SCHEMA-STATUS.md` for human review
+  - Added to success criteria and summary output
+
 ## [1.4.21] - 2026-02-05
 
 ### Added
