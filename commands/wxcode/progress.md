@@ -51,6 +51,14 @@ Provides situational awareness before continuing work.
 
 <process>
 
+<step name="header">
+**Emit structured header:**
+
+```
+<!-- WXCODE:HEADER:{"command":"progress","args":"","title":"WXCODE ▶ PROJECT PROGRESS"} -->
+```
+</step>
+
 <step name="verify">
 **Verify planning structure exists:**
 
@@ -189,6 +197,10 @@ Find the first PLAN.md without matching SUMMARY.md.
 Read its `<objective>` section.
 
 ```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"Phase {N} ready to execute","progress":{calculated},"phase":{N}} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"execute-phase","args":"{phase}","description":"Execute planned tasks","priority":"recommended"} -->
+```
+
 ---
 
 ## ▶ Next Up
@@ -200,7 +212,6 @@ Read its `<objective>` section.
 <sub>`/clear` first → fresh context window</sub>
 
 ---
-```
 
 ---
 
@@ -211,6 +222,10 @@ Check if `{phase}-CONTEXT.md` exists in phase directory.
 **If CONTEXT.md exists:**
 
 ```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"Phase {N} ready to plan","progress":{calculated},"phase":{N}} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"plan-phase","args":"{phase}","description":"Create execution plan","priority":"recommended"} -->
+```
+
 ---
 
 ## ▶ Next Up
@@ -223,11 +238,14 @@ Check if `{phase}-CONTEXT.md` exists in phase directory.
 <sub>`/clear` first → fresh context window</sub>
 
 ---
-```
 
 **If CONTEXT.md does NOT exist:**
 
 ```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"Phase {N} needs context","progress":{calculated},"phase":{N}} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"discuss-phase","args":"{phase}","description":"Gather context before planning","priority":"recommended"} -->
+```
+
 ---
 
 ## ▶ Next Up
@@ -245,7 +263,6 @@ Check if `{phase}-CONTEXT.md` exists in phase directory.
 - `/wxcode:list-phase-assumptions {phase}` — see Claude's assumptions
 
 ---
-```
 
 ---
 
@@ -254,6 +271,10 @@ Check if `{phase}-CONTEXT.md` exists in phase directory.
 UAT.md exists with gaps (diagnosed issues). User needs to plan fixes.
 
 ```
+<!-- WXCODE:STATUS:{"status":"failed","message":"Phase {N} has UAT gaps","progress":{calculated},"phase":{N}} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"plan-phase","args":"{phase} --gaps","description":"Plan fixes for UAT gaps","priority":"required"} -->
+```
+
 ---
 
 ## ⚠ UAT Gaps Found
@@ -271,7 +292,6 @@ UAT.md exists with gaps (diagnosed issues). User needs to plan fixes.
 - `/wxcode:verify-work {phase}` — run more UAT testing
 
 ---
-```
 
 ---
 
@@ -299,6 +319,10 @@ State: "Current phase is {X}. Milestone has {N} phases (highest: {Y})."
 Read ROADMAP.md to get the next phase's name and goal.
 
 ```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Phase {Z} complete","progress":{calculated},"phase":{Z}} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"discuss-phase","args":"{Z+1}","description":"Gather context for next phase","priority":"recommended"} -->
+```
+
 ---
 
 ## ✓ Phase {Z} Complete
@@ -318,13 +342,16 @@ Read ROADMAP.md to get the next phase's name and goal.
 - `/wxcode:verify-work {Z}` — user acceptance test before continuing
 
 ---
-```
 
 ---
 
 **Route D: Milestone complete**
 
 ```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Milestone complete","progress":100} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"complete-milestone","args":"","description":"Archive milestone","priority":"recommended"} -->
+```
+
 ---
 
 ## 🎉 Milestone Complete
@@ -345,7 +372,6 @@ All {N} phases finished!
 - `/wxcode:verify-work` — user acceptance test before completing milestone
 
 ---
-```
 
 ---
 
@@ -356,6 +382,10 @@ A milestone was completed and archived. Ready to start the next milestone cycle.
 Read MILESTONES.md to find the last completed milestone version.
 
 ```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Between milestones","progress":100} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"new-milestone","args":"","description":"Start next milestone cycle","priority":"recommended"} -->
+```
+
 ---
 
 ## ✓ Milestone v{X.Y} Complete
@@ -371,7 +401,6 @@ Ready to plan the next milestone.
 <sub>`/clear` first → fresh context window</sub>
 
 ---
-```
 
 </step>
 
