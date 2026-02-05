@@ -499,6 +499,51 @@ Task(wxcode-schema-generator):
 
 </integration>
 
+<dashboard_update>
+
+## Dashboard Update (MANDATORY)
+
+**After EVERY schema operation (generate, validate, or get_missing), trigger dashboard update.**
+
+This ensures the UI always has current schema information in a stack-agnostic format.
+
+### When to Update
+
+| Capability | Trigger Dashboard |
+|------------|-------------------|
+| generate_all_models | ✅ Yes - after all models generated |
+| generate_specific_models | ✅ Yes - after new models added |
+| validate_models | ✅ Yes - after validation complete |
+| get_missing_tables | ❌ No - read-only operation |
+
+### How to Update
+
+After completing the primary operation, invoke the schema dashboard command:
+
+```
+Use Skill tool to invoke /wxcode:schema-dashboard
+
+OR if Skill not available, output instruction:
+
+---
+## Dashboard Update Required
+
+Run `/wxcode:schema-dashboard` to update the schema dashboard.
+---
+```
+
+### Dashboard Output
+
+The dashboard command will:
+1. Parse all current model files
+2. Compare against legacy schema from MCP
+3. Generate `.planning/schema-dashboard.json` (machine-readable)
+4. Generate `.planning/SCHEMA-STATUS.md` (human-readable)
+
+**UI Consumption:** The UI reads `.planning/schema-dashboard.json` for the datamodel panel.
+
+</dashboard_update>
+
 <execution_checklist>
 
 Before returning, verify:
@@ -512,5 +557,6 @@ Before returning, verify:
 - [ ] Index file exports all models
 - [ ] Connection config matches MCP connection info
 - [ ] Validation report is actionable (specific fixes)
+- [ ] **Dashboard update triggered** (for generate/validate operations)
 
 </execution_checklist>

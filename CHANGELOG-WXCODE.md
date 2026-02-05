@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.21] - 2026-02-05
+
+### Added
+- **New command: `/wxcode:schema-dashboard`**
+  - Generates stack-agnostic JSON dashboard of all database models
+  - Output: `.planning/schema-dashboard.json` (for UI consumption)
+  - Output: `.planning/SCHEMA-STATUS.md` (human-readable summary)
+  - Comprehensive schema format covering ALL database elements:
+    - Tables with full column details (type, size, precision, scale, nullable, default, computed)
+    - Primary keys, foreign keys, indexes, unique constraints, check constraints
+    - Relationships (one-to-one, one-to-many, many-to-many) with all metadata
+    - Enums, views, sequences, functions, procedures, triggers
+    - Composite types, domains, extensions
+    - Type normalization from any ORM to base types
+  - Parsers for: SQLAlchemy, Prisma, TypeORM, Django, Sequelize
+  - Coverage comparison against legacy schema from MCP
+
+### Changed
+- **`wxcode-schema-generator` now triggers dashboard update**
+  - After generate_all_models: updates dashboard
+  - After generate_specific_models: updates dashboard
+  - After validate_models: updates dashboard
+  - Ensures UI always has current schema information
+
 ## [1.4.20] - 2026-02-05
 
 ### Added
