@@ -7,9 +7,17 @@ allowed-tools:
 ---
 
 <structured_output>
+## Structured Output (MANDATORY)
+
 **At command start:**
 ```
 <!-- WXCODE:HEADER:{"command":"history","args":"$ARGUMENTS","title":"WXCODE ▶ HISTORY"} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"History displayed"} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"status","args":"","description":"Check current sync state","priority":"optional"} -->
 ```
 </structured_output>
 
@@ -135,6 +143,10 @@ View details: `cat .wxcode/decisions/<name>.md`
 - /wxcode:status — Current state summary
 - /wxcode:diff <file> — Compare specific file with upstream
 - /wxcode:sync — Sync with upstream
+
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"History displayed"} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"status","args":"","description":"Check current sync state","priority":"optional"} -->
 ```
 
 </process>

@@ -7,9 +7,33 @@ allowed-tools:
 ---
 
 <structured_output>
+## Structured Output (MANDATORY)
+
 **At command start:**
 ```
 <!-- WXCODE:HEADER:{"command":"status","args":"$ARGUMENTS","title":"WXCODE ▶ STATUS"} -->
+```
+
+**At command end (up-to-date):**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Up to date with upstream"} -->
+```
+
+**At command end (updates available):**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"N updates available"} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"sync","args":"","description":"Apply upstream updates","priority":"recommended"} -->
+```
+
+**At command end (not initialized):**
+```
+<!-- WXCODE:STATUS:{"status":"failed","message":"WXCODE not initialized"} -->
+<!-- WXCODE:ERROR:{"code":"NOT_INITIALIZED","message":"WXCODE fork not initialized","recoverable":true,"suggestion":"Run /wxcode:init"} -->
+```
+
+**At command end (fetch failed):**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Offline - showing cached state"} -->
 ```
 </structured_output>
 
@@ -41,6 +65,9 @@ If not initialized:
 WXCODE not initialized.
 
 Run /wxcode:init to setup fork management.
+
+<!-- WXCODE:STATUS:{"status":"failed","message":"WXCODE not initialized"} -->
+<!-- WXCODE:ERROR:{"code":"NOT_INITIALIZED","message":"WXCODE fork not initialized","recoverable":true,"suggestion":"Run /wxcode:init"} -->
 ```
 
 Exit.
@@ -131,6 +158,8 @@ NEW_COMMANDS=$(git diff --name-status $LAST_COMMIT upstream/main 2>/dev/null | g
 - /wxcode:discuss — Plan new features
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<!-- WXCODE:STATUS:{"status":"completed","message":"Up to date with upstream"} -->
 ```
 
 **If updates available:**
@@ -183,6 +212,9 @@ NEW_COMMANDS=$(git diff --name-status $LAST_COMMIT upstream/main 2>/dev/null | g
 → `/wxcode:diff` — Preview specific changes
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<!-- WXCODE:STATUS:{"status":"completed","message":"N updates available"} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"sync","args":"","description":"Apply upstream updates","priority":"recommended"} -->
 ```
 
 **If fetch failed:**
@@ -211,6 +243,8 @@ NEW_COMMANDS=$(git diff --name-status $LAST_COMMIT upstream/main 2>/dev/null | g
 Retry when online: /wxcode:status
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<!-- WXCODE:STATUS:{"status":"completed","message":"Offline - showing cached state"} -->
 ```
 
 </process>

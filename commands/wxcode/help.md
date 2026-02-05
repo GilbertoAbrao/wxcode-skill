@@ -4,9 +4,16 @@ description: Show available WXCODE fork management commands
 ---
 
 <structured_output>
+## Structured Output (MANDATORY)
+
 **At command start (emit before reference content):**
 ```
 <!-- WXCODE:HEADER:{"command":"help","args":"","title":"WXCODE ▶ COMMAND REFERENCE"} -->
+```
+
+**At command end (emit after reference content):**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Help displayed"} -->
 ```
 </structured_output>
 
@@ -285,4 +292,8 @@ When syncing, you may be asked about:
 - Mark heavily customized files as overrides to avoid conflicts
 - Record decisions in `/wxcode:discuss` before major changes
 - Use `/wxcode:history` to understand past decisions
+
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Help displayed"} -->
+```
 </reference>

@@ -6,9 +6,16 @@ allowed-tools:
 ---
 
 <structured_output>
+## Structured Output (MANDATORY)
+
 **At command start:**
 ```
 <!-- WXCODE:HEADER:{"command":"version","args":"$ARGUMENTS","title":"WXCODE ▶ VERSION"} -->
+```
+
+**At command end:**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"v{VERSION}"} -->
 ```
 </structured_output>
 
@@ -28,6 +35,8 @@ Output format:
 
 ```
 WXCODE v{VERSION}
+
+<!-- WXCODE:STATUS:{"status":"completed","message":"v{VERSION}"} -->
 ```
 
 </process>

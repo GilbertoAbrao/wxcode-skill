@@ -7,9 +7,28 @@ allowed-tools:
 ---
 
 <structured_output>
+## Structured Output (MANDATORY)
+
 **At command start:**
 ```
 <!-- WXCODE:HEADER:{"command":"diff","args":"$ARGUMENTS","title":"WXCODE ▶ DIFF"} -->
+```
+
+**At command end (no differences):**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"No differences found"} -->
+```
+
+**At command end (differences exist):**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"N differences found"} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"sync","args":"","description":"Apply upstream changes","priority":"optional"} -->
+```
+
+**At command end (list mode):**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"N files with differences"} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"diff","args":"<file>","description":"View specific file diff","priority":"optional"} -->
 ```
 </structured_output>
 
@@ -46,6 +65,10 @@ git diff --name-only $LAST_SYNC upstream/main
 Display:
 
 ```
+<!-- WXCODE:STATUS:{"status":"completed","message":"N files with differences"} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"diff","args":"<file>","description":"View specific file diff","priority":"optional"} -->
+```
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  WXCODE ► DIFF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -163,6 +186,9 @@ DIFF_LINES=$(wc -l < /tmp/diff-output.txt)
 **4.1 If no differences:**
 
 ```
+<!-- WXCODE:STATUS:{"status":"completed","message":"No differences found"} -->
+```
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  WXCODE ► DIFF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -175,11 +201,14 @@ DIFF_LINES=$(wc -l < /tmp/diff-output.txt)
 Your file matches upstream (after transformation).
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
 
 **4.2 If differences exist:**
 
 ```
+<!-- WXCODE:STATUS:{"status":"completed","message":"N differences found"} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"sync","args":"","description":"Apply upstream changes","priority":"optional"} -->
+```
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  WXCODE ► DIFF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

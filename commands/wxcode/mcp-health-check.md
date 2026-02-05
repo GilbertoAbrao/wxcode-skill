@@ -6,9 +6,22 @@ allowed-tools:
 ---
 
 <structured_output>
+## Structured Output (MANDATORY)
+
 **At command start:**
 ```
 <!-- WXCODE:HEADER:{"command":"mcp-health-check","args":"$ARGUMENTS","title":"WXCODE ▶ MCP HEALTH CHECK"} -->
+```
+
+**At command end (success):**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"MCP connected"} -->
+```
+
+**At command end (failure):**
+```
+<!-- WXCODE:STATUS:{"status":"failed","message":"MCP not available"} -->
+<!-- WXCODE:ERROR:{"code":"MCP_UNAVAILABLE","message":"wxcode-kb MCP server not responding","recoverable":true,"suggestion":"Check MCP server is running"} -->
 ```
 </structured_output>
 
@@ -33,6 +46,9 @@ mcp__wxcode-kb__health_check()
 **If success:**
 
 ```
+<!-- WXCODE:STATUS:{"status":"completed","message":"MCP connected"} -->
+```
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  WXCODE MCP ► HEALTH CHECK
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -45,11 +61,14 @@ mcp__wxcode-kb__health_check()
 | Neo4j   | [status from response] |
 
 [Any additional info from health_check response]
-```
 
 **If fails:**
 
 ```
+<!-- WXCODE:STATUS:{"status":"failed","message":"MCP not available"} -->
+<!-- WXCODE:ERROR:{"code":"MCP_UNAVAILABLE","message":"wxcode-kb MCP server not responding","recoverable":true,"suggestion":"Check MCP server is running"} -->
+```
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  WXCODE MCP ► HEALTH CHECK
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -60,7 +79,6 @@ mcp__wxcode-kb__health_check()
 1. Ensure wxcode-kb MCP server is running
 2. Verify MCP is configured in Claude Code settings
 3. Restart Claude Code if recently configured
-```
 
 </process>
 

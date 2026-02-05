@@ -8,9 +8,22 @@ allowed-tools:
 ---
 
 <structured_output>
+## Structured Output (MANDATORY)
+
 **At command start:**
 ```
 <!-- WXCODE:HEADER:{"command":"settings","args":"$ARGUMENTS","title":"WXCODE ▶ SETTINGS"} -->
+```
+
+**At command end (success):**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Settings updated"} -->
+```
+
+**At command end (no project):**
+```
+<!-- WXCODE:STATUS:{"status":"failed","message":"No project found"} -->
+<!-- WXCODE:ERROR:{"code":"NO_PROJECT","message":"No WXCODE project found","recoverable":true,"suggestion":"Run /wxcode:new-project first"} -->
 ```
 </structured_output>
 
@@ -146,6 +159,9 @@ Quick commands:
 - /wxcode:plan-phase --research — force research
 - /wxcode:plan-phase --skip-research — skip research
 - /wxcode:plan-phase --skip-verify — skip plan check
+
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Settings updated"} -->
 ```
 
 </process>

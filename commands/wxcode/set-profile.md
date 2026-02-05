@@ -8,9 +8,28 @@ arguments:
 ---
 
 <structured_output>
+## Structured Output (MANDATORY)
+
 **At command start:**
 ```
 <!-- WXCODE:HEADER:{"command":"set-profile","args":"$ARGUMENTS","title":"WXCODE ▶ SET PROFILE"} -->
+```
+
+**At command end (success):**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Profile set to $ARGUMENTS"} -->
+```
+
+**At command end (invalid profile):**
+```
+<!-- WXCODE:STATUS:{"status":"failed","message":"Invalid profile"} -->
+<!-- WXCODE:ERROR:{"code":"INVALID_PROFILE","message":"Profile must be quality, balanced, or budget","recoverable":true} -->
+```
+
+**At command end (no project):**
+```
+<!-- WXCODE:STATUS:{"status":"failed","message":"No project found"} -->
+<!-- WXCODE:ERROR:{"code":"NO_PROJECT","message":"No WXCODE project found","recoverable":true,"suggestion":"Run /wxcode:new-project first"} -->
 ```
 </structured_output>
 
@@ -68,13 +87,15 @@ Write updated config back to `.planning/config.json`.
 ## 4. Confirm
 
 ```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Profile set to $ARGUMENTS.profile"} -->
+```
+
 ✓ Model profile set to: $ARGUMENTS.profile
 
 Agents will now use:
 [Show table from model-profiles.md for selected profile]
 
 Next spawned agents will use the new profile.
-```
 
 </process>
 

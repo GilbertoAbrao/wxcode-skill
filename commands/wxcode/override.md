@@ -10,9 +10,33 @@ allowed-tools:
 ---
 
 <structured_output>
+## Structured Output (MANDATORY)
+
 **At command start:**
 ```
 <!-- WXCODE:HEADER:{"command":"override","args":"$ARGUMENTS","title":"WXCODE ▶ OVERRIDE"} -->
+```
+
+**At command end (help/usage):**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Usage displayed"} -->
+```
+
+**At command end (list):**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"N overrides active"} -->
+```
+
+**At command end (add success):**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Override added"} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"override","args":"--list","description":"View all overrides","priority":"optional"} -->
+```
+
+**At command end (remove success):**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Override removed"} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"diff","args":"<file>","description":"Preview upstream changes","priority":"optional"} -->
 ```
 </structured_output>
 
@@ -80,6 +104,8 @@ When a file is overridden:
 - Local-only features
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<!-- WXCODE:STATUS:{"status":"completed","message":"Usage displayed"} -->
 ```
 
 Exit.
@@ -111,6 +137,8 @@ Display formatted:
 - /wxcode:override --remove <file> — Remove override
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<!-- WXCODE:STATUS:{"status":"completed","message":"N overrides active"} -->
 ```
 
 Exit.
@@ -200,6 +228,9 @@ To remove this override later:
   /wxcode:override --remove [FILE]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<!-- WXCODE:STATUS:{"status":"completed","message":"Override added"} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"override","args":"--list","description":"View all overrides","priority":"optional"} -->
 ```
 
 ## Phase 4: Handle --remove
@@ -260,6 +291,9 @@ To preview what would change:
   /wxcode:diff [FILE]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<!-- WXCODE:STATUS:{"status":"completed","message":"Override removed"} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"diff","args":"[FILE]","description":"Preview upstream changes","priority":"optional"} -->
 ```
 
 </process>

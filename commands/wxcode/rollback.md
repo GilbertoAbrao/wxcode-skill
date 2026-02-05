@@ -9,9 +9,28 @@ allowed-tools:
 ---
 
 <structured_output>
+## Structured Output (MANDATORY)
+
 **At command start:**
 ```
 <!-- WXCODE:HEADER:{"command":"rollback","args":"$ARGUMENTS","title":"WXCODE ▶ ROLLBACK"} -->
+```
+
+**At command end (success):**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Rollback complete"} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"status","args":"","description":"Verify current state","priority":"recommended"} -->
+```
+
+**At command end (no sync found):**
+```
+<!-- WXCODE:STATUS:{"status":"failed","message":"No sync to rollback"} -->
+<!-- WXCODE:ERROR:{"code":"NO_SYNC_FOUND","message":"No sync commit found to rollback","recoverable":false} -->
+```
+
+**At command end (cancelled):**
+```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Rollback cancelled"} -->
 ```
 </structured_output>
 
@@ -68,6 +87,9 @@ This might mean:
 - The last sync wasn't committed
 
 Use /wxcode:status to check current state.
+
+<!-- WXCODE:STATUS:{"status":"failed","message":"No sync to rollback"} -->
+<!-- WXCODE:ERROR:{"code":"NO_SYNC_FOUND","message":"No sync commit found to rollback","recoverable":false} -->
 ```
 
 Exit.
@@ -229,6 +251,9 @@ If you want to permanently skip certain changes:
 - Choose "Skip" or "Never import" during sync
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<!-- WXCODE:STATUS:{"status":"completed","message":"Rollback complete"} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"status","args":"","description":"Verify current state","priority":"recommended"} -->
 ```
 
 </process>
