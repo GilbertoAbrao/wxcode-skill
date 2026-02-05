@@ -1,7 +1,7 @@
 # WXCODE Structured Output Specification
 
-**Versão:** 1.0.0
-**Data:** 2026-02-04
+**Versão:** 1.1.0
+**Data:** 2026-02-04 (atualizado)
 **Propósito:** Especificação completa para parsing de saídas WXCODE em interfaces de chat.
 
 ---
@@ -283,18 +283,23 @@ interface ErrorData {
 
 **Códigos de Erro:**
 
-| Code | Descrição | Recoverable |
-|------|-----------|-------------|
-| `MCP_UNAVAILABLE` | MCP server não conectado | true |
-| `FILE_NOT_FOUND` | Arquivo não existe | depends |
-| `PHASE_NOT_FOUND` | Fase não existe no roadmap | false |
-| `PLAN_NOT_FOUND` | Plano não encontrado | false |
-| `GIT_DIRTY` | Mudanças não commitadas | true |
-| `VALIDATION_FAILED` | Validação falhou | true |
-| `AUTH_REQUIRED` | Precisa autenticação | true |
-| `TOOL_FAILED` | Ferramenta falhou | depends |
-| `UAT_GAPS_FOUND` | Testes falharam | true |
-| `TIMEOUT` | Operação timeout | true |
+| Code | Descrição | Recoverable | Comandos |
+|------|-----------|-------------|----------|
+| `MCP_UNAVAILABLE` | MCP server não conectado | true | mcp-health-check, execute-phase, plan-phase |
+| `FILE_NOT_FOUND` | Arquivo não existe | depends | new-project-greetings |
+| `MISSING_ARGUMENT` | Argumento obrigatório faltando | true | new-project-greetings |
+| `PHASE_NOT_FOUND` | Fase não existe no roadmap | false | execute-phase, plan-phase |
+| `PLAN_NOT_FOUND` | Plano não encontrado | false | execute-phase |
+| `NO_PROJECT` | Projeto WXCODE não encontrado | true | set-profile, settings |
+| `INVALID_PROFILE` | Perfil de modelo inválido | true | set-profile |
+| `NOT_INITIALIZED` | WXCODE fork não inicializado | true | status |
+| `NO_SYNC_FOUND` | Nenhum sync para rollback | false | rollback |
+| `GIT_DIRTY` | Mudanças não commitadas | true | execute-phase |
+| `VALIDATION_FAILED` | Validação falhou | true | plan-phase |
+| `AUTH_REQUIRED` | Precisa autenticação | true | - |
+| `TOOL_FAILED` | Ferramenta falhou | depends | execute-phase |
+| `UAT_GAPS_FOUND` | Testes falharam | true | verify-work |
+| `TIMEOUT` | Operação timeout | true | execute-phase |
 
 **Rendering Sugerido:**
 
@@ -487,52 +492,57 @@ errors = [e for e in events if e.type == 'ERROR']
 
 ## 5. Mapeamento Completo de Comandos
 
-| Comando | Title | Status Messages | Next Action |
-|---------|-------|-----------------|-------------|
-| `add-phase` | ADDING PHASE | Updating roadmap | plan-phase |
-| `add-todo` | ADDING TODO | Creating todo | check-todos |
-| `audit-milestone` | AUDITING MILESTONE | Checking requirements, Verifying integration | complete-milestone |
-| `check-todos` | CHECKING TODOS | Loading todos | progress |
-| `complete-milestone` | COMPLETING MILESTONE | Archiving roadmap, Creating tag | new-milestone |
-| `create-start-dev` | CREATING START-DEV | Getting template, Creating script | start-dev |
-| `customize` | CUSTOMIZING WXCODE | Gathering preferences | status |
-| `dashboard` | GENERATING DASHBOARD | Parsing state, Generating JSON | progress |
-| `debug` | DEBUG SESSION | Analyzing, Forming hypothesis, Testing | progress |
-| `design-system` | DESIGN SYSTEM | Collecting inputs, Generating tokens | progress |
-| `diff` | DIFF | (minimal) | - |
-| `discuss-phase` | DISCUSSING PHASE X | Analyzing phase, Gathering decisions | plan-phase X |
-| `discuss` | DISCUSSION | Exploring options | progress |
-| `execute-phase` | EXECUTING PHASE X | Executing waves, Verifying | discuss-phase X+1 |
-| `help` | COMMAND REFERENCE | (minimal) | - |
-| `history` | HISTORY | (minimal) | - |
-| `init` | INITIALIZING WXCODE | Creating config, Setting up remotes | help |
-| `insert-phase` | INSERTING PHASE | Updating roadmap | plan-phase |
-| `join-discord` | JOIN DISCORD | (minimal) | - |
-| `list-phase-assumptions` | PHASE ASSUMPTIONS | Analyzing phase | discuss-phase |
-| `map-codebase` | MAPPING CODEBASE | Analyzing architecture | progress |
-| `mcp-health-check` | MCP HEALTH CHECK | (minimal) | - |
-| `new-milestone` | NEW MILESTONE | Gathering requirements | plan-phase 1 |
-| `new-project` | INITIALIZING PROJECT | Gathering context, Running research | plan-phase 1 |
-| `new-project-greetings` | WELCOME | (minimal) | new-project |
-| `override` | OVERRIDE | (minimal) | - |
-| `pause-work` | PAUSING WORK | Creating handoff | resume-work |
-| `plan-milestone-gaps` | PLANNING GAP CLOSURE | Analyzing gaps | execute-phase |
-| `plan-phase` | PLANNING PHASE X | Researching, Creating plan, Verifying | execute-phase X |
-| `progress` | PROJECT PROGRESS | Phase X of Y | execute-phase ou plan-phase |
-| `quick` | QUICK TASK | Executing task | progress |
-| `remove-phase` | REMOVING PHASE | Updating roadmap | progress |
-| `research-phase` | RESEARCHING PHASE X | Gathering knowledge | plan-phase X |
-| `resume-work` | RESUMING WORK | Loading context | progress |
-| `rollback` | ROLLBACK | (minimal) | - |
-| `set-profile` | SET PROFILE | (minimal) | - |
-| `settings` | SETTINGS | (minimal) | - |
-| `start-dev` | STARTING DEV SERVER | Launching server | progress |
-| `status` | STATUS | (minimal) | - |
-| `sync` | SYNCING WITH UPSTREAM | Fetching, Applying transformations | status |
-| `trace` | TRACING ELEMENT | Finding legacy, Locating converted | progress |
-| `update` | UPDATING WXCODE | Checking, Installing | version |
-| `verify-work` | VERIFYING PHASE X | Testing: [item] | execute-phase --gaps |
-| `version` | VERSION | (minimal) | - |
+**Legenda:**
+- ✓ = Implementado com múltiplos cenários
+- ○ = Implementado (cenário único)
+- - = Não aplicável (comando terminal)
+
+| Comando | Title | STATUS | NEXT_ACTION | ERROR |
+|---------|-------|--------|-------------|-------|
+| `add-phase` | ADDING PHASE | ✓ | ✓ plan-phase | - |
+| `add-todo` | ADDING TODO | ✓ | ✓ check-todos | - |
+| `audit-milestone` | AUDITING MILESTONE | ✓ | ✓ complete-milestone | - |
+| `check-todos` | CHECKING TODOS | ✓ | ✓ progress | - |
+| `complete-milestone` | COMPLETING MILESTONE | ✓ | ✓ new-milestone | - |
+| `create-start-dev` | CREATING START-DEV | ✓ | ✓ start-dev | - |
+| `customize` | CUSTOMIZING WXCODE | ✓ | ✓ status | - |
+| `dashboard` | GENERATING DASHBOARD | ✓ | ✓ progress | - |
+| `debug` | DEBUG SESSION | ✓ | ✓ progress | - |
+| `design-system` | DESIGN SYSTEM | ✓ | ✓ progress | - |
+| `diff` | DIFF | ✓ completed/N differences | ✓ sync (se diferenças) | - |
+| `discuss-phase` | DISCUSSING PHASE X | ✓ | ✓ plan-phase X | - |
+| `discuss` | DISCUSSION | ✓ | ✓ progress | - |
+| `execute-phase` | EXECUTING PHASE X | ✓ waves/verifying | ✓ discuss-phase X+1 | ✓ |
+| `help` | COMMAND REFERENCE | ○ completed | - | - |
+| `history` | HISTORY | ○ completed | ✓ status | - |
+| `init` | INITIALIZING WXCODE | ✓ | ✓ help | - |
+| `insert-phase` | INSERTING PHASE | ✓ | ✓ plan-phase | - |
+| `join-discord` | JOIN DISCORD | ○ completed | - | - |
+| `list-phase-assumptions` | PHASE ASSUMPTIONS | ✓ | ✓ discuss-phase | - |
+| `map-codebase` | MAPPING CODEBASE | ✓ | ✓ progress | - |
+| `mcp-health-check` | MCP HEALTH CHECK | ✓ connected/failed | - | ✓ MCP_UNAVAILABLE |
+| `new-milestone` | NEW MILESTONE | ✓ | ✓ plan-phase 1 | - |
+| `new-project` | INITIALIZING PROJECT | ✓ | ✓ plan-phase 1 | - |
+| `new-project-greetings` | WELCOME | ✓ loaded/failed | ✓ new-project | ✓ MISSING_ARG, FILE_NOT_FOUND |
+| `override` | OVERRIDE | ✓ usage/list/add/remove | ✓ override --list, diff | - |
+| `pause-work` | PAUSING WORK | ✓ | ✓ resume-work | - |
+| `plan-milestone-gaps` | PLANNING GAP CLOSURE | ✓ | ✓ execute-phase | - |
+| `plan-phase` | PLANNING PHASE X | ✓ researching/creating/verifying | ✓ execute-phase X | ✓ |
+| `progress` | PROJECT PROGRESS | ✓ Phase X of Y (6 rotas) | ✓ execute/plan/discuss/complete | - |
+| `quick` | QUICK TASK | ✓ | ✓ progress | - |
+| `remove-phase` | REMOVING PHASE | ✓ | ✓ progress | - |
+| `research-phase` | RESEARCHING PHASE X | ✓ | ✓ plan-phase X | - |
+| `resume-work` | RESUMING WORK | ✓ | ✓ progress | - |
+| `rollback` | ROLLBACK | ✓ complete/failed/cancelled | ✓ status | ✓ NO_SYNC_FOUND |
+| `set-profile` | SET PROFILE | ✓ success/error | - | ✓ INVALID_PROFILE, NO_PROJECT |
+| `settings` | SETTINGS | ✓ updated/error | - | ✓ NO_PROJECT |
+| `start-dev` | STARTING DEV SERVER | ✓ | ✓ progress | - |
+| `status` | STATUS | ✓ up-to-date/updates/offline | ✓ sync (se updates) | ✓ NOT_INITIALIZED |
+| `sync` | SYNCING WITH UPSTREAM | ✓ | ✓ status | - |
+| `trace` | TRACING ELEMENT | ✓ | ✓ progress | - |
+| `update` | UPDATING WXCODE | ✓ | ✓ version | - |
+| `verify-work` | VERIFYING PHASE X | ✓ Testing: [item] | ✓ execute-phase --gaps | ✓ UAT_GAPS_FOUND |
+| `version` | VERSION | ○ completed | - | - |
 
 ---
 
@@ -576,4 +586,19 @@ Esta especificação segue semantic versioning. Mudanças:
 - **MINOR**: Novos tipos de eventos ou campos opcionais
 - **PATCH**: Correções e esclarecimentos
 
-Versão atual: **1.0.0**
+### Histórico de Versões
+
+**1.1.0** (2026-02-04)
+- 100% dos 44 comandos com structured output completo
+- Adicionados ERROR markers para 12 comandos
+- Adicionados novos códigos de erro: MISSING_ARGUMENT, NO_PROJECT, INVALID_PROFILE, NOT_INITIALIZED, NO_SYNC_FOUND
+- Comandos corrigidos: diff, help, history, join-discord, mcp-health-check, new-project-greetings, override, rollback, set-profile, settings, status, version
+- Tabela de mapeamento atualizada com indicadores de cobertura
+
+**1.0.0** (2026-02-04)
+- Especificação inicial
+- 6 tipos de eventos: HEADER, STATUS, TOOL, TOOL_RESULT, NEXT_ACTION, ERROR
+- Parsers TypeScript e Python
+- Guia de UI
+
+Versão atual: **1.1.0**
