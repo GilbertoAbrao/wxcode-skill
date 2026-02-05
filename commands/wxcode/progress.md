@@ -295,28 +295,43 @@ UAT.md exists with gaps (diagnosed issues). User needs to plan fixes.
 
 ---
 
-**Step 3: Check milestone status (only when phase complete)**
+**Step 3: Check milestone status (only when current phase complete)**
 
 Read ROADMAP.md and identify:
 1. Current phase number
 2. All phase numbers in the current milestone section
+3. The highest phase number
 
-Count total phases and identify the highest phase number.
+**Verify ALL phases are complete before suggesting milestone completion:**
 
-State: "Current phase is {X}. Milestone has {N} phases (highest: {Y})."
+```bash
+# For EACH phase directory in .planning/phases/
+# Count PLAN.md files and SUMMARY.md files
+# A phase is complete when summaries >= plans AND plans > 0
+for dir in .planning/phases/*/; do
+  plans=$(ls -1 "$dir"*-PLAN.md 2>/dev/null | wc -l)
+  summaries=$(ls -1 "$dir"*-SUMMARY.md 2>/dev/null | wc -l)
+  echo "$dir: plans=$plans summaries=$summaries"
+done
+```
+
+State: "Current phase is {X}. Milestone has {N} phases (highest: {Y}). Phases complete: {completed}/{total}."
 
 **Route based on milestone status:**
 
 | Condition | Meaning | Action |
 |-----------|---------|--------|
 | current phase < highest phase | More phases remain | Go to **Route C** |
-| current phase = highest phase | Milestone complete | Go to **Route D** |
+| current phase = highest phase BUT incomplete phases exist | Last phase reached but not all done | Go to **Route C** (next incomplete phase) |
+| ALL phases complete (summaries >= plans for each) | Milestone truly complete | Go to **Route D** |
 
 ---
 
-**Route C: Phase complete, more phases remain**
+**Route C: Phase complete, more phases remain (or incomplete phases exist)**
 
-Read ROADMAP.md to get the next phase's name and goal.
+Find the **next incomplete phase** — either the next sequential phase, or if at the last phase, find the first incomplete phase.
+
+Read ROADMAP.md to get that phase's name and goal.
 
 ```
 <!-- WXCODE:STATUS:{"status":"completed","message":"Phase {Z} complete","progress":{calculated},"phase":{Z}} -->

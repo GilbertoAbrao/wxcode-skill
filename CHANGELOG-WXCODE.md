@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.17] - 2026-02-05
+
+### Fixed
+- **`/wxcode:progress` suggesting milestone completion with incomplete phases**
+  - Bug: When reaching the last phase number, Route D (milestone complete) was triggered even if other phases weren't executed
+  - Fix: Now verifies ALL phases have `summaries >= plans` before suggesting `/wxcode:complete-milestone`
+  - Added explicit loop to check completion status of each phase directory
+  - Route C now handles "at last phase but incomplete phases exist" by finding the next incomplete phase
+
 ## [1.4.16] - 2026-02-04
 
 ### Added
