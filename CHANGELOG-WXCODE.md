@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.23] - 2026-02-05
+
+### Added
+- **Watcher notifications for schema dashboard**
+  - `[WXCODE:SCHEMA_DASHBOARD_UPDATED] .planning/schema-dashboard.json`
+  - `[WXCODE:SCHEMA_STATUS_UPDATED] .planning/SCHEMA-STATUS.md`
+  - UI can listen for these to refresh datamodel panel
+  - Documented in SCHEMA-DASHBOARD-SPEC.md section 20.4
+
 ## [1.4.22] - 2026-02-05
 
 ### Changed

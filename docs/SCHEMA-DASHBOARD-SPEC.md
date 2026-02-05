@@ -1031,6 +1031,46 @@ function renderCoverage(coverage: Coverage) {
 
 The UI can render any table uniformly using the `base` type for icons/colors and `orm_specific` for technical details.
 
+### 20.4 Watcher Notifications
+
+The `/wxcode:schema-dashboard` command emits notifications when files are updated:
+
+```
+[WXCODE:SCHEMA_DASHBOARD_UPDATED] .planning/schema-dashboard.json
+[WXCODE:SCHEMA_STATUS_UPDATED] .planning/SCHEMA-STATUS.md
+```
+
+**UI Integration:**
+
+```typescript
+// Watch for schema dashboard updates
+function watchSchemaUpdates(output: string) {
+  const dashboardMatch = output.match(/\[WXCODE:SCHEMA_DASHBOARD_UPDATED\] (.+)/);
+  if (dashboardMatch) {
+    const filePath = dashboardMatch[1];
+    reloadSchemaDashboard(filePath);
+  }
+
+  const statusMatch = output.match(/\[WXCODE:SCHEMA_STATUS_UPDATED\] (.+)/);
+  if (statusMatch) {
+    const filePath = statusMatch[1];
+    reloadSchemaStatus(filePath);
+  }
+}
+```
+
+**Notification Events:**
+
+| Notification | File | Trigger |
+|--------------|------|---------|
+| `SCHEMA_DASHBOARD_UPDATED` | `.planning/schema-dashboard.json` | Dashboard regenerated |
+| `SCHEMA_STATUS_UPDATED` | `.planning/SCHEMA-STATUS.md` | Status summary regenerated |
+
+These notifications are emitted by:
+- `/wxcode:schema-dashboard` (directly)
+- `/wxcode:dashboard --all` (via schema-dashboard)
+- `wxcode-schema-generator` agent (after generate/validate)
+
 ---
 
 ## 21. Related Commands

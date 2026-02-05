@@ -660,9 +660,20 @@ Write to `.planning/schema-dashboard.json`:
 
 ```bash
 # Pretty-print with 2-space indent
+# Write JSON file
+```
+
+**Emit watcher notification for schema dashboard:**
+```
+[WXCODE:SCHEMA_DASHBOARD_UPDATED] .planning/schema-dashboard.json
 ```
 
 Also generate human-readable summary in `.planning/SCHEMA-STATUS.md`:
+
+**Emit watcher notification for status file:**
+```
+[WXCODE:SCHEMA_STATUS_UPDATED] .planning/SCHEMA-STATUS.md
+```
 
 ```markdown
 # Schema Status
@@ -724,5 +735,7 @@ Also generate human-readable summary in `.planning/SCHEMA-STATUS.md`:
 - [ ] Preserves ORM-specific type info in `raw` and `orm_specific`
 - [ ] Compares against legacy schema for coverage
 - [ ] Outputs valid JSON following the schema
+- [ ] Emits `[WXCODE:SCHEMA_DASHBOARD_UPDATED]` notification
+- [ ] Emits `[WXCODE:SCHEMA_STATUS_UPDATED]` notification
 - [ ] Generates human-readable SCHEMA-STATUS.md
 </success_criteria>
