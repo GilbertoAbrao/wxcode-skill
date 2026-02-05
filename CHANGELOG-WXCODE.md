@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.25] - 2026-02-05
+
+### Changed
+- **`wxcode-executor` screenshot handling: graceful fallback**
+  - Added note: screenshot may not exist or may return invalid image
+  - If screenshot unavailable/invalid, ignore and proceed with conversion
+  - Use control hierarchy, planes analysis, and code structure instead
+  - Do not block execution waiting for valid screenshot
+
 ## [1.4.24] - 2026-02-05
 
 ### Changed

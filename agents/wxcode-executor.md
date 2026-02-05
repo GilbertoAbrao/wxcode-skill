@@ -875,6 +875,19 @@ When generating any visual component:
    >
    > This reveals all planes and suggests modern equivalents (tabs, stepper, etc.).
 
+   > **📝 NOTE: Screenshot May Be Unavailable or Invalid**
+   >
+   > The screenshot may not exist or may return an image that doesn't make sense
+   > (corrupted, blank, unrelated content, or error image).
+   >
+   > **If this happens, simply ignore the screenshot** and proceed with conversion
+   > using only:
+   > - The element's control hierarchy from MCP (`get_controls`)
+   > - The planes analysis (`get_element_planes`)
+   > - The code structure and data bindings
+   >
+   > Do NOT block execution waiting for a valid screenshot.
+
 3. **Include context in skill invocation:**
    The `frontend-design` skill should receive:
    - Design tokens from `design/tokens.json`
