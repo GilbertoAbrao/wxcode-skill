@@ -1048,6 +1048,8 @@ questions: [
 
 ## Phase C4: Generate Database Models
 
+**CRITICAL:** Models must preserve **exact** legacy table/column names for transparent database access. The new application accesses the EXISTING legacy database.
+
 **If "Convert all now":**
 
 Display progress:
@@ -1055,25 +1057,60 @@ Display progress:
 ◆ Generating [N] database models...
 ```
 
-For each table in schema:
-1. Convert table name using **Naming Conventions**
-2. Convert each column using **Type Mappings**
-3. Generate model file
+Spawn the schema generator agent:
 
-**Python/SQLAlchemy:**
-- Create `app/models/base.py` with Base class
-- Create `app/models/{table_name}.py` for each table
-- Create `app/models/__init__.py` exporting all
+```
+Task(wxcode-schema-generator):
+  prompt: |
+    Generate all database models for this conversion project.
 
-**TypeScript/Prisma:**
-- Create `prisma/schema.prisma` with all models
+    Output Project ID: [output_project_id from CONTEXT.md]
+
+    Use capability: generate_all_models
+
+    Requirements:
+    - Preserve EXACT legacy table names (use __tablename__, @@map, db_table, etc.)
+    - Preserve EXACT legacy column names (use Column name=, @map, db_column, field=, etc.)
+    - Include all constraints, indexes, and relationships
+    - Create base/config files as needed by the stack
+    - Create index/barrel file exporting all models
+
+    After generation, validate models against MCP schema to confirm no drift.
+  subagent_type: wxcode-schema-generator
+```
+
+Wait for agent completion and display summary:
+```
+✓ Generated [N] models
+  - Tables: [list first 5]...
+  - Validation: [✓ All match | ⚠ See report]
+```
 
 **If "On-demand":**
 
-Create only base infrastructure:
-- Base class/configuration
-- Empty models directory
-- Note in PROJECT.md that models are generated per milestone
+Create only base infrastructure (no agent needed):
+
+**Python/SQLAlchemy:**
+- Create `app/models/base.py` with Base class and engine setup
+- Create `app/models/__init__.py` (empty, will be populated per milestone)
+- Add comment: "Models generated on-demand via wxcode-schema-generator"
+
+**TypeScript/Prisma:**
+- Create `prisma/schema.prisma` with datasource only (no models yet)
+- Add comment: "Models added per milestone via wxcode-schema-generator"
+
+**TypeScript/TypeORM:**
+- Create `src/config/database.ts` with connection setup
+- Create `src/models/index.ts` (empty barrel file)
+- Add comment: "Models generated on-demand via wxcode-schema-generator"
+
+Note in PROJECT.md:
+```markdown
+## Schema Status
+
+Models generated per milestone as needed.
+Use `/wxcode:validate-schema` to check coverage.
+```
 
 ## Phase C5: Workflow Preferences
 

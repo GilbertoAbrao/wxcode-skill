@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.19] - 2026-02-05
+
+### Changed
+- **`/wxcode:new-project` Phase C4 now uses `wxcode-schema-generator` agent**
+  - Replaced inline schema conversion logic with agent call
+  - Ensures exact legacy table/column name preservation
+  - Added validation step after generation
+  - "On-demand" mode now creates proper base infrastructure with comments
+
 ## [1.4.18] - 2026-02-05
 
 ### Added
