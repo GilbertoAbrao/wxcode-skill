@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.18] - 2026-02-05
+
+### Added
+- **New agent: `wxcode-schema-generator`**
+  - Generates ORM models from legacy schema via MCP
+  - Preserves exact table/column names for transparent legacy database access
+  - Supports SQLAlchemy, Prisma, TypeORM, Django, Sequelize
+  - Capabilities: generate_all_models, generate_specific_models, validate_models, get_missing_tables
+  - Called by: new-project (Phase C4), new-milestone, execute-phase
+  - Ensures new application can access legacy data without schema drift
+
 ## [1.4.17] - 2026-02-05
 
 ### Fixed
