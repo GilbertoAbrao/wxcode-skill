@@ -41,7 +41,7 @@ Files to update (ALL of them):
 1. `package.json` -> `"version": "X.Y.Z"`
 2. `VERSION` -> `X.Y.Z`
 3. `CHANGELOG-WXCODE.md` -> Add new version section
-4. `README-WXCODE.md` -> Update "Current Version"
+4. `README.md` -> Update "Current Version"
 
 ### Version Format
 
@@ -141,7 +141,7 @@ wxcode/
 ├── package.json                # Version here!
 ├── VERSION                     # Version here too!
 ├── CHANGELOG-WXCODE.md         # And here!
-├── README-WXCODE.md            # And here!
+├── README.md                   # And here!
 └── CLAUDE.md                   # This file
 ```
 
@@ -266,7 +266,7 @@ When extending commands for conversion mode:
 
 ### Bump Version
 ```bash
-# Edit: package.json, VERSION, CHANGELOG-WXCODE.md, README-WXCODE.md
+# Edit: package.json, VERSION, CHANGELOG-WXCODE.md, README.md
 git add -A && git commit -m "feat/fix/chore: description"
 git push origin main
 ```

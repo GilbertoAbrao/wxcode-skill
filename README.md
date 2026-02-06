@@ -1,414 +1,237 @@
-<div align="center">
+# WXCODE
 
-# GET SHIT DONE
+**WXCODE** is an AI-powered toolkit for **WinDev/WebDev code conversion projects**, built for Claude Code, OpenCode, and Gemini.
 
-**A light-weight and powerful meta-prompting, context engineering and spec-driven development system for Claude Code and OpenCode.**
-
-**Solves context rot — the quality degradation that happens as Claude fills its context window.**
-
-[![npm version](https://img.shields.io/npm/v/get-shit-done-cc?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/get-shit-done-cc)
-[![npm downloads](https://img.shields.io/npm/dm/get-shit-done-cc?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/get-shit-done-cc)
-[![Discord](https://img.shields.io/badge/Discord-Join%20Server-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/5JJgD5svVS)
-[![GitHub stars](https://img.shields.io/github/stars/glittercowboy/get-shit-done?style=for-the-badge&logo=github&color=181717)](https://github.com/glittercowboy/get-shit-done)
-[![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
-
-<br>
-
-```bash
-npx get-shit-done-cc
-```
-
-**Works on Mac, Windows, and Linux.**
-
-<br>
-
-![GSD Install](assets/terminal.svg)
-
-<br>
-
-*"If you know clearly what you want, this WILL build it for you. No bs."*
-
-*"I've done SpecKit, OpenSpec and Taskmaster — this has produced the best results for me."*
-
-*"By far the most powerful addition to my Claude Code. Nothing over-engineered. Literally just gets shit done."*
-
-<br>
-
-**Trusted by engineers at Amazon, Google, Shopify, and Webflow.**
-
-[Why I Built This](#why-i-built-this) · [How It Works](#how-it-works) · [Commands](#commands) · [Why It Works](#why-it-works)
-
-</div>
+**Current Version:** 2.0.1
 
 ---
 
-## Why I Built This
+## Table of Contents
 
-I'm a solo developer. I don't write code — Claude Code does.
-
-Other spec-driven development tools exist; BMAD, Speckit... But they all seem to make things way more complicated than they need to be (sprint ceremonies, story points, stakeholder syncs, retrospectives, Jira workflows) or lack real big picture understanding of what you're building. I'm not a 50-person software company. I don't want to play enterprise theater. I'm just a creative person trying to build great things that work.
-
-So I built GSD. The complexity is in the system, not in your workflow. Behind the scenes: context engineering, XML prompt formatting, subagent orchestration, state management. What you see: a few commands that just work.
-
-The system gives Claude everything it needs to do the work *and* verify it. I trust the workflow. It just does a good job.
-
-That's what this is. No enterprise roleplay bullshit. Just an incredibly effective system for building cool stuff consistently using Claude Code.
-
-— **TÂCHES**
-
----
-
-Vibecoding has a bad reputation. You describe what you want, AI generates code, and you get inconsistent garbage that falls apart at scale.
-
-GSD fixes that. It's the context engineering layer that makes Claude Code reliable. Describe your idea, let the system extract everything it needs to know, and let Claude Code get to work.
+- [Installation](#installation)
+- [How It Works](#how-it-works)
+- [Supported Target Stacks](#supported-target-stacks)
+- [MCP Integration](#mcp-integration)
+- [Extension Agents](#extension-agents)
+- [Planes Detection](#planes-detection)
+- [Structure Preservation](#structure-preservation)
+- [Commands](#commands)
+- [File Structure](#file-structure)
+- [Version History](#version-history)
 
 ---
 
-## Who This Is For
+## Installation
 
-People who want to describe what they want and have it built correctly — without pretending they're running a 50-person engineering org.
-
----
-
-## Getting Started
-
+**From GitHub (recommended):**
 ```bash
-npx get-shit-done-cc
+npx github:GilbertoAbrao/get-shit-done#main --claude --global
 ```
 
-The installer prompts you to choose:
-1. **Runtime** — Claude Code, OpenCode, or both
-2. **Location** — Global (all projects) or local (current project only)
-
-Verify with `/gsd:help` inside your Claude Code or OpenCode interface.
-
-### Staying Updated
-
-GSD evolves fast. Update periodically:
-
+**From local clone:**
 ```bash
-npx get-shit-done-cc@latest
-```
-
-<details>
-<summary><strong>Non-interactive Install (Docker, CI, Scripts)</strong></summary>
-
-```bash
-# Claude Code
-npx get-shit-done-cc --claude --global   # Install to ~/.claude/
-npx get-shit-done-cc --claude --local    # Install to ./.claude/
-
-# OpenCode (open source, free models)
-npx get-shit-done-cc --opencode --global # Install to ~/.opencode/
-
-# Both runtimes
-npx get-shit-done-cc --both --global     # Install to both directories
-```
-
-Use `--global` (`-g`) or `--local` (`-l`) to skip the location prompt.
-Use `--claude`, `--opencode`, or `--both` to skip the runtime prompt.
-
-</details>
-
-<details>
-<summary><strong>Development Installation</strong></summary>
-
-Clone the repository and run the installer locally:
-
-```bash
-git clone https://github.com/glittercowboy/get-shit-done.git
+git clone https://github.com/GilbertoAbrao/get-shit-done.git
 cd get-shit-done
-node bin/install.js --claude --local
+node bin/install.js --claude --global
 ```
 
-Installs to `./.claude/` for testing modifications before contributing.
+Verify with `/wxcode:help` inside Claude Code.
 
-</details>
-
-### Recommended: Skip Permissions Mode
-
-GSD is designed for frictionless automation. Run Claude Code with:
+### Updating
 
 ```bash
-claude --dangerously-skip-permissions
+npm cache clean --force && rm -rf ~/.npm/_npx && npx github:GilbertoAbrao/get-shit-done#main --claude --global
 ```
 
-> [!TIP]
-> This is how GSD is intended to be used — stopping to approve `date` and `git commit` 50 times defeats the purpose.
-
-<details>
-<summary><strong>Alternative: Granular Permissions</strong></summary>
-
-If you prefer not to use that flag, add this to your project's `.claude/settings.json`:
-
-```json
-{
-  "permissions": {
-    "allow": [
-      "Bash(date:*)",
-      "Bash(echo:*)",
-      "Bash(cat:*)",
-      "Bash(ls:*)",
-      "Bash(mkdir:*)",
-      "Bash(wc:*)",
-      "Bash(head:*)",
-      "Bash(tail:*)",
-      "Bash(sort:*)",
-      "Bash(grep:*)",
-      "Bash(tr:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git status:*)",
-      "Bash(git log:*)",
-      "Bash(git diff:*)",
-      "Bash(git tag:*)"
-    ]
-  }
-}
-```
-
-</details>
+Or use `/wxcode:update` inside Claude Code (handles cache automatically).
 
 ---
 
 ## How It Works
 
-> **Already have code?** Run `/gsd:map-codebase` first. It spawns parallel agents to analyze your stack, architecture, conventions, and concerns. Then `/gsd:new-project` knows your codebase — questions focus on what you're adding, and planning automatically loads your patterns.
+WXCODE converts legacy WinDev/WebDev applications to modern stacks through a structured workflow:
 
 ### 1. Initialize Project
 
 ```
-/gsd:new-project
+/wxcode:new-project /path/to/CONTEXT.md
 ```
 
-One command, one flow. The system:
+Creates the **complete project foundation**:
+- Directory structure (per target stack)
+- Configuration files (pyproject.toml, package.json, etc.)
+- Application entry point and `start-dev.sh`
+- Database models (all at once or on-demand)
+- Design system tokens (DTCG format)
+- Planning documents and `.planning/CONVERSION.md`
 
-1. **Questions** — Asks until it understands your idea completely (goals, constraints, tech preferences, edge cases)
-2. **Research** — Spawns parallel agents to investigate the domain (optional but recommended)
-3. **Requirements** — Extracts what's v1, v2, and out of scope
-4. **Roadmap** — Creates phases mapped to requirements
+### 2. Convert Elements via Milestones
 
-You approve the roadmap. Now you're ready to build.
+```
+/wxcode:new-milestone --element=PAGE_Login --output-project=<id>
+```
 
-**Creates:** `PROJECT.md`, `REQUIREMENTS.md`, `ROADMAP.md`, `STATE.md`, `.planning/research/`
+Each milestone converts one WinDev/WebDev element:
+1. Queries Knowledge Base for source code (MCP is Source of Truth)
+2. Plans conversion phases with research and verification
+3. Converts to target stack
+4. Integrates with existing foundation
+
+### 3. Plan, Execute, Verify
+
+```
+/wxcode:plan-phase 1       # Research + plan + verify
+/wxcode:execute-phase 1    # Execute with parallel agents
+/wxcode:verify-work 1      # Confirm conversion works
+```
+
+Each phase uses fresh context windows. Parallel execution where possible. Atomic git commits per task.
+
+### Core Principle
+
+> **CONTEXT.md is a snapshot. MCP is the Source of Truth.**
+> Always consult MCP for current data, use CONTEXT.md for initial context only.
 
 ---
 
-### 2. Discuss Phase
+## Supported Target Stacks
 
-```
-/gsd:discuss-phase 1
-```
+15 stacks organized by rendering type:
 
-**This is where you shape the implementation.**
+### Server-Rendered
+- `fastapi-jinja2`, `fastapi-htmx`
+- `django-templates`
+- `rails-erb`
+- `laravel-blade`
 
-Your roadmap has a sentence or two per phase. That's not enough context to build something the way *you* imagine it. This step captures your preferences before anything gets researched or planned.
+### SPA (Backend + Frontend)
+- `fastapi-react`, `fastapi-vue`
+- `nestjs-react`, `nestjs-vue`
+- `laravel-react`
 
-The system analyzes the phase and identifies gray areas based on what's being built:
-
-- **Visual features** → Layout, density, interactions, empty states
-- **APIs/CLIs** → Response format, flags, error handling, verbosity
-- **Content systems** → Structure, tone, depth, flow
-- **Organization tasks** → Grouping criteria, naming, duplicates, exceptions
-
-For each area you select, it asks until you're satisfied. The output — `CONTEXT.md` — feeds directly into the next two steps:
-
-1. **Researcher reads it** — Knows what patterns to investigate ("user wants card layout" → research card component libraries)
-2. **Planner reads it** — Knows what decisions are locked ("infinite scroll decided" → plan includes scroll handling)
-
-The deeper you go here, the more the system builds what you actually want. Skip it and you get reasonable defaults. Use it and you get *your* vision.
-
-**Creates:** `{phase}-CONTEXT.md`
+### Fullstack (Single Node)
+- `nextjs-app-router`, `nextjs-pages`
+- `nuxt3`, `sveltekit`, `remix`
 
 ---
 
-### 3. Plan Phase
+## MCP Integration
+
+WXCODE workflows use **25 MCP tools** to access legacy code stored in MongoDB/Neo4j.
+
+| Category | Tools | Description |
+|----------|-------|-------------|
+| **Elements** | `get_element`, `list_elements`, `search_code` | Access WinDev source code |
+| **Controls** | `get_controls`, `get_data_bindings` | UI hierarchy and bindings |
+| **Procedures** | `get_procedures`, `get_procedure` | Global and local procedures |
+| **Schema** | `get_schema`, `get_table` | Database schema |
+| **Graph** | `get_dependencies`, `get_impact`, `get_path`, `find_hubs`, `find_dead_code`, `find_cycles` | Dependency analysis (Neo4j) |
+| **Conversion** | `get_conversion_candidates`, `get_topological_order`, `get_conversion_stats`, `mark_converted`, `mark_project_initialized` | Conversion workflow |
+| **Stack** | `get_stack_conventions` | Target stack conventions |
+| **Planes** | `get_element_planes` | Tabs/wizard/views detection |
+| **WLanguage** | `get_wlanguage_reference`, `list_wlanguage_functions`, `get_wlanguage_pattern` | H* function reference |
+| **Similarity** | `search_converted_similar` | Find similar converted elements |
+| **PDF** | `get_element_pdf_slice` | Documentation and screenshots |
+
+### Usage Pattern
 
 ```
-/gsd:plan-phase 1
+Before planning any element:
+1. get_element {name}           -> Full code
+2. get_controls {name}          -> UI structure
+3. get_element_planes {name}    -> Detect tabs/wizard
+4. get_procedures {name}        -> Business logic
+5. get_dependencies {name}      -> Prerequisites
+6. search_converted_similar     -> Learn from similar
 ```
 
-The system:
-
-1. **Researches** — Investigates how to implement this phase, guided by your CONTEXT.md decisions
-2. **Plans** — Creates 2-3 atomic task plans with XML structure
-3. **Verifies** — Checks plans against requirements, loops until they pass
-
-Each plan is small enough to execute in a fresh context window. No degradation, no "I'll be more concise now."
-
-**Creates:** `{phase}-RESEARCH.md`, `{phase}-{N}-PLAN.md`
+See `.wxcode/conversion/mcp-usage.md` for complete documentation.
 
 ---
 
-### 4. Execute Phase
+## Extension Agents
 
-```
-/gsd:execute-phase 1
-```
+### wxcode-legacy-analyzer
 
-The system:
+**Purpose:** Analyzes legacy WinDev code via MCP and produces structured documentation.
 
-1. **Runs plans in waves** — Parallel where possible, sequential when dependent
-2. **Fresh context per plan** — 200k tokens purely for implementation, zero accumulated garbage
-3. **Commits per task** — Every task gets its own atomic commit
-4. **Verifies against goals** — Checks the codebase delivers what the phase promised
+**Capabilities:**
+- Retrieves element data via MCP tools
+- Identifies planes in pages/windows
+- Maps UI control hierarchy
+- Documents business logic from procedures
+- Analyzes database operations
+- Categorizes dependencies (converted vs pending)
 
-Walk away, come back to completed work with clean git history.
+**Output:** Writes to `{phase}-LEGACY.md` or RESEARCH.md "Legacy Analysis" section.
 
-**Creates:** `{phase}-{N}-SUMMARY.md`, `{phase}-VERIFICATION.md`
+### wxcode-conversion-advisor
 
----
+**Purpose:** Advises on conversion decisions and reformulates questions with legacy context.
 
-### 5. Verify Work
+**Capabilities:**
+- Checks if answer exists in legacy (don't ask redundant questions)
+- Reframes generic questions with legacy context
+- Suggests defaults based on patterns
+- Ensures consistency with previous decisions
 
-```
-/gsd:verify-work 1
-```
+### wxcode-schema-generator
 
-**This is where you confirm it actually works.**
+**Purpose:** Generates ORM models from legacy schema via MCP.
 
-Automated verification checks that code exists and tests pass. But does the feature *work* the way you expected? This is your chance to use it.
-
-The system:
-
-1. **Extracts testable deliverables** — What you should be able to do now
-2. **Walks you through one at a time** — "Can you log in with email?" Yes/no, or describe what's wrong
-3. **Diagnoses failures automatically** — Spawns debug agents to find root causes
-4. **Creates verified fix plans** — Ready for immediate re-execution
-
-If everything passes, you move on. If something's broken, you don't manually debug — you just run `/gsd:execute-phase` again with the fix plans it created.
-
-**Creates:** `{phase}-UAT.md`, fix plans if issues found
+**Capabilities:**
+- Preserves exact table/column names for transparent legacy database access
+- Supports SQLAlchemy, Prisma, TypeORM, Django, Sequelize
+- Validates generated models against legacy schema
 
 ---
 
-### 6. Repeat → Complete → Next Milestone
+## Planes Detection
+
+WinDev pages/windows can have **planes** (stacked views where only one is visible).
+
+### What Are Planes?
 
 ```
-/gsd:discuss-phase 2
-/gsd:plan-phase 2
-/gsd:execute-phase 2
-/gsd:verify-work 2
-...
-/gsd:complete-milestone
-/gsd:new-milestone
++---------------------------------+
+|        PAGE_Cadastro            |
++---------------------------------+
+| Plane 1: Dados Pessoais  <------ Visible
+| Plane 2: Documentos      <------ Hidden
+| Plane 3: Confirmacao     <------ Hidden
++---------------------------------+
 ```
 
-Loop **discuss → plan → execute → verify** until milestone complete.
+Common uses: Wizard steps, tab-like interfaces, conditional views.
 
-Each phase gets your input (discuss), proper research (plan), clean execution (execute), and human verification (verify). Context stays fresh. Quality stays high.
+### Conversion Strategies
 
-When all phases are done, `/gsd:complete-milestone` archives the milestone and tags the release.
+| Pattern | Strategy | Target |
+|---------|----------|--------|
+| Wizard (sequential) | Multi-step form | All stacks |
+| Tabs (direct access) | Tab component | All stacks |
+| Conditional | State-based rendering | SPA stacks |
+| Complex | Separate routes | MPA stacks |
 
-Then `/gsd:new-milestone` starts the next version — same flow as `new-project` but for your existing codebase. You describe what you want to build next, the system researches the domain, you scope requirements, and it creates a fresh roadmap. Each milestone is a clean cycle: define → build → ship.
+See `.wxcode/conversion/planes-detection.md` for complete documentation.
 
 ---
 
-### Quick Mode
+## Structure Preservation
 
-```
-/gsd:quick
-```
+Generate code that feels **familiar** to legacy users.
 
-**For ad-hoc tasks that don't need full planning.**
+### Naming Conventions
 
-Quick mode gives you GSD guarantees (atomic commits, state tracking) with a faster path:
+| Legacy | Converted | Rule |
+|--------|-----------|------|
+| `PAGE_Login` | `login.py`, `login.html` | Keep semantic name |
+| `proc:ValidaCPF` | `validar_cpf()` | Portuguese verb -> infinitive |
+| `EDT_Usuario` | `username` or `usuario` | Ask user preference |
+| `gnUsuarioID` | `usuario_id` | Remove Hungarian prefix |
+| `class:Cliente` | `Cliente` | Keep class name |
 
-- **Same agents** — Planner + executor, same quality
-- **Skips optional steps** — No research, no plan checker, no verifier
-- **Separate tracking** — Lives in `.planning/quick/`, not phases
-
-Use for: bug fixes, small features, config changes, one-off tasks.
-
-```
-/gsd:quick
-> What do you want to do? "Add dark mode toggle to settings"
-```
-
-**Creates:** `.planning/quick/001-add-dark-mode-toggle/PLAN.md`, `SUMMARY.md`
-
----
-
-## Why It Works
-
-### Context Engineering
-
-Claude Code is incredibly powerful *if* you give it the context it needs. Most people don't.
-
-GSD handles it for you:
-
-| File | What it does |
-|------|--------------|
-| `PROJECT.md` | Project vision, always loaded |
-| `research/` | Ecosystem knowledge (stack, features, architecture, pitfalls) |
-| `REQUIREMENTS.md` | Scoped v1/v2 requirements with phase traceability |
-| `ROADMAP.md` | Where you're going, what's done |
-| `STATE.md` | Decisions, blockers, position — memory across sessions |
-| `PLAN.md` | Atomic task with XML structure, verification steps |
-| `SUMMARY.md` | What happened, what changed, committed to history |
-| `todos/` | Captured ideas and tasks for later work |
-
-Size limits based on where Claude's quality degrades. Stay under, get consistent excellence.
-
-### XML Prompt Formatting
-
-Every plan is structured XML optimized for Claude:
-
-```xml
-<task type="auto">
-  <name>Create login endpoint</name>
-  <files>src/app/api/auth/login/route.ts</files>
-  <action>
-    Use jose for JWT (not jsonwebtoken - CommonJS issues).
-    Validate credentials against users table.
-    Return httpOnly cookie on success.
-  </action>
-  <verify>curl -X POST localhost:3000/api/auth/login returns 200 + Set-Cookie</verify>
-  <done>Valid credentials return cookie, invalid return 401</done>
-</task>
-```
-
-Precise instructions. No guessing. Verification built in.
-
-### Multi-Agent Orchestration
-
-Every stage uses the same pattern: a thin orchestrator spawns specialized agents, collects results, and routes to the next step.
-
-| Stage | Orchestrator does | Agents do |
-|-------|------------------|-----------|
-| Research | Coordinates, presents findings | 4 parallel researchers investigate stack, features, architecture, pitfalls |
-| Planning | Validates, manages iteration | Planner creates plans, checker verifies, loop until pass |
-| Execution | Groups into waves, tracks progress | Executors implement in parallel, each with fresh 200k context |
-| Verification | Presents results, routes next | Verifier checks codebase against goals, debuggers diagnose failures |
-
-The orchestrator never does heavy lifting. It spawns agents, waits, integrates results.
-
-**The result:** You can run an entire phase — deep research, multiple plans created and verified, thousands of lines of code written across parallel executors, automated verification against goals — and your main context window stays at 30-40%. The work happens in fresh subagent contexts. Your session stays fast and responsive.
-
-### Atomic Git Commits
-
-Each task gets its own commit immediately after completion:
-
-```bash
-abc123f docs(08-02): complete user registration plan
-def456g feat(08-02): add email confirmation flow
-hij789k feat(08-02): implement password hashing
-lmn012o feat(08-02): create registration endpoint
-```
-
-> [!NOTE]
-> **Benefits:** Git bisect finds exact failing task. Each task independently revertable. Clear history for Claude in future sessions. Better observability in AI-automated workflow.
-
-Every commit is surgical, traceable, and meaningful.
-
-### Modular by Design
-
-- Add phases to current milestone
-- Insert urgent work between phases
-- Complete milestones and start fresh
-- Adjust plans without rebuilding everything
-
-You're never locked in. The system adapts.
+See `.wxcode/conversion/structure-preservation.md` for complete documentation.
 
 ---
 
@@ -418,183 +241,101 @@ You're never locked in. The system adapts.
 
 | Command | What it does |
 |---------|--------------|
-| `/gsd:new-project` | Full initialization: questions → research → requirements → roadmap |
-| `/gsd:discuss-phase [N]` | Capture implementation decisions before planning |
-| `/gsd:plan-phase [N]` | Research + plan + verify for a phase |
-| `/gsd:execute-phase <N>` | Execute all plans in parallel waves, verify when complete |
-| `/gsd:verify-work [N]` | Manual user acceptance testing ¹ |
-| `/gsd:audit-milestone` | Verify milestone achieved its definition of done |
-| `/gsd:complete-milestone` | Archive milestone, tag release |
-| `/gsd:new-milestone [name]` | Start next version: questions → research → requirements → roadmap |
+| `/wxcode:new-project` | Initialize project: questioning, research, requirements, roadmap |
+| `/wxcode:new-milestone` | Start element conversion: context, phases, roadmap |
+| `/wxcode:plan-phase [N]` | Research + plan + verify for a phase |
+| `/wxcode:execute-phase [N]` | Execute plans in parallel waves |
+| `/wxcode:verify-work [N]` | Validate converted features |
+| `/wxcode:complete-milestone` | Archive milestone, tag release |
 
 ### Navigation
 
 | Command | What it does |
 |---------|--------------|
-| `/gsd:progress` | Where am I? What's next? |
-| `/gsd:help` | Show all commands and usage guide |
-| `/gsd:update` | Update GSD with changelog preview |
-| `/gsd:join-discord` | Join the GSD Discord community |
-
-### Brownfield
-
-| Command | What it does |
-|---------|--------------|
-| `/gsd:map-codebase` | Analyze existing codebase before new-project |
+| `/wxcode:progress` | Where am I? What's next? |
+| `/wxcode:help` | Show all commands |
+| `/wxcode:version` | Display current version |
+| `/wxcode:update` | Update WXCODE with changelog preview |
 
 ### Phase Management
 
 | Command | What it does |
 |---------|--------------|
-| `/gsd:add-phase` | Append phase to roadmap |
-| `/gsd:insert-phase [N]` | Insert urgent work between phases |
-| `/gsd:remove-phase [N]` | Remove future phase, renumber |
-| `/gsd:list-phase-assumptions [N]` | See Claude's intended approach before planning |
-| `/gsd:plan-milestone-gaps` | Create phases to close gaps from audit |
-
-### Session
-
-| Command | What it does |
-|---------|--------------|
-| `/gsd:pause-work` | Create handoff when stopping mid-phase |
-| `/gsd:resume-work` | Restore from last session |
+| `/wxcode:discuss-phase [N]` | Gather context before planning |
+| `/wxcode:add-phase` | Append phase to roadmap |
+| `/wxcode:insert-phase [N]` | Insert urgent work between phases |
+| `/wxcode:remove-phase [N]` | Remove future phase, renumber |
 
 ### Utilities
 
 | Command | What it does |
 |---------|--------------|
-| `/gsd:settings` | Configure model profile and workflow agents |
-| `/gsd:set-profile <profile>` | Switch model profile (quality/balanced/budget) |
-| `/gsd:add-todo [desc]` | Capture idea for later |
-| `/gsd:check-todos` | List pending todos |
-| `/gsd:debug [desc]` | Systematic debugging with persistent state |
-| `/gsd:quick` | Execute ad-hoc task with GSD guarantees |
-
-<sup>¹ Contributed by reddit user OracleGreyBeard</sup>
+| `/wxcode:settings` | Configure workflow toggles and model profile |
+| `/wxcode:dashboard` | Generate project dashboard JSON |
+| `/wxcode:design-system` | Create or update design tokens |
+| `/wxcode:validate-schema` | Validate models against legacy schema |
+| `/wxcode:trace` | Navigate between legacy and converted code |
+| `/wxcode:debug` | Systematic debugging with persistent state |
 
 ---
 
-## Configuration
+## File Structure
 
-GSD stores project settings in `.planning/config.json`. Configure during `/gsd:new-project` or update later with `/gsd:settings`.
-
-### Core Settings
-
-| Setting | Options | Default | What it controls |
-|---------|---------|---------|------------------|
-| `mode` | `yolo`, `interactive` | `interactive` | Auto-approve vs confirm at each step |
-| `depth` | `quick`, `standard`, `comprehensive` | `standard` | Planning thoroughness (phases × plans) |
-
-### Model Profiles
-
-Control which Claude model each agent uses. Balance quality vs token spend.
-
-| Profile | Planning | Execution | Verification |
-|---------|----------|-----------|--------------|
-| `quality` | Opus | Opus | Sonnet |
-| `balanced` (default) | Opus | Sonnet | Sonnet |
-| `budget` | Sonnet | Sonnet | Haiku |
-
-Switch profiles:
 ```
-/gsd:set-profile budget
+wxcode/
+├── commands/
+│   └── wxcode/                    # WXCODE commands (39+)
+│       ├── new-project.md
+│       ├── plan-phase.md
+│       ├── execute-phase.md
+│       └── ...
+│
+├── agents/
+│   ├── wxcode-*.md                # WXCODE agents
+│   ├── wxcode-legacy-analyzer.md  # Conversion extension
+│   └── wxcode-conversion-advisor.md # Conversion extension
+│
+├── .wxcode/
+│   ├── config.md                  # WXCODE identity
+│   └── conversion/                # Conversion extension
+│       ├── context-md-spec.md
+│       ├── mcp-usage.md
+│       ├── planes-detection.md
+│       ├── structure-preservation.md
+│       ├── injection-points.md
+│       └── templates/
+│           └── CONVERSION.md
+│
+├── wxcode-skill/                  # Reference documentation
+│   ├── references/
+│   ├── templates/
+│   └── workflows/
+│
+├── hooks/                         # Hooks
+├── bin/                           # Installer
+│
+├── README.md                      # This file
+├── CLAUDE.md                      # Development context
+├── CHANGELOG-WXCODE.md            # WXCODE changelog
+├── package.json                   # Version
+└── VERSION                        # Version
 ```
-
-Or configure via `/gsd:settings`.
-
-### Workflow Agents
-
-These spawn additional agents during planning/execution. They improve quality but add tokens and time.
-
-| Setting | Default | What it does |
-|---------|---------|--------------|
-| `workflow.research` | `true` | Researches domain before planning each phase |
-| `workflow.plan_check` | `true` | Verifies plans achieve phase goals before execution |
-| `workflow.verifier` | `true` | Confirms must-haves were delivered after execution |
-
-Use `/gsd:settings` to toggle these, or override per-invocation:
-- `/gsd:plan-phase --skip-research`
-- `/gsd:plan-phase --skip-verify`
-
-### Execution
-
-| Setting | Default | What it controls |
-|---------|---------|------------------|
-| `parallelization.enabled` | `true` | Run independent plans simultaneously |
-| `planning.commit_docs` | `true` | Track `.planning/` in git |
 
 ---
 
-## Troubleshooting
+## Version History
 
-**Commands not found after install?**
-- Restart Claude Code to reload slash commands
-- Verify files exist in `~/.claude/commands/gsd/` (global) or `./.claude/commands/gsd/` (local)
-
-**Commands not working as expected?**
-- Run `/gsd:help` to verify installation
-- Re-run `npx get-shit-done-cc` to reinstall
-
-**Updating to the latest version?**
-```bash
-npx get-shit-done-cc@latest
-```
-
-**Using Docker or containerized environments?**
-
-If file reads fail with tilde paths (`~/.claude/...`), set `CLAUDE_CONFIG_DIR` before installing:
-```bash
-CLAUDE_CONFIG_DIR=/home/youruser/.claude npx get-shit-done-cc --global
-```
-This ensures absolute paths are used instead of `~` which may not expand correctly in containers.
-
-### Uninstalling
-
-To remove GSD completely:
-
-```bash
-# Global installs
-npx get-shit-done-cc --claude --global --uninstall
-npx get-shit-done-cc --opencode --global --uninstall
-
-# Local installs (current project)
-npx get-shit-done-cc --claude --local --uninstall
-npx get-shit-done-cc --opencode --local --uninstall
-```
-
-This removes all GSD commands, agents, hooks, and settings while preserving your other configurations.
-
----
-
-## Community Ports
-
-| Project | Platform | Description |
-|---------|----------|-------------|
-| [gsd-opencode](https://github.com/rokicool/gsd-opencode) | OpenCode | GSD adapted for OpenCode CLI |
-| [gsd-gemini](https://github.com/uberfuzzy/gsd-gemini) | Gemini CLI | GSD adapted for Google's Gemini CLI |
-
----
-
-## Star History
-
-<a href="https://star-history.com/#glittercowboy/get-shit-done&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=glittercowboy/get-shit-done&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=glittercowboy/get-shit-done&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=glittercowboy/get-shit-done&type=Date" />
- </picture>
-</a>
+See [CHANGELOG-WXCODE.md](CHANGELOG-WXCODE.md) for full version history.
 
 ---
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT License.
 
 ---
 
-<div align="center">
+## Links
 
-**Claude Code is powerful. GSD makes it reliable.**
-
-</div>
+- [WXCODE Repository](https://github.com/GilbertoAbrao/get-shit-done)
+- [Discord](https://discord.gg/5JJgD5svVS)
