@@ -21,14 +21,14 @@
 
 **From GitHub (recommended):**
 ```bash
-npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global
+npx github:GilbertoAbrao/get-shit-done#main --claude --global
 ```
 
 **From local clone:**
 ```bash
 git clone https://github.com/GilbertoAbrao/get-shit-done.git
 cd get-shit-done
-git checkout main-wxcode
+git checkout main
 node bin/install.js --claude --global
 ```
 
@@ -37,7 +37,7 @@ Verify with `/wxcode:help` inside Claude Code.
 ### Updating
 
 ```bash
-npm cache clean --force && rm -rf ~/.npm/_npx && npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global
+npm cache clean --force && rm -rf ~/.npm/_npx && npx github:GilbertoAbrao/get-shit-done#main --claude --global
 ```
 
 Or use `/wxcode:update` inside Claude Code (handles cache automatically).
@@ -287,7 +287,7 @@ See [CHANGELOG-WXCODE.md](CHANGELOG-WXCODE.md) for full version history.
 
 ### Current Version
 
-- **WXCODE:** 2.0.0
+- **WXCODE:** 2.0.1
 
 ---
 

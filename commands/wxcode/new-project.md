@@ -119,7 +119,7 @@ This is the most leveraged moment in any project. Deep questioning here means be
        ln -s "$WXCODE_STORAGE" "$WXCODE_LOCAL"
        echo "WXCODE commands linked ✓"
    else
-       echo "⚠ WXCODE commands storage not found. Run: npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global"
+       echo "⚠ WXCODE commands storage not found. Run: npx github:GilbertoAbrao/get-shit-done#main --claude --global"
    fi
    ```
 

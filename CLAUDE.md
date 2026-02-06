@@ -7,7 +7,7 @@ This file contains everything needed to work on the WXCODE project effectively.
 **WXCODE** is an AI-powered WinDev/WebDev conversion toolkit for Claude Code, OpenCode, and Gemini.
 
 - **Repository:** GilbertoAbrao/get-shit-done
-- **Branch:** `main-wxcode` (always work here)
+- **Branch:** `main` (always work here)
 - **Installs to:** `~/.claude/` (commands, agents, hooks)
 
 ---
@@ -73,7 +73,7 @@ MAJOR.MINOR.PATCH
 git add -A && git commit -m "feat/fix/chore: description"
 
 # 4. Push
-git push origin main-wxcode
+git push origin main
 ```
 
 ---
@@ -82,7 +82,7 @@ git push origin main-wxcode
 
 ### How Installation Works
 
-1. User runs: `npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global`
+1. User runs: `npx github:GilbertoAbrao/get-shit-done#main --claude --global`
 2. npm downloads package from GitHub
 3. `bin/install.js` runs
 4. Copies files to `~/.claude/`:
@@ -244,7 +244,7 @@ ls ~/.claude/wxcode-skill/commands/wxcode/ | wc -l
 ```bash
 # Clear cache and reinstall from GitHub
 npm cache clean --force && rm -rf ~/.npm/_npx
-npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global
+npx github:GilbertoAbrao/get-shit-done#main --claude --global
 ```
 
 ---
@@ -268,13 +268,13 @@ When extending commands for conversion mode:
 ```bash
 # Edit: package.json, VERSION, CHANGELOG-WXCODE.md, README-WXCODE.md
 git add -A && git commit -m "feat/fix/chore: description"
-git push origin main-wxcode
+git push origin main
 ```
 
 ### Force Update
 ```bash
 npm cache clean --force && rm -rf ~/.npm/_npx
-npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global
+npx github:GilbertoAbrao/get-shit-done#main --claude --global
 ```
 
 ### Check Installed Version

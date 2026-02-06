@@ -24,7 +24,7 @@ WXCODE usa um modelo de **comando por projeto** (project-level commands). Nenhum
 
 ## Estrutura de Armazenamento
 
-Apos a instalacao (`npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global`):
+Apos a instalacao (`npx github:GilbertoAbrao/get-shit-done#main --claude --global`):
 
 ```
 ~/.claude/
@@ -116,7 +116,7 @@ Cloud Instance
 
 ```bash
 # 1. Instalar WXCODE (mesmo comando de sempre)
-npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global
+npx github:GilbertoAbrao/get-shit-done#main --claude --global
 
 # 2. Resultado automatico:
 #    - 4 bootstrap wxcode commands em ~/.claude/commands/wxcode/
@@ -168,7 +168,7 @@ Nao. O diretorio `.claude/` geralmente esta no `.gitignore`. Cada clone/instanci
 O `/wxcode:new-project` detecta isso e exibe:
 ```
 ⚠ WXCODE commands storage not found.
-Run: npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global
+Run: npx github:GilbertoAbrao/get-shit-done#main --claude --global
 ```
 
 ### Os 4 bootstrap commands aparecem em todos os projetos?

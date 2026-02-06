@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-02-06
+
+### Changed
+- **Branch renamed from `main-wxcode` to `main`** — reflects WXCODE takeover completion
+  - All install/update URLs now use `#main` instead of `#main-wxcode`
+  - Updated: CLAUDE.md, README-WXCODE.md, docs/command-scoping.md
+  - Updated: commands/wxcode/update.md, new-project.md, new-milestone.md
+
 ## [2.0.0] - 2026-02-06
 
 ### Changed
