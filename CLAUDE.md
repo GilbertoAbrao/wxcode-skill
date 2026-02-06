@@ -8,7 +8,8 @@ This file contains everything needed to work on the WXCODE project effectively.
 
 - **Repository:** GilbertoAbrao/get-shit-done
 - **Branch:** `main` (always work here)
-- **Installs to:** `~/.claude/` (commands, agents, hooks)
+- **Installs to:** `~/.claude/wxcode-skill/` (skill), `~/.claude/commands/wxcode/` (bootstrap)
+- **Coexists with GSD:** WXCODE installer does NOT touch GSD files (`get-shit-done/`, `commands/gsd/`)
 
 ---
 
@@ -37,11 +38,13 @@ When `/wxcode:new-project` receives a CONTEXT.md argument, it switches to conver
 
 **ALWAYS bump version when making ANY change that will be released.**
 
-Files to update (ALL of them):
-1. `package.json` -> `"version": "X.Y.Z"`
-2. `VERSION` -> `X.Y.Z`
-3. `CHANGELOG-WXCODE.md` -> Add new version section
-4. `README.md` -> Update "Current Version"
+Files to update (ALL 4 of them):
+1. `package.json` → `"version": "X.Y.Z"`
+2. `VERSION` → `X.Y.Z`
+3. `CHANGELOG-WXCODE.md` → Add new version section
+4. `README.md` → Update "Current Version" line
+
+**Note:** Changelog is `CHANGELOG-WXCODE.md` (not `CHANGELOG.md` — that was deleted with the GSD upstream).
 
 ### Version Format
 
@@ -91,6 +94,11 @@ git push origin main
    - `wxcode-skill/commands/wxcode/` <- all commands (storage for symlinks)
    - `agents/wxcode-*.md` <- agents
    - `hooks/` <- bundled hooks
+   - `wxcode-skill/CHANGELOG-WXCODE.md` <- changelog
+   - `wxcode-skill/VERSION` <- version file
+
+**Important:** The installer ONLY manages WXCODE files. It does NOT touch GSD files
+(`~/.claude/get-shit-done/`, `~/.claude/commands/gsd/`). Both products coexist independently.
 
 ### Cache Issues
 
