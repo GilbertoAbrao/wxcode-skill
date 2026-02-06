@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.29] - 2026-02-05
+
+### Fixed
+- **`/wxcode:dashboard` now emits structured output correctly**
+  - Added Step 0: HEADER emission at start
+  - Added STATUS markers throughout process (5% → 15% → 30% → 45% → 60% → 80% → 100%)
+  - Added NEXT_ACTION at completion
+  - Removed references to non-existent Python script
+  - Proper step numbering (0-7)
+  - Updated troubleshooting section
+
 ## [1.4.28] - 2026-02-05
 
 ### Fixed
