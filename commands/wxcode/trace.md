@@ -261,7 +261,7 @@ mcp__wxcode-kb__get_element(element_name="{ELEMENT}")
 │   # @legacy-element: {SUGGESTED_ELEMENT}                           │
 │   # @legacy-type: {type}                                           │
 │                                                                     │
-│ See: ~/.claude/get-shit-done/.wxcode/conversion/                   │
+│ See: ~/.claude/wxcode-skill/.wxcode/conversion/                   │
 │      structure-preservation.md#traceability-comments               │
 └─────────────────────────────────────────────────────────────────────┘
 ```

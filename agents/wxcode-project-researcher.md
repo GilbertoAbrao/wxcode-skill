@@ -1174,7 +1174,7 @@ When research cannot proceed:
 
 ## MCP Tool Discovery
 
-**Reference:** `~/.claude/get-shit-done/references/mcp-discovery.md`
+**Reference:** `~/.claude/wxcode-skill/references/mcp-discovery.md`
 
 MCP tools are dynamic. The wxcode-kb server evolves rapidly (currently 29+ tools).
 Discover available tools by their prefix `mcp__wxcode-kb__`.

@@ -36,8 +36,8 @@ Generate comprehensive JSON snapshots of project progress for external UI render
 </objective>
 
 <execution_context>
-@~/.claude/get-shit-done/references/dashboard-schema-project.md
-@~/.claude/get-shit-done/references/dashboard-schema-milestone.md
+@~/.claude/wxcode-skill/references/dashboard-schema-project.md
+@~/.claude/wxcode-skill/references/dashboard-schema-milestone.md
 </execution_context>
 
 <structured_output>

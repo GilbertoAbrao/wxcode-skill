@@ -37,7 +37,7 @@ Provides a better update experience by showing version diff and changelog entrie
 Read installed version:
 
 ```bash
-cat ~/.claude/get-shit-done/VERSION 2>/dev/null
+cat ~/.claude/wxcode-skill/VERSION 2>/dev/null
 ```
 
 **If VERSION file missing:**
@@ -129,7 +129,7 @@ STOP here if ahead.
 
 ⚠️  **Note:** The installer performs a clean install of WXCODE folders:
 - `~/.claude/commands/wxcode/` will be wiped and replaced
-- `~/.claude/get-shit-done/` will be wiped and replaced
+- `~/.claude/wxcode-skill/` will be wiped and replaced
 - `~/.claude/agents/wxcode-*` files will be replaced
 
 Your custom files in other locations are preserved:

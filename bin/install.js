@@ -585,11 +585,11 @@ function convertClaudeToGeminiToml(content) {
 /**
  * Copy commands to a flat structure for OpenCode
  * OpenCode expects: command/wxcode-help.md (invoked as /wxcode-help)
- * Source structure: commands/gsd/help.md
+ * Source structure: commands/wxcode/help.md
  * 
- * @param {string} srcDir - Source directory (e.g., commands/gsd/)
+ * @param {string} srcDir - Source directory (e.g., commands/wxcode/)
  * @param {string} destDir - Destination directory (e.g., command/)
- * @param {string} prefix - Prefix for filenames (e.g., 'gsd')
+ * @param {string} prefix - Prefix for filenames (e.g., 'wxcode')
  * @param {string} pathPrefix - Path prefix for file references
  * @param {string} runtime - Target runtime ('claude' or 'opencode')
  */
@@ -616,7 +616,7 @@ function copyFlattenedCommands(srcDir, destDir, prefix, pathPrefix, runtime) {
     
     if (entry.isDirectory()) {
       // Recurse into subdirectories, adding to prefix
-      // e.g., commands/gsd/debug/start.md -> command/wxcode-debug-start.md
+      // e.g., commands/wxcode/debug/start.md -> command/wxcode-debug-start.md
       copyFlattenedCommands(srcPath, destDir, `${prefix}-${entry.name}`, pathPrefix, runtime);
     } else if (entry.name.endsWith('.md')) {
       // Flatten: help.md -> wxcode-help.md
@@ -814,14 +814,6 @@ function uninstall(isGlobal, runtime = 'claude') {
       console.log(`  ${green}✓${reset} Removed WXCODE commands from command/`);
     }
   } else {
-    // Claude Code & Gemini: remove commands/gsd/ directory
-    const gsdCommandsDir = path.join(targetDir, 'commands', 'gsd');
-    if (fs.existsSync(gsdCommandsDir)) {
-      fs.rmSync(gsdCommandsDir, { recursive: true });
-      removedCount++;
-      console.log(`  ${green}✓${reset} Removed commands/gsd/`);
-    }
-
     // Claude Code & Gemini: remove commands/wxcode/ directory
     const wxcodeCommandsDir = path.join(targetDir, 'commands', 'wxcode');
     if (fs.existsSync(wxcodeCommandsDir)) {
@@ -831,12 +823,14 @@ function uninstall(isGlobal, runtime = 'claude') {
     }
   }
 
-  // 2. Remove get-shit-done directory
-  const gsdDir = path.join(targetDir, 'get-shit-done');
-  if (fs.existsSync(gsdDir)) {
-    fs.rmSync(gsdDir, { recursive: true });
-    removedCount++;
-    console.log(`  ${green}✓${reset} Removed get-shit-done/`);
+  // 2. Remove wxcode-skill directory (and legacy get-shit-done)
+  for (const dirName of ['wxcode-skill', 'get-shit-done']) {
+    const skillDir = path.join(targetDir, dirName);
+    if (fs.existsSync(skillDir)) {
+      fs.rmSync(skillDir, { recursive: true });
+      removedCount++;
+      console.log(`  ${green}✓${reset} Removed ${dirName}/`);
+    }
   }
 
   // 3. Remove WXCODE agents (wxcode-*.md files only)
@@ -859,9 +853,9 @@ function uninstall(isGlobal, runtime = 'claude') {
   // 4. Remove WXCODE hooks
   const hooksDir = path.join(targetDir, 'hooks');
   if (fs.existsSync(hooksDir)) {
-    const gsdHooks = ['wxcode-statusline.js', 'wxcode-check-update.js', 'wxcode-check-update.sh'];
+    const wxcodeHooks = ['wxcode-statusline.js', 'wxcode-check-update.js', 'wxcode-check-update.sh'];
     let hookCount = 0;
-    for (const hook of gsdHooks) {
+    for (const hook of wxcodeHooks) {
       const hookPath = path.join(hooksDir, hook);
       if (fs.existsSync(hookPath)) {
         fs.unlinkSync(hookPath);
@@ -894,10 +888,10 @@ function uninstall(isGlobal, runtime = 'claude') {
       settings.hooks.SessionStart = settings.hooks.SessionStart.filter(entry => {
         if (entry.hooks && Array.isArray(entry.hooks)) {
           // Filter out WXCODE hooks
-          const hasGsdHook = entry.hooks.some(h =>
+          const hasWxcodeHook = entry.hooks.some(h =>
             h.command && (h.command.includes('wxcode-check-update') || h.command.includes('wxcode-statusline'))
           );
-          return !hasGsdHook;
+          return !hasWxcodeHook;
         }
         return true;
       });
@@ -1004,18 +998,18 @@ function configureOpencodePermissions() {
   // Build the WXCODE path using the actual config directory
   // Use ~ shorthand if it's in the default location, otherwise use full path
   const defaultConfigDir = path.join(os.homedir(), '.config', 'opencode');
-  const gsdPath = opencodeConfigDir === defaultConfigDir
+  const wxcodePath = opencodeConfigDir === defaultConfigDir
     ? '~/.config/opencode/wxcode/*'
     : `${opencodeConfigDir}/wxcode/*`;
-  
+
   let modified = false;
 
   // Configure read permission
   if (!config.permission.read || typeof config.permission.read !== 'object') {
     config.permission.read = {};
   }
-  if (config.permission.read[gsdPath] !== 'allow') {
-    config.permission.read[gsdPath] = 'allow';
+  if (config.permission.read[wxcodePath] !== 'allow') {
+    config.permission.read[wxcodePath] = 'allow';
     modified = true;
   }
 
@@ -1023,8 +1017,8 @@ function configureOpencodePermissions() {
   if (!config.permission.external_directory || typeof config.permission.external_directory !== 'object') {
     config.permission.external_directory = {};
   }
-  if (config.permission.external_directory[gsdPath] !== 'allow') {
-    config.permission.external_directory[gsdPath] = 'allow';
+  if (config.permission.external_directory[wxcodePath] !== 'allow') {
+    config.permission.external_directory[wxcodePath] = 'allow';
     modified = true;
   }
 
@@ -1115,38 +1109,41 @@ function install(isGlobal, runtime = 'claude') {
     const commandDir = path.join(targetDir, 'command');
     fs.mkdirSync(commandDir, { recursive: true });
 
-    // Copy commands/gsd/*.md as command/gsd-*.md (flatten structure)
-    const gsdSrc = path.join(src, 'commands', 'gsd');
-    copyFlattenedCommands(gsdSrc, commandDir, 'gsd', pathPrefix, runtime);
+    // Remove legacy gsd-* commands from OpenCode (migration from older versions)
+    if (fs.existsSync(commandDir)) {
+      for (const file of fs.readdirSync(commandDir)) {
+        if (file.startsWith('gsd-') && file.endsWith('.md')) {
+          fs.unlinkSync(path.join(commandDir, file));
+        }
+      }
+    }
 
     // Copy commands/wxcode/*.md as command/wxcode-*.md (flatten structure)
     const wxcodeSrc = path.join(src, 'commands', 'wxcode');
     copyFlattenedCommands(wxcodeSrc, commandDir, 'wxcode', pathPrefix, runtime);
 
     if (verifyInstalled(commandDir, 'command/wxcode-*')) {
-      const count = fs.readdirSync(commandDir).filter(f => f.startsWith('wxcode-') || f.startsWith('gsd-')).length;
+      const count = fs.readdirSync(commandDir).filter(f => f.startsWith('wxcode-')).length;
       console.log(`  ${green}✓${reset} Installed ${count} commands to command/`);
     } else {
       failures.push('command/wxcode-*');
     }
   } else {
     // Claude Code & Gemini: nested structure in commands/ directory
-    // BOTH gsd and wxcode are project-level (not global).
     // Only wxcode bootstrap commands are global (new-project, help, version, update).
-    // Full commands are stored in get-shit-done/commands/{gsd,wxcode}/ and
-    // symlinked into projects by /wxcode:new-project or manually.
+    // Full commands are stored in wxcode-skill/commands/wxcode/ and
+    // symlinked into projects by /wxcode:new-project.
     const commandsDir = path.join(targetDir, 'commands');
     fs.mkdirSync(commandsDir, { recursive: true });
 
-    // Remove old global gsd commands (migration from older versions)
-    const gsdGlobalDest = path.join(commandsDir, 'gsd');
-    if (fs.existsSync(gsdGlobalDest)) {
-      fs.rmSync(gsdGlobalDest, { recursive: true });
-      console.log(`  ${green}✓${reset} Migrated commands/gsd to project-level`);
+    // Remove legacy get-shit-done paths (migration from older versions)
+    const legacyGsdDest = path.join(commandsDir, 'gsd');
+    if (fs.existsSync(legacyGsdDest)) {
+      fs.rmSync(legacyGsdDest, { recursive: true });
     }
 
     // Install only bootstrap wxcode commands globally (new-project, help, version, update)
-    // Full commands are installed to storage AFTER get-shit-done copy below
+    // Full commands are installed to storage AFTER wxcode-skill copy below
     const wxcodeGlobalDest = path.join(commandsDir, 'wxcode');
     fs.mkdirSync(wxcodeGlobalDest, { recursive: true });
     const bootstrapCommands = ['new-project.md', 'help.md', 'version.md', 'update.md'];
@@ -1176,44 +1173,40 @@ function install(isGlobal, runtime = 'claude') {
     console.log(`  ${green}✓${reset} Installed commands/wxcode (${bootstrapCommands.length} bootstrap commands global)`);
   }
 
-  // Copy get-shit-done references/templates with path replacement
-  const skillSrc = path.join(src, 'get-shit-done');
-  const skillDest = path.join(targetDir, 'get-shit-done');
+  // Copy wxcode-skill references/templates with path replacement
+  const skillSrc = path.join(src, 'wxcode-skill');
+  const skillDest = path.join(targetDir, 'wxcode-skill');
   copyWithPathReplacement(skillSrc, skillDest, pathPrefix, runtime);
-  if (verifyInstalled(skillDest, 'get-shit-done')) {
-    console.log(`  ${green}✓${reset} Installed get-shit-done`);
+  if (verifyInstalled(skillDest, 'wxcode-skill')) {
+    console.log(`  ${green}✓${reset} Installed wxcode-skill`);
   } else {
-    failures.push('get-shit-done');
+    failures.push('wxcode-skill');
   }
 
-  // Copy ALL commands to storage (project-level via symlink, not global)
-  // This runs AFTER get-shit-done copy because copyWithPathReplacement does clean install.
-  // Commands are stored in get-shit-done/commands/{gsd,wxcode}/ and symlinked
+  // Remove legacy get-shit-done directory if migrating from older versions
+  const legacySkillDest = path.join(targetDir, 'get-shit-done');
+  if (fs.existsSync(legacySkillDest)) {
+    fs.rmSync(legacySkillDest, { recursive: true });
+    console.log(`  ${green}✓${reset} Removed legacy get-shit-done/`);
+  }
+
+  // Copy ALL wxcode commands to storage (project-level via symlink, not global)
+  // This runs AFTER wxcode-skill copy because copyWithPathReplacement does clean install.
+  // Commands are stored in wxcode-skill/commands/wxcode/ and symlinked
   // into projects. See docs/command-scoping.md for full architecture.
   if (!isOpencode) {
-    const storageCommandsDir = path.join(targetDir, 'get-shit-done', 'commands');
+    const storageCommandsDir = path.join(targetDir, 'wxcode-skill', 'commands');
     fs.mkdirSync(storageCommandsDir, { recursive: true });
-
-    // GSD commands → storage (no global install)
-    const gsdCommandsSrc = path.join(src, 'commands', 'gsd');
-    const gsdStorageDest = path.join(storageCommandsDir, 'gsd');
-    copyWithPathReplacement(gsdCommandsSrc, gsdStorageDest, pathPrefix, runtime);
-    if (verifyInstalled(gsdStorageDest, 'get-shit-done/commands/gsd')) {
-      const count = fs.readdirSync(gsdStorageDest).filter(f => f.endsWith('.md') || f.endsWith('.toml')).length;
-      console.log(`  ${green}✓${reset} Installed gsd commands storage (${count} commands for project-level symlink)`);
-    } else {
-      failures.push('get-shit-done/commands/gsd');
-    }
 
     // WXCODE commands → storage (bootstrap already installed globally above)
     const wxcodeCommandsSrc = path.join(src, 'commands', 'wxcode');
     const wxcodeStorageDest = path.join(storageCommandsDir, 'wxcode');
     copyWithPathReplacement(wxcodeCommandsSrc, wxcodeStorageDest, pathPrefix, runtime);
-    if (verifyInstalled(wxcodeStorageDest, 'get-shit-done/commands/wxcode')) {
+    if (verifyInstalled(wxcodeStorageDest, 'wxcode-skill/commands/wxcode')) {
       const count = fs.readdirSync(wxcodeStorageDest).filter(f => f.endsWith('.md') || f.endsWith('.toml')).length;
       console.log(`  ${green}✓${reset} Installed wxcode commands storage (${count} commands for project-level symlink)`);
     } else {
-      failures.push('get-shit-done/commands/wxcode');
+      failures.push('wxcode-skill/commands/wxcode');
     }
   }
 
@@ -1259,7 +1252,7 @@ function install(isGlobal, runtime = 'claude') {
 
   // Copy CHANGELOG.md
   const changelogSrc = path.join(src, 'CHANGELOG.md');
-  const changelogDest = path.join(targetDir, 'get-shit-done', 'CHANGELOG.md');
+  const changelogDest = path.join(targetDir, 'wxcode-skill', 'CHANGELOG.md');
   if (fs.existsSync(changelogSrc)) {
     fs.copyFileSync(changelogSrc, changelogDest);
     if (verifyFileInstalled(changelogDest, 'CHANGELOG.md')) {
@@ -1270,7 +1263,7 @@ function install(isGlobal, runtime = 'claude') {
   }
 
   // Write VERSION file
-  const versionDest = path.join(targetDir, 'get-shit-done', 'VERSION');
+  const versionDest = path.join(targetDir, 'wxcode-skill', 'VERSION');
   fs.writeFileSync(versionDest, pkg.version);
   if (verifyFileInstalled(versionDest, 'VERSION')) {
     console.log(`  ${green}✓${reset} Wrote VERSION (${pkg.version})`);
@@ -1334,11 +1327,11 @@ function install(isGlobal, runtime = 'claude') {
       settings.hooks.SessionStart = [];
     }
 
-    const hasGsdUpdateHook = settings.hooks.SessionStart.some(entry =>
+    const hasUpdateHook = settings.hooks.SessionStart.some(entry =>
       entry.hooks && entry.hooks.some(h => h.command && h.command.includes('wxcode-check-update'))
     );
 
-    if (!hasGsdUpdateHook) {
+    if (!hasUpdateHook) {
       settings.hooks.SessionStart.push({
         hooks: [
           {

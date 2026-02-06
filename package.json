@@ -1,14 +1,14 @@
 {
   "name": "wxcode",
-  "version": "1.4.33",
-  "description": "WXCODE - A customized fork of GSD (Get Shit Done) for Claude Code",
+  "version": "2.0.0",
+  "description": "WXCODE - AI-powered WinDev/WebDev conversion toolkit for Claude Code",
   "bin": {
     "wxcode": "bin/install.js"
   },
   "files": [
     "bin",
     "commands",
-    "get-shit-done",
+    "wxcode-skill",
     "agents",
     "hooks/dist",
     "scripts",
@@ -37,14 +37,6 @@
   },
   "engines": {
     "node": ">=16.7.0"
-  },
-  "wxcode": {
-    "upstream": {
-      "name": "get-shit-done-cc",
-      "repository": "https://github.com/glittercowboy/get-shit-done",
-      "version": "1.11.1",
-      "commit": "8384575"
-    }
   },
   "dependencies": {},
   "devDependencies": {

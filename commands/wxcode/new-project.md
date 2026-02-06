@@ -47,14 +47,14 @@ This is the most leveraged moment in any project. Deep questioning here means be
 
 <execution_context>
 
-@~/.claude/get-shit-done/references/questioning.md
-@~/.claude/get-shit-done/references/ui-brand.md
-@~/.claude/get-shit-done/references/structured-output.md
-@~/.claude/get-shit-done/templates/project.md
-@~/.claude/get-shit-done/templates/requirements.md
-@~/.claude/get-shit-done/.wxcode/conversion/injection-points.md
-@~/.claude/get-shit-done/.wxcode/conversion/mcp-usage.md
-@~/.claude/get-shit-done/.wxcode/conversion/structure-preservation.md
+@~/.claude/wxcode-skill/references/questioning.md
+@~/.claude/wxcode-skill/references/ui-brand.md
+@~/.claude/wxcode-skill/references/structured-output.md
+@~/.claude/wxcode-skill/templates/project.md
+@~/.claude/wxcode-skill/templates/requirements.md
+@~/.claude/wxcode-skill/.wxcode/conversion/injection-points.md
+@~/.claude/wxcode-skill/.wxcode/conversion/mcp-usage.md
+@~/.claude/wxcode-skill/.wxcode/conversion/structure-preservation.md
 
 </execution_context>
 
@@ -107,7 +107,7 @@ This is the most leveraged moment in any project. Deep questioning here means be
    so all `/wxcode:*` commands become available in this project.
 
    ```bash
-   WXCODE_STORAGE="$HOME/.claude/get-shit-done/commands/wxcode"
+   WXCODE_STORAGE="$HOME/.claude/wxcode-skill/commands/wxcode"
    WXCODE_LOCAL=".claude/commands/wxcode"
 
    if [ -L "$WXCODE_LOCAL" ]; then
@@ -726,9 +726,9 @@ This skill will:
 These tokens will be automatically used by the `frontend-design` skill during execution.
 
 **Reference files:**
-- Spec: `~/.claude/get-shit-done/.wxcode/conversion/dtcg-spec.md`
-- Flow: `~/.claude/get-shit-done/.wxcode/conversion/design-system-flow.md`
-- Template: `~/.claude/get-shit-done/templates/design-tokens.json`
+- Spec: `~/.claude/wxcode-skill/.wxcode/conversion/dtcg-spec.md`
+- Flow: `~/.claude/wxcode-skill/.wxcode/conversion/design-system-flow.md`
+- Template: `~/.claude/wxcode-skill/templates/design-tokens.json`
 
 ### Step 1: Choose Collection Method
 
@@ -922,7 +922,7 @@ Generate tokens from questionnaire responses using style presets.
 Copy template directly:
 ```bash
 mkdir -p design
-cp ~/.claude/get-shit-done/templates/design-tokens.json design/tokens.json
+cp ~/.claude/wxcode-skill/templates/design-tokens.json design/tokens.json
 ```
 
 Display:
@@ -1684,9 +1684,9 @@ Store resolved models for use in Task calls below.
 These tokens will be automatically used by the `frontend-design` skill during execution.
 
 **Reference files:**
-- Spec: `~/.claude/get-shit-done/.wxcode/conversion/dtcg-spec.md`
-- Flow: `~/.claude/get-shit-done/.wxcode/conversion/design-system-flow.md`
-- Template: `~/.claude/get-shit-done/templates/design-tokens.json`
+- Spec: `~/.claude/wxcode-skill/.wxcode/conversion/dtcg-spec.md`
+- Flow: `~/.claude/wxcode-skill/.wxcode/conversion/design-system-flow.md`
+- Template: `~/.claude/wxcode-skill/templates/design-tokens.json`
 
 ### Step 1: Choose Collection Method
 
@@ -1880,7 +1880,7 @@ Generate tokens from questionnaire responses using style presets.
 Copy template directly:
 ```bash
 mkdir -p design
-cp ~/.claude/get-shit-done/templates/design-tokens.json design/tokens.json
+cp ~/.claude/wxcode-skill/templates/design-tokens.json design/tokens.json
 ```
 
 Display:
@@ -2068,7 +2068,7 @@ Your STACK.md feeds into roadmap creation. Be prescriptive:
 
 <output>
 Write to: .planning/research/STACK.md
-Use template: ~/.claude/get-shit-done/templates/research-project/STACK.md
+Use template: ~/.claude/wxcode-skill/templates/research-project/STACK.md
 </output>
 ", subagent_type="general-purpose", model="{researcher_model}", description="Stack research")
 
@@ -2108,7 +2108,7 @@ Your FEATURES.md feeds into requirements definition. Categorize clearly:
 
 <output>
 Write to: .planning/research/FEATURES.md
-Use template: ~/.claude/get-shit-done/templates/research-project/FEATURES.md
+Use template: ~/.claude/wxcode-skill/templates/research-project/FEATURES.md
 </output>
 ", subagent_type="general-purpose", model="{researcher_model}", description="Features research")
 
@@ -2148,7 +2148,7 @@ Your ARCHITECTURE.md informs phase structure in roadmap. Include:
 
 <output>
 Write to: .planning/research/ARCHITECTURE.md
-Use template: ~/.claude/get-shit-done/templates/research-project/ARCHITECTURE.md
+Use template: ~/.claude/wxcode-skill/templates/research-project/ARCHITECTURE.md
 </output>
 ", subagent_type="general-purpose", model="{researcher_model}", description="Architecture research")
 
@@ -2188,7 +2188,7 @@ Your PITFALLS.md prevents mistakes in roadmap/planning. For each pitfall:
 
 <output>
 Write to: .planning/research/PITFALLS.md
-Use template: ~/.claude/get-shit-done/templates/research-project/PITFALLS.md
+Use template: ~/.claude/wxcode-skill/templates/research-project/PITFALLS.md
 </output>
 ", subagent_type="general-purpose", model="{researcher_model}", description="Pitfalls research")
 ```
@@ -2211,7 +2211,7 @@ Read these files:
 
 <output>
 Write to: .planning/research/SUMMARY.md
-Use template: ~/.claude/get-shit-done/templates/research-project/SUMMARY.md
+Use template: ~/.claude/wxcode-skill/templates/research-project/SUMMARY.md
 Commit after writing.
 </output>
 ", subagent_type="wxcode-research-synthesizer", model="{synthesizer_model}", description="Synthesize research")

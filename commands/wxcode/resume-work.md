@@ -22,7 +22,7 @@ Routes to the resume-project workflow which handles:
   </objective>
 
 <execution_context>
-@~/.claude/get-shit-done/workflows/resume-project.md
+@~/.claude/wxcode-skill/workflows/resume-project.md
 </execution_context>
 
 <structured_output>
@@ -48,7 +48,7 @@ Routes to the resume-project workflow which handles:
 
 
 <process>
-**Follow the resume-project workflow** from `@~/.claude/get-shit-done/workflows/resume-project.md`.
+**Follow the resume-project workflow** from `@~/.claude/wxcode-skill/workflows/resume-project.md`.
 
 The workflow handles all resumption logic including:
 

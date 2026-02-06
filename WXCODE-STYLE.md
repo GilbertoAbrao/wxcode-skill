@@ -16,7 +16,7 @@ WXCODE is a **meta-prompting system** where every file is both implementation an
 
 ## File Structure Conventions
 
-### Slash Commands (`commands/gsd/*.md`)
+### Slash Commands (`commands/wxcode/*.md`)
 
 ```yaml
 ---
@@ -36,7 +36,7 @@ allowed-tools: [Read, Write, Bash, Glob, Grep, AskUserQuestion]
 
 **Commands are thin wrappers.** Delegate detailed logic to workflows.
 
-### Workflows (`wxcode/workflows/*.md`)
+### Workflows (`wxcode-skill/workflows/*.md`)
 
 No YAML frontmatter. Structure varies by workflow.
 
@@ -55,7 +55,7 @@ Some workflows use domain-specific tags like `<philosophy>`, `<references>`, `<p
 
 **Key principle:** Match the style of the specific workflow you're editing.
 
-### Templates (`wxcode/templates/*.md`)
+### Templates (`wxcode-skill/templates/*.md`)
 
 Structure varies. Common patterns:
 - Most start with `# [Name] Template` header
@@ -66,7 +66,7 @@ Structure varies. Common patterns:
 - Square brackets: `[Project Name]`, `[Description]`
 - Curly braces: `{phase}-{plan}-PLAN.md`
 
-### References (`wxcode/references/*.md`)
+### References (`wxcode-skill/references/*.md`)
 
 Typically use outer XML containers related to filename, but structure varies.
 
@@ -324,7 +324,7 @@ Use subagents for autonomous work. Reserve main context for user interaction.
 
 ## UX Patterns
 
-**Visual patterns:** `wxcode/references/ui-brand.md`
+**Visual patterns:** `wxcode-skill/references/ui-brand.md`
 
 Orchestrators @-reference ui-brand.md for stage banners, checkpoint boxes, status symbols, and completion displays.
 

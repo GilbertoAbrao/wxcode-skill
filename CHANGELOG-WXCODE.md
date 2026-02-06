@@ -7,15 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-02-06
+
+### Changed
+- **BREAKING: WXCODE takeover — removed GSD upstream dependency**
+  - WXCODE is now a standalone product, no longer a fork of GSD
+  - Install path changed from `~/.claude/get-shit-done/` to `~/.claude/wxcode-skill/`
+  - Install GSD separately from `glittercowboy/get-shit-done` if needed
+  - Projects with existing symlinks need to update:
+    ```bash
+    rm .claude/commands/wxcode
+    ln -s ~/.claude/wxcode-skill/commands/wxcode .claude/commands/wxcode
+    ```
+
+### Removed
+- **GSD commands** (`commands/gsd/`) — 27 files removed, install GSD upstream separately
+- **Sync commands** — `sync`, `diff`, `rollback`, `history`, `status`, `override`, `init` (7 commands)
+- **Sync agent** — `wxcode-sync-agent.md`
+- **Sync infrastructure** — `.wxcode/transform-rules.md`, `.wxcode/upstream-state.md`
+- **GSD upstream reference** — `package.json` no longer tracks upstream version
+- **GSD-related overrides** — `.wxcode/overrides.md` simplified
+
+### Renamed
+- `get-shit-done/` directory -> `wxcode-skill/` (references, templates, workflows)
+- `GSD-STYLE.md` -> `WXCODE-STYLE.md`
+
 ## [1.4.33] - 2026-02-06
 
 ### Added
-- **Restored 27 GSD commands from upstream `main` branch**
-  - `commands/gsd/` now contains all original GSD commands (was only `help.md`)
-  - Enables non-WXCODE projects (e.g., guest-portal) to use `/gsd:*` commands via symlink
-  - Commands are exact upstream copies with `gsd:` namespace
-  - No changes to installer — it already copies `commands/gsd/` to storage
-  - Commands restored: add-phase, add-todo, audit-milestone, check-todos, complete-milestone, debug, discuss-phase, execute-phase, help, insert-phase, join-discord, list-phase-assumptions, map-codebase, new-milestone, new-project, pause-work, plan-milestone-gaps, plan-phase, progress, quick, remove-phase, research-phase, resume-work, set-profile, settings, update, verify-work
+- **Restored 27 GSD commands from upstream `main` branch** (removed in 2.0.0)
 
 ## [1.4.32] - 2026-02-06
 
@@ -32,7 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **ALL commands are now project-level (GSD + WXCODE)**
   - Neither `/gsd:*` nor `/wxcode:*` commands are globally visible
   - Only 4 wxcode bootstrap commands stay global (`new-project`, `help`, `version`, `update`)
-  - Installer stores commands in `~/.claude/get-shit-done/commands/{gsd,wxcode}/`
+  - Installer stores commands in `~/.claude/wxcode-skill/commands/{gsd,wxcode}/`
   - Projects create symlinks to access the commands they need
   - `/wxcode:new-project` creates wxcode symlink automatically
   - `/wxcode:new-milestone` ensures wxcode symlink exists
@@ -338,7 +358,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **Python dashboard script not installed**
-  - Installer now copies `bin/` folder to `~/.claude/get-shit-done/bin/`
+  - Installer now copies `bin/` folder to `~/.claude/wxcode-skill/bin/`
   - `generate-dashboard.py` now available after installation
   - Fixes "No such file or directory" error for dashboard commands
 
@@ -348,7 +368,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **All commands now use Python script for dashboard updates**
   - Replaced LLM-based dashboard generation in 9 commands
   - Commands affected: add-phase, complete-milestone, execute-phase, insert-phase, new-milestone, new-project, plan-phase, remove-phase, verify-work
-  - All now call `python3 ~/.claude/get-shit-done/bin/generate-dashboard.py --all`
+  - All now call `python3 ~/.claude/wxcode-skill/bin/generate-dashboard.py --all`
   - Ensures consistent, deterministic dashboard JSON with tasks
 
 ## [1.4.2] - 2026-02-02

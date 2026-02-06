@@ -41,9 +41,9 @@ design/
 </objective>
 
 <execution_context>
-@~/.claude/get-shit-done/.wxcode/conversion/design-system-flow.md
-@~/.claude/get-shit-done/.wxcode/conversion/dtcg-spec.md
-@~/.claude/get-shit-done/templates/design-tokens.json
+@~/.claude/wxcode-skill/.wxcode/conversion/design-system-flow.md
+@~/.claude/wxcode-skill/.wxcode/conversion/dtcg-spec.md
+@~/.claude/wxcode-skill/templates/design-tokens.json
 </execution_context>
 
 <structured_output>

@@ -1,6 +1,6 @@
 ---
 name: wxcode:help
-description: Show available WXCODE fork management commands
+description: Show available WXCODE commands
 ---
 
 <structured_output>
@@ -34,265 +34,172 @@ Output ONLY the reference content below. Do NOT add:
 <reference>
 # WXCODE Command Reference
 
-**WXCODE** is a fork management system for customizing WXCODE (Get Shit Done) while staying in sync with upstream improvements.
+**WXCODE** is an AI-powered WinDev/WebDev conversion toolkit for Claude Code.
 
-## Quick Start
+## Project Setup
 
-1. `/wxcode:init` — Initialize fork management (run once)
-2. `/wxcode:status` — Check for upstream updates
-3. `/wxcode:sync` — Apply upstream updates with transformations
+### `/wxcode:new-project`
+Initialize a new project with deep context gathering and PROJECT.md.
 
-## Core Commands
+### `/wxcode:new-milestone`
+Create a new milestone for converting a specific WinDev element.
 
-### `/wxcode:init`
+### `/wxcode:version`
+Display the current WXCODE version.
 
-Initialize the WXCODE fork management system.
-
-- Creates `.wxcode/` configuration directory
-- Configures upstream Git remote
-- Records initial sync state
-- Optionally applies WXCODE → WXCODE transformation
-
-**Usage:** `/wxcode:init`
-
-Run this once when setting up your WXCODE fork.
+### `/wxcode:update`
+Update WXCODE to the latest version.
 
 ---
 
-### `/wxcode:sync`
+## Planning & Research
 
-Synchronize with upstream WXCODE repository.
+### `/wxcode:plan-phase`
+Plan a project phase with research, task breakdown, and verification.
 
-- Fetches latest changes from upstream
-- Classifies changes (deterministic, new feature, conflict)
-- Applies WXCODE → WXCODE transformations automatically
-- Asks for decisions on new features and conflicts
-- Creates commit with all changes
+### `/wxcode:research-phase`
+Deep research for a specific phase before planning.
 
-**Usage:** `/wxcode:sync`
-
----
-
-### `/wxcode:status`
-
-Show current sync state and available updates.
-
-- Compares local version with upstream
-- Lists pending changes
-- Shows customization and override counts
-- Read-only (no changes made)
-
-**Usage:** `/wxcode:status`
-
-## Customization Commands
+### `/wxcode:discuss-phase`
+Discuss and explore a phase's approach before planning.
 
 ### `/wxcode:discuss`
+Open-ended exploration and planning for features or changes.
 
-Explore and plan new features or behavioral changes.
+### `/wxcode:map-codebase`
+Analyze and map the current codebase structure.
 
-- Open-ended questioning to understand your needs
-- Design new commands or modifications
-- Creates design documents for approval
-- Can implement directly or save for later
-
-**Usage:** `/wxcode:discuss`
-
-Use when you're not sure exactly what you want or need to explore options.
+### `/wxcode:list-phase-assumptions`
+List assumptions made during phase planning.
 
 ---
 
-### `/wxcode:customize <name>`
+## Execution & Progress
 
-Directly customize a specific command or agent.
+### `/wxcode:execute-phase`
+Execute a planned phase with atomic commits and state management.
 
-- Goes straight to modifying a known target
-- Focused questioning about specific changes
-- Records decisions in `.wxcode/decisions/`
-- Marks file as customized for future syncs
+### `/wxcode:progress`
+Show project progress and phase status.
 
-**Usage:**
-- `/wxcode:customize plan-phase` — Customize the plan-phase command
-- `/wxcode:customize executor` — Customize the wxcode-executor agent
+### `/wxcode:dashboard`
+Generate project dashboard with metrics and status.
 
-Use when you know exactly what you want to modify.
-
-## Management Commands
-
-### `/wxcode:override <file>`
-
-Mark a file to ignore upstream changes.
-
-Overridden files are completely skipped during sync — you maintain them manually.
-
-**Usage:**
-- `/wxcode:override README.md` — Add file to override list
-- `/wxcode:override --remove README.md` — Remove from override list
-- `/wxcode:override --list` — Show all overridden files
-
-Use for files you've completely customized (custom README, rewritten commands).
+### `/wxcode:quick`
+Quick task execution without full phase workflow.
 
 ---
 
-### `/wxcode:diff [file]`
+## Phase Management
 
-Compare local file with upstream equivalent.
+### `/wxcode:add-phase`
+Add a new phase to the project roadmap.
 
-- Shows differences after applying WXCODE → WXCODE transformation
-- Helps you understand what's different before syncing
-- Read-only (no changes made)
+### `/wxcode:insert-phase`
+Insert a phase at a specific position in the roadmap.
 
-**Usage:**
-- `/wxcode:diff` — List all files with differences
-- `/wxcode:diff plan-phase` — Compare specific command
-- `/wxcode:diff commands/wxcode/help.md` — Compare by path
+### `/wxcode:remove-phase`
+Remove a phase from the project roadmap.
 
 ---
 
-### `/wxcode:rollback`
+## Verification & Quality
 
-Revert the last sync operation.
+### `/wxcode:verify-work`
+Verify completed work meets acceptance criteria.
 
-- Creates a git revert commit (preserves history)
-- Restores previous sync state
-- Useful when a sync introduced problems
+### `/wxcode:audit-milestone`
+Audit a milestone for completeness and quality.
 
-**Usage:** `/wxcode:rollback`
+### `/wxcode:check-todos`
+Check and manage TODO items in the codebase.
+
+### `/wxcode:add-todo`
+Add a TODO item to track.
 
 ---
 
-### `/wxcode:history`
+## Milestone Management
 
-View complete sync and customization history.
+### `/wxcode:complete-milestone`
+Complete and archive a milestone.
 
-- Sync timeline with versions and changes
-- Customization decisions made
-- Override additions/removals
-- Statistics
+### `/wxcode:plan-milestone-gaps`
+Identify gaps in milestone planning.
 
-**Usage:** `/wxcode:history`
+---
 
-## Development Server Commands
+## Development Server
 
 ### `/wxcode:create-start-dev`
-
 Generate start-dev.sh script from stack template.
 
-- Detects project stack from configuration
-- Fetches template from MongoDB via MCP
-- Uses standardized ports (7xxx series)
-- Sets executable permissions
-
-**Usage:** `/wxcode:create-start-dev`
+### `/wxcode:start-dev`
+Execute start-dev.sh to start development server(s).
 
 ---
 
-### `/wxcode:start-dev`
-
-Execute start-dev.sh to start development server(s).
-
-- Kills processes on required ports automatically
-- Starts server(s) in background
-- Redirects logs to `/tmp/{project_name}.log`
-- Displays access URLs
-
-**Usage:** `/wxcode:start-dev`
-
-## Conversion Traceability Commands
+## Conversion Tools
 
 ### `/wxcode:trace <element|file>`
+Navigate between legacy WinDev code and converted code.
 
-Navigate bidirectionally between legacy WinDev code and converted code.
+### `/wxcode:validate-schema`
+Validate database schema models against legacy.
 
-- **Legacy → Converted:** Shows all converted files, control mappings, procedure mappings
-- **Converted → Legacy:** Shows all legacy origins for a converted file
-- Displays deviations from legacy behavior
-- Shows conversion status and dependencies
+### `/wxcode:schema-dashboard`
+Show schema conversion progress dashboard.
 
-**Usage:**
-- `/wxcode:trace PAGE_Login` — Find converted code for legacy page
-- `/wxcode:trace Global_ValidaCPF` — Find converted function
-- `/wxcode:trace app/routes/auth.py` — Find legacy origins of file
-- `/wxcode:trace PAGE_Login --json` — Output as JSON for tooling
+### `/wxcode:mcp-health-check`
+Check MCP server health and connectivity.
 
-**Output includes:**
-- Converted file locations with line numbers
-- Control mappings (EDT_Usuario → input[name='usuario'])
-- Procedure mappings (Global_ValidaCPF → validar_cpf())
-- Data binding mappings
-- Documented deviations from legacy behavior
+---
 
-## Workflow
+## Design & Customization
 
-### Standard Workflow
+### `/wxcode:design-system`
+Manage the project's design system.
 
-```
-/wxcode:init           # First time only
+### `/wxcode:customize <name>`
+Customize a specific command or agent.
 
-/wxcode:status         # Check for updates
-/wxcode:sync           # Apply updates when available
+### `/wxcode:set-profile`
+Set user profile preferences.
 
-/wxcode:customize X    # Modify specific commands as needed
-```
+### `/wxcode:settings`
+Manage WXCODE settings.
 
-### Customization Workflow
+---
 
-```
-/wxcode:discuss        # Explore what you want to change
-/wxcode:customize X    # Apply specific customizations
-/wxcode:override X     # Mark files to never sync
-```
+## Session Management
 
-### Recovery Workflow
+### `/wxcode:pause-work`
+Save current work state for later resumption.
 
-```
-/wxcode:rollback       # Undo problematic sync
-/wxcode:history        # Review what happened
-/wxcode:status         # Check current state
-```
+### `/wxcode:resume-work`
+Resume previously paused work.
+
+### `/wxcode:debug`
+Debug issues with scientific method approach.
+
+---
+
+## Community
+
+### `/wxcode:join-discord`
+Join the WXCODE community Discord.
+
+---
 
 ## Configuration Files
 
 ```
 .wxcode/
 ├── config.md           # Identity and settings
-├── transform-rules.md  # WXCODE → WXCODE transformations
-├── upstream-state.md   # Sync state tracking
 ├── customizations.md   # Decision history
-├── overrides.md        # Files to skip during sync
+├── overrides.md        # Files with special handling
 └── decisions/          # Per-command decision records
-    ├── plan-phase.md
-    └── ...
 ```
-
-## Transformation Rules
-
-During sync, these transformations are applied automatically:
-
-| WXCODE | WXCODE |
-|-----|--------|
-| `wxcode:` | `wxcode:` |
-| `wxcode-` | `wxcode-` |
-| `WXCODE` | `WXCODE` |
-| `get-shit-done` | `wxcode` |
-| `Get Shit Done` | `WXCODE` |
-
-## Sync Decision Types
-
-When syncing, you may be asked about:
-
-| Type | Description | Options |
-|------|-------------|---------|
-| **New Feature** | Upstream added something | Import, Import & customize, Skip, Never |
-| **Behavioral Change** | Upstream modified customized file | Accept upstream, Keep local, Merge |
-| **Conflict** | Both sides changed | Various resolution strategies |
-
-## Tips
-
-- Run `/wxcode:status` regularly to stay aware of upstream changes
-- Use `/wxcode:diff` before sync to preview changes
-- Mark heavily customized files as overrides to avoid conflicts
-- Record decisions in `/wxcode:discuss` before major changes
-- Use `/wxcode:history` to understand past decisions
 
 ```
 <!-- WXCODE:STATUS:{"status":"completed","message":"Help displayed"} -->

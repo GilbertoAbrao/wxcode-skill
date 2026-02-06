@@ -21,8 +21,8 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
 <execution_context>
 **Load these files NOW (before proceeding):**
 
-- @~/.claude/get-shit-done/workflows/complete-milestone.md (main workflow)
-- @~/.claude/get-shit-done/templates/milestone-archive.md (archive template)
+- @~/.claude/wxcode-skill/workflows/complete-milestone.md (main workflow)
+- @~/.claude/wxcode-skill/templates/milestone-archive.md (archive template)
   </execution_context>
 
 <structured_output>
@@ -149,7 +149,7 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
 9. **Regenerate dashboards (MANDATORY):**
 
    ```bash
-   python3 ~/.claude/get-shit-done/bin/generate-dashboard.py --all --project-dir .
+   python3 ~/.claude/wxcode-skill/bin/generate-dashboard.py --all --project-dir .
    ```
 
    This updates:
@@ -182,7 +182,7 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
 **MANDATORY:** After state changes, regenerate dashboards using the Python script.
 
 ```bash
-python3 ~/.claude/get-shit-done/bin/generate-dashboard.py --all --project-dir .
+python3 ~/.claude/wxcode-skill/bin/generate-dashboard.py --all --project-dir .
 ```
 
 This script:

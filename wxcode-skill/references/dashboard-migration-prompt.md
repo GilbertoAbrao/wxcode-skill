@@ -168,8 +168,8 @@ This ensures the milestone is created with `wxcode_version` and `milestone_folde
 ## File Locations
 
 Schema files:
-- `~/.claude/get-shit-done/references/dashboard-schema-project.md`
-- `~/.claude/get-shit-done/references/dashboard-schema-milestone.md`
+- `~/.claude/wxcode-skill/references/dashboard-schema-project.md`
+- `~/.claude/wxcode-skill/references/dashboard-schema-milestone.md`
 
 The old `dashboard-schema.md` has been removed.
 

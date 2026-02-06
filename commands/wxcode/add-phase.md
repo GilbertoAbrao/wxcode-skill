@@ -237,7 +237,7 @@ Phase addition is complete when:
 **MANDATORY:** After state changes, regenerate dashboards using the Python script.
 
 ```bash
-python3 ~/.claude/get-shit-done/bin/generate-dashboard.py --all --project-dir .
+python3 ~/.claude/wxcode-skill/bin/generate-dashboard.py --all --project-dir .
 ```
 
 This script:

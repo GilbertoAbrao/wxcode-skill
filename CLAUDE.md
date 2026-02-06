@@ -4,51 +4,30 @@ This file contains everything needed to work on the WXCODE project effectively.
 
 ## Project Overview
 
-**WXCODE** is a customized fork of [GSD (Get Shit Done)](https://github.com/glittercowboy/get-shit-done) specialized for **WinDev/WebDev code conversion projects**.
+**WXCODE** is an AI-powered WinDev/WebDev conversion toolkit for Claude Code, OpenCode, and Gemini.
 
 - **Repository:** GilbertoAbrao/get-shit-done
 - **Branch:** `main-wxcode` (always work here)
-- **Based on:** GSD v1.9.13
 - **Installs to:** `~/.claude/` (commands, agents, hooks)
 
 ---
 
-## Extension Architecture
+## Architecture
 
-WXCODE uses an **Extension Pattern** — it extends existing GSD commands rather than creating new ones.
+WXCODE extends standard project workflows with specialized support for WinDev/WebDev code conversion.
 
-### How Extensions Work
-
-1. **Inject conditional logic** into existing commands
-2. **Detect mode** via arguments or context files
-3. **Branch to specialized flow** when conditions met
-4. **Return to standard flow** for common operations
-
-### Example: `/wxcode:new-project` Extension
-
-```
-Standard Flow (Greenfield):
-  Phase 1 → Phase 2 → Phase 3 → ...
-
-Extended Flow (Conversion Mode):
-  Phase 1 → Phase 1.5 (detect CONTEXT.md) → Phase C1 → C2 → C3 → ...
-                ↓
-         If no CONTEXT.md, continue standard flow
-```
-
-### Injection Points
-
-When extending a command:
-
-1. **Add detection phase** early in the flow
-2. **Branch to specialized phases** (prefix with C for conversion)
-3. **Rejoin standard flow** where appropriate
-4. **Update success_criteria** to include new checks
-
-### Key Principle
+### Core Principle
 
 > **CONTEXT.md is a snapshot. MCP is the Source of Truth.**
 > Always consult MCP for current data, use CONTEXT.md for initial context only.
+
+### Conversion Mode
+
+When `/wxcode:new-project` receives a CONTEXT.md argument, it switches to conversion mode:
+1. Reads CONTEXT.md (snapshot) + consults MCP (Source of Truth)
+2. Creates project foundation with all files
+3. Generates database models
+4. Creates `.planning/CONVERSION.md` (activates conversion mode for other commands)
 
 ---
 
@@ -59,18 +38,15 @@ When extending a command:
 **ALWAYS bump version when making ANY change that will be released.**
 
 Files to update (ALL of them):
-1. `package.json` → `"version": "X.Y.Z"`
-2. `VERSION` → `X.Y.Z`
-3. `CHANGELOG-WXCODE.md` → Add new version section
-4. `README-WXCODE.md` → Update "Current Version"
+1. `package.json` -> `"version": "X.Y.Z"`
+2. `VERSION` -> `X.Y.Z`
+3. `CHANGELOG-WXCODE.md` -> Add new version section
+4. `README-WXCODE.md` -> Update "Current Version"
 
 ### Version Format
 
 ```
 MAJOR.MINOR.PATCH
-  │     │     └── Bug fixes, small improvements
-  │     └──────── New features, non-breaking changes
-  └────────────── Breaking changes (rarely used)
 ```
 
 ### Changelog Format
@@ -87,8 +63,6 @@ MAJOR.MINOR.PATCH
 ### Changed
 - Modification description
 ```
-
-Also update the **Upstream Sync History** table at the bottom.
 
 ### Commit and Push Workflow
 
@@ -112,10 +86,11 @@ git push origin main-wxcode
 2. npm downloads package from GitHub
 3. `bin/install.js` runs
 4. Copies files to `~/.claude/`:
-   - `commands/wxcode/` ← from `commands/wxcode/`
-   - `get-shit-done/` ← reference docs
-   - `agents/wxcode-*.md` ← agents
-   - `hooks/` ← bundled hooks
+   - `commands/wxcode/` <- 4 bootstrap commands (global)
+   - `wxcode-skill/` <- references, templates, workflows
+   - `wxcode-skill/commands/wxcode/` <- all commands (storage for symlinks)
+   - `agents/wxcode-*.md` <- agents
+   - `hooks/` <- bundled hooks
 
 ### Cache Issues
 
@@ -135,27 +110,30 @@ curl -s "...VERSION?t=$(date +%s)"  # timestamp prevents cache
 ## File Structure
 
 ```
-get-shit-done/
+wxcode/
 ├── commands/
-│   └── wxcode/                 # ALL commands here (not gsd/)
-│       ├── new-project.md      # Extended with Conversion Mode
+│   └── wxcode/                 # ALL commands here (39+)
+│       ├── new-project.md
 │       ├── plan-phase.md
 │       ├── execute-phase.md
-│       ├── update.md           # Handles version checking
 │       └── ...
 │
 ├── agents/
-│   ├── wxcode-*.md             # Standard agents (renamed from gsd-)
-│   ├── wxcode-legacy-analyzer.md    # NEW: Conversion extension
-│   └── wxcode-conversion-advisor.md # NEW: Conversion extension
+│   ├── wxcode-*.md             # Standard agents
+│   ├── wxcode-legacy-analyzer.md    # Conversion agent
+│   └── wxcode-conversion-advisor.md # Conversion agent
 │
 ├── .wxcode/
-│   ├── config.md               # Fork identity
-│   ├── transform-rules.md      # GSD → WXCODE transformations
+│   ├── config.md               # WXCODE identity
 │   └── conversion/             # Conversion-specific docs
 │       ├── context-md-spec.md  # CONTEXT.md format spec
 │       ├── mcp-usage.md        # 25 MCP tools guide
 │       └── ...
+│
+├── wxcode-skill/               # Reference documentation
+│   ├── references/
+│   ├── templates/
+│   └── workflows/
 │
 ├── bin/
 │   └── install.js              # Installer script
@@ -258,7 +236,7 @@ curl -s "...VERSION?t=$(date +%s)"
 node bin/install.js --claude --global
 
 # Verify
-grep "your-change" ~/.claude/commands/wxcode/your-file.md
+ls ~/.claude/wxcode-skill/commands/wxcode/ | wc -l
 ```
 
 ### After Push
@@ -289,7 +267,7 @@ When extending commands for conversion mode:
 ### Bump Version
 ```bash
 # Edit: package.json, VERSION, CHANGELOG-WXCODE.md, README-WXCODE.md
-git add -A && git commit -m "chore: bump version to X.Y.Z"
+git add -A && git commit -m "feat/fix/chore: description"
 git push origin main-wxcode
 ```
 
@@ -301,6 +279,5 @@ npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global
 
 ### Check Installed Version
 ```bash
-cat ~/.claude/get-shit-done/VERSION
-grep "Conversion Mode" ~/.claude/commands/wxcode/new-project.md
+cat ~/.claude/wxcode-skill/VERSION
 ```

@@ -29,7 +29,7 @@ Display the current WXCODE version.
 Read and display version:
 
 ```bash
-cat ~/.claude/get-shit-done/VERSION
+cat ~/.claude/wxcode-skill/VERSION
 ```
 
 Output format:

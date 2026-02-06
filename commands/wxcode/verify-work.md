@@ -22,9 +22,9 @@ Output: {phase}-UAT.md tracking all test results. If issues found: diagnosed gap
 </objective>
 
 <execution_context>
-@~/.claude/get-shit-done/workflows/verify-work.md
-@~/.claude/get-shit-done/templates/UAT.md
-@~/.claude/get-shit-done/references/structured-output.md
+@~/.claude/wxcode-skill/workflows/verify-work.md
+@~/.claude/wxcode-skill/templates/UAT.md
+@~/.claude/wxcode-skill/references/structured-output.md
 </execution_context>
 
 <structured_output>
@@ -296,7 +296,7 @@ Review the issues above and either:
 **MANDATORY:** After state changes, regenerate dashboards using the Python script.
 
 ```bash
-python3 ~/.claude/get-shit-done/bin/generate-dashboard.py --all --project-dir .
+python3 ~/.claude/wxcode-skill/bin/generate-dashboard.py --all --project-dir .
 ```
 
 This script:

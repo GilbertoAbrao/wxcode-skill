@@ -10,7 +10,7 @@ allowed-tools:
 ---
 
 <execution_context>
-@~/.claude/get-shit-done/references/structured-output.md
+@~/.claude/wxcode-skill/references/structured-output.md
 </execution_context>
 
 <structured_output>

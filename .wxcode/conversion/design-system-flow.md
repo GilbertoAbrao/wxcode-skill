@@ -587,5 +587,5 @@ When the `wxcode-executor` detects a UI generation task:
 ## References
 
 - **DTCG Spec:** See `.wxcode/conversion/dtcg-spec.md`
-- **Template:** See `get-shit-done/templates/design-tokens.json`
+- **Template:** See `wxcode-skill/templates/design-tokens.json`
 - **frontend-design Skill:** Claude Code built-in skill for UI generation

@@ -1,7 +1,7 @@
 # Command Scoping Architecture
 
 **Data:** 2026-02-06
-**Versao:** 1.4.31+
+**Versao:** 2.0.0+
 
 ---
 
@@ -17,8 +17,7 @@ WXCODE usa um modelo de **comando por projeto** (project-level commands). Nenhum
 
 | Tipo de projeto | Comandos visiveis | Comandos invisiveis |
 |---|---|---|
-| Output-project (conversao) | `/wxcode:*` | `/gsd:*` |
-| Projeto GSD vanilla | `/gsd:*` | `/wxcode:*` |
+| Output-project (conversao) | `/wxcode:*` | — |
 | Projeto sem setup | Nenhum (so bootstrap) | Todos |
 
 ---
@@ -36,11 +35,9 @@ Apos a instalacao (`npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude 
 │       ├── version.md          ← bootstrap
 │       └── update.md           ← bootstrap
 │
-├── get-shit-done/
+├── wxcode-skill/
 │   ├── commands/               ← STORAGE (nao visivel diretamente)
-│   │   ├── gsd/                ← todos comandos GSD (1+)
-│   │   │   └── help.md
-│   │   └── wxcode/             ← todos comandos WXCODE (46+)
+│   │   └── wxcode/             ← todos comandos WXCODE (39+)
 │   │       ├── new-project.md
 │   │       ├── plan-phase.md
 │   │       ├── execute-phase.md
@@ -60,7 +57,7 @@ Apos a instalacao (`npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude 
 ### Por que "storage" separado?
 
 - `~/.claude/commands/` e escaneado pelo Claude Code para descobrir skills
-- `~/.claude/get-shit-done/commands/` **NAO** e escaneado (nao e `commands/` direto)
+- `~/.claude/wxcode-skill/commands/` **NAO** e escaneado (nao e `commands/` direto)
 - Isso permite armazenar comandos sem torna-los visiveis globalmente
 
 ---
@@ -75,39 +72,12 @@ O `/wxcode:new-project` cria automaticamente o symlink durante Phase 1 Setup:
 output-project/
 └── .claude/
     └── commands/
-        └── wxcode → ~/.claude/get-shit-done/commands/wxcode  (symlink)
+        └── wxcode → ~/.claude/wxcode-skill/commands/wxcode  (symlink)
 ```
 
-**Resultado:** O projeto ve todos os 46+ comandos `/wxcode:*`.
+**Resultado:** O projeto ve todos os 39+ comandos `/wxcode:*`.
 
 O `/wxcode:new-milestone` tambem verifica e cria o symlink se necessario (para projetos existentes).
-
-### Projetos GSD vanilla
-
-Para projetos que usam GSD puro (nao-wxcode), criar o symlink manualmente:
-
-```bash
-mkdir -p .claude/commands
-ln -s ~/.claude/get-shit-done/commands/gsd .claude/commands/gsd
-```
-
-**Resultado:** O projeto ve todos os comandos `/gsd:*`.
-
-### Projeto wxcode-ui
-
-O wxcode-ui e um projeto especial — ele gerencia output-projects mas nao e um deles.
-Deve ter seus proprios comandos locais conforme necessidade:
-
-```
-wxcode-ui/
-└── .claude/
-    └── commands/
-        ├── gsd → ~/.claude/get-shit-done/commands/gsd  (se quiser GSD)
-        ├── openspec/       ← comandos proprios
-        └── wx-convert/     ← comandos proprios
-```
-
-**NAO** deve ter symlink para wxcode (para nao confundir com output-projects).
 
 ---
 
@@ -119,21 +89,15 @@ wxcode-ui/
 Dev Machine
 ├── ~/.claude/                          ← instalacao global
 │   ├── commands/wxcode/ (4 bootstrap)
-│   └── get-shit-done/commands/         ← storage
-│       ├── gsd/
+│   └── wxcode-skill/commands/          ← storage
 │       └── wxcode/
 │
-├── ~/projetos/wxcode-ui/               ← gerencia conversoes
-│   └── .claude/commands/gsd → storage  ← ve /gsd:*
+├── ~/projetos/output-simetra/          ← output-project
+│   └── .claude/commands/wxcode → storage  ← ve /wxcode:*
 │
-├── ~/projetos/meu-app/                 ← projeto GSD vanilla
-│   └── .claude/commands/gsd → storage  ← ve /gsd:*
-│
-└── ~/projetos/output-simetra/          ← output-project
+└── ~/projetos/outro-output/            ← outro output-project
     └── .claude/commands/wxcode → storage  ← ve /wxcode:*
 ```
-
-**Dev machine tem tudo instalado.** Cada projeto so ve o que precisa.
 
 ### Cloud (Instancia de Producao)
 
@@ -141,15 +105,12 @@ Dev Machine
 Cloud Instance
 ├── ~/.claude/                          ← instalacao global
 │   ├── commands/wxcode/ (4 bootstrap)
-│   └── get-shit-done/commands/         ← storage
-│       ├── gsd/                        ← armazenado, mas ninguem usa
+│   └── wxcode-skill/commands/          ← storage
 │       └── wxcode/
 │
 └── /app/output-project/                ← unico tipo de projeto na nuvem
     └── .claude/commands/wxcode → storage  ← ve /wxcode:*
 ```
-
-**Na nuvem, output-projects so vem `/wxcode:*`.** GSD existe no storage mas nenhum projeto cria symlink para ele.
 
 ### Setup da Cloud Instance
 
@@ -159,8 +120,7 @@ npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global
 
 # 2. Resultado automatico:
 #    - 4 bootstrap wxcode commands em ~/.claude/commands/wxcode/
-#    - Storage completo em ~/.claude/get-shit-done/commands/
-#    - GSD no storage mas NAO em ~/.claude/commands/gsd/ (nao global)
+#    - Storage completo em ~/.claude/wxcode-skill/commands/
 #    - Agents e hooks globais
 
 # 3. Ao criar output-project:
@@ -181,8 +141,6 @@ Apenas estes comandos sao instalados globalmente em `~/.claude/commands/`:
 | `version.md` | `wxcode` | Exibir versao |
 | `update.md` | `wxcode` | Atualizar para ultima versao |
 
-**GSD NAO tem comandos globais.** Para usar GSD, crie o symlink manualmente.
-
 ---
 
 ## Fluxo de Criacao de Projeto
@@ -193,21 +151,8 @@ Apenas estes comandos sao instalados globalmente em `~/.claude/commands/`:
 1. Usuario roda /wxcode:new-project
 2. Phase 1 Setup:
    a. Verifica se .claude/commands/wxcode existe
-   b. Se nao: cria symlink → ~/.claude/get-shit-done/commands/wxcode
-   c. NAO cria symlink para gsd
+   b. Se nao: cria symlink → ~/.claude/wxcode-skill/commands/wxcode
 3. Todos comandos /wxcode:* ficam disponiveis
-4. Nenhum comando /gsd:* visivel
-```
-
-### Projeto GSD vanilla
-
-```
-1. Usuario cria diretorio do projeto
-2. Executa manualmente:
-   mkdir -p .claude/commands
-   ln -s ~/.claude/get-shit-done/commands/gsd .claude/commands/gsd
-3. Todos comandos /gsd:* ficam disponiveis
-4. Nenhum comando /wxcode:* visivel (alem dos 4 bootstrap)
 ```
 
 ---
@@ -238,11 +183,7 @@ rm .claude/commands/wxcode  # remove symlink
 
 ### Como o OpenCode funciona?
 
-OpenCode continua usando a estrutura global flat (sem symlinks). Todos os comandos gsd-* e wxcode-* ficam em `~/.config/opencode/command/`. A separacao por projeto nao se aplica ao OpenCode.
-
-### Posso ter GSD e WXCODE no mesmo projeto?
-
-Tecnicamente sim (criar ambos symlinks), mas nao e recomendado. Os comandos podem conflitar ou confundir o LLM.
+OpenCode continua usando a estrutura global flat (sem symlinks). Todos os comandos wxcode-* ficam em `~/.config/opencode/command/`. A separacao por projeto nao se aplica ao OpenCode.
 
 ---
 
@@ -250,10 +191,9 @@ Tecnicamente sim (criar ambos symlinks), mas nao e recomendado. Os comandos pode
 
 O `bin/install.js` faz:
 
-1. **GSD commands**: copia para storage (`get-shit-done/commands/gsd/`), NAO instala global
-2. **WXCODE commands**: copia para storage (`get-shit-done/commands/wxcode/`), instala 4 bootstrap global
-3. **get-shit-done/**: copia references, templates, workflows
-4. **Agents**: copia para `~/.claude/agents/` (sempre global)
-5. **Hooks**: copia para `~/.claude/hooks/` (sempre global)
+1. **WXCODE commands**: copia para storage (`wxcode-skill/commands/wxcode/`), instala 4 bootstrap global
+2. **wxcode-skill/**: copia references, templates, workflows
+3. **Agents**: copia para `~/.claude/agents/` (sempre global)
+4. **Hooks**: copia para `~/.claude/hooks/` (sempre global)
 
-A copia para storage roda DEPOIS da copia de `get-shit-done/` porque `copyWithPathReplacement()` faz clean install (deleta destino antes de copiar).
+A copia para storage roda DEPOIS da copia de `wxcode-skill/` porque `copyWithPathReplacement()` faz clean install (deleta destino antes de copiar).
