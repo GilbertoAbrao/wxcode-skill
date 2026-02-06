@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-02-06
+
+### Fixed
+- **Installer no longer deletes GSD files** — WXCODE and GSD now coexist
+  - Removed cleanup of `commands/gsd/` (Claude Code & Gemini)
+  - Removed cleanup of `gsd-*` commands (OpenCode)
+  - Removed deletion of `get-shit-done/` directory (install & uninstall)
+- Fixed CHANGELOG reference in installer (`CHANGELOG.md` → `CHANGELOG-WXCODE.md`)
+
 ## [2.0.1] - 2026-02-06
 
 ### Changed

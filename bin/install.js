@@ -823,8 +823,8 @@ function uninstall(isGlobal, runtime = 'claude') {
     }
   }
 
-  // 2. Remove wxcode-skill directory (and legacy get-shit-done)
-  for (const dirName of ['wxcode-skill', 'get-shit-done']) {
+  // 2. Remove wxcode-skill directory
+  for (const dirName of ['wxcode-skill']) {
     const skillDir = path.join(targetDir, dirName);
     if (fs.existsSync(skillDir)) {
       fs.rmSync(skillDir, { recursive: true });
@@ -1109,15 +1109,6 @@ function install(isGlobal, runtime = 'claude') {
     const commandDir = path.join(targetDir, 'command');
     fs.mkdirSync(commandDir, { recursive: true });
 
-    // Remove legacy gsd-* commands from OpenCode (migration from older versions)
-    if (fs.existsSync(commandDir)) {
-      for (const file of fs.readdirSync(commandDir)) {
-        if (file.startsWith('gsd-') && file.endsWith('.md')) {
-          fs.unlinkSync(path.join(commandDir, file));
-        }
-      }
-    }
-
     // Copy commands/wxcode/*.md as command/wxcode-*.md (flatten structure)
     const wxcodeSrc = path.join(src, 'commands', 'wxcode');
     copyFlattenedCommands(wxcodeSrc, commandDir, 'wxcode', pathPrefix, runtime);
@@ -1135,12 +1126,6 @@ function install(isGlobal, runtime = 'claude') {
     // symlinked into projects by /wxcode:new-project.
     const commandsDir = path.join(targetDir, 'commands');
     fs.mkdirSync(commandsDir, { recursive: true });
-
-    // Remove legacy get-shit-done paths (migration from older versions)
-    const legacyGsdDest = path.join(commandsDir, 'gsd');
-    if (fs.existsSync(legacyGsdDest)) {
-      fs.rmSync(legacyGsdDest, { recursive: true });
-    }
 
     // Install only bootstrap wxcode commands globally (new-project, help, version, update)
     // Full commands are installed to storage AFTER wxcode-skill copy below
@@ -1181,13 +1166,6 @@ function install(isGlobal, runtime = 'claude') {
     console.log(`  ${green}✓${reset} Installed wxcode-skill`);
   } else {
     failures.push('wxcode-skill');
-  }
-
-  // Remove legacy get-shit-done directory if migrating from older versions
-  const legacySkillDest = path.join(targetDir, 'get-shit-done');
-  if (fs.existsSync(legacySkillDest)) {
-    fs.rmSync(legacySkillDest, { recursive: true });
-    console.log(`  ${green}✓${reset} Removed legacy get-shit-done/`);
   }
 
   // Copy ALL wxcode commands to storage (project-level via symlink, not global)
@@ -1250,15 +1228,15 @@ function install(isGlobal, runtime = 'claude') {
     }
   }
 
-  // Copy CHANGELOG.md
-  const changelogSrc = path.join(src, 'CHANGELOG.md');
-  const changelogDest = path.join(targetDir, 'wxcode-skill', 'CHANGELOG.md');
+  // Copy CHANGELOG-WXCODE.md
+  const changelogSrc = path.join(src, 'CHANGELOG-WXCODE.md');
+  const changelogDest = path.join(targetDir, 'wxcode-skill', 'CHANGELOG-WXCODE.md');
   if (fs.existsSync(changelogSrc)) {
     fs.copyFileSync(changelogSrc, changelogDest);
-    if (verifyFileInstalled(changelogDest, 'CHANGELOG.md')) {
-      console.log(`  ${green}✓${reset} Installed CHANGELOG.md`);
+    if (verifyFileInstalled(changelogDest, 'CHANGELOG-WXCODE.md')) {
+      console.log(`  ${green}✓${reset} Installed CHANGELOG-WXCODE.md`);
     } else {
-      failures.push('CHANGELOG.md');
+      failures.push('CHANGELOG-WXCODE.md');
     }
   }
 
