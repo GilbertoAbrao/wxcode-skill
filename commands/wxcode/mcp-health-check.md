@@ -8,9 +8,10 @@ allowed-tools:
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"mcp-health-check","args":"$ARGUMENTS","title":"WXCODE ▶ MCP HEALTH CHECK"} -->
+## WXCODE ▶ MCP HEALTH CHECK
 ```
 
 **At command end (success):**

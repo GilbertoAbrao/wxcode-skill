@@ -13,9 +13,10 @@ allowed-tools:
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"schema-dashboard","args":"$ARGUMENTS","title":"WXCODE ▶ GENERATING SCHEMA DASHBOARD"} -->
+## WXCODE ▶ GENERATING SCHEMA DASHBOARD
 ```
 
 **On status changes:**

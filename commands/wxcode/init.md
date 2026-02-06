@@ -11,9 +11,10 @@ allowed-tools:
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"init","args":"$ARGUMENTS","title":"WXCODE ▶ INITIALIZING WXCODE"} -->
+## WXCODE ▶ INITIALIZING WXCODE
 ```
 
 **On status changes:**

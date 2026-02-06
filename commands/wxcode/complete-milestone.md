@@ -28,9 +28,10 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"complete-milestone","args":"$ARGUMENTS","title":"WXCODE ▶ COMPLETING MILESTONE $ARGUMENTS"} -->
+## WXCODE ▶ COMPLETING MILESTONE $ARGUMENTS
 ```
 
 **On status changes:**

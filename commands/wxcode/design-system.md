@@ -49,9 +49,10 @@ design/
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"design-system","args":"$ARGUMENTS","title":"WXCODE ▶ DESIGN SYSTEM"} -->
+## WXCODE ▶ DESIGN SYSTEM
 ```
 
 **On status changes:**
@@ -71,10 +72,11 @@ design/
 
 ## Step 0: Emit Header
 
-**First, emit the structured header:**
+**Emit the structured header immediately followed by the visual banner (no blank line):**
 
 ```
 <!-- WXCODE:HEADER:{"command":"design-system","args":"$ARGUMENTS","title":"WXCODE ▶ DESIGN SYSTEM"} -->
+## WXCODE ▶ DESIGN SYSTEM
 ```
 
 ## Step 1: Parse Arguments

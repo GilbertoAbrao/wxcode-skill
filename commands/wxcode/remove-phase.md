@@ -25,9 +25,10 @@ Output: Phase deleted, all subsequent phases renumbered, git commit as historica
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"remove-phase","args":"$ARGUMENTS","title":"WXCODE ▶ REMOVING PHASE"} -->
+## WXCODE ▶ REMOVING PHASE
 ```
 
 **On status changes:**

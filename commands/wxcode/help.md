@@ -6,9 +6,10 @@ description: Show available WXCODE fork management commands
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start (emit before reference content):**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"help","args":"","title":"WXCODE ▶ COMMAND REFERENCE"} -->
+## WXCODE ▶ COMMAND REFERENCE
 ```
 
 **At command end (emit after reference content):**
@@ -20,7 +21,7 @@ description: Show available WXCODE fork management commands
 <objective>
 Display the complete WXCODE command reference.
 
-**First emit the structured header, then output the reference content.**
+**Emit the structured header immediately followed by the visual banner (no blank line), then output the reference content.**
 
 Output ONLY the reference content below. Do NOT add:
 

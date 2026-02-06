@@ -30,9 +30,10 @@ Output: {phase}-UAT.md tracking all test results. If issues found: diagnosed gap
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"verify-work","args":"$ARGUMENTS","title":"WXCODE ▶ VERIFYING PHASE $ARGUMENTS"} -->
+## WXCODE ▶ VERIFYING PHASE $ARGUMENTS
 ```
 
 **Per test result:**

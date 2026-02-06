@@ -28,9 +28,10 @@ Routes to the resume-project workflow which handles:
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"resume-work","args":"$ARGUMENTS","title":"WXCODE ▶ RESUMING WORK"} -->
+## WXCODE ▶ RESUMING WORK
 ```
 
 **On status changes:**

@@ -13,9 +13,10 @@ allowed-tools:
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"validate-schema","args":"$ARGUMENTS","title":"WXCODE ▶ VALIDATING SCHEMA"} -->
+## WXCODE ▶ VALIDATING SCHEMA
 ```
 
 **On status changes:**

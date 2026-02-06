@@ -24,9 +24,10 @@ allowed-tools:
 
 Emit structured markers alongside human-readable output. Reference: structured-output.md
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"plan-phase","args":"$ARGUMENTS","title":"WXCODE ▶ PLANNING PHASE $PHASE"} -->
+## WXCODE ▶ PLANNING PHASE $PHASE
 ```
 
 **On status changes:**

@@ -61,9 +61,10 @@ This is the most leveraged moment in any project. Deep questioning here means be
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"new-project","args":"$ARGUMENTS","title":"WXCODE ▶ INITIALIZING PROJECT"} -->
+## WXCODE ▶ INITIALIZING PROJECT
 ```
 
 **On status changes:**

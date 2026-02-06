@@ -6,9 +6,10 @@ description: Update WXCODE to latest version with changelog display
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"update","args":"$ARGUMENTS","title":"WXCODE ▶ UPDATING WXCODE"} -->
+## WXCODE ▶ UPDATING WXCODE
 ```
 
 **On status changes:**

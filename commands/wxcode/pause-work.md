@@ -10,9 +10,10 @@ allowed-tools:
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"pause-work","args":"$ARGUMENTS","title":"WXCODE ▶ PAUSING WORK"} -->
+## WXCODE ▶ PAUSING WORK
 ```
 
 **On status changes:**

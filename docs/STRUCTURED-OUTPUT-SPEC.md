@@ -1,7 +1,7 @@
 # WXCODE Structured Output Specification
 
-**Versão:** 1.1.0
-**Data:** 2026-02-04 (atualizado)
+**Versão:** 1.2.0
+**Data:** 2026-02-06 (atualizado)
 **Propósito:** Especificação completa para parsing de saídas WXCODE em interfaces de chat.
 
 ---
@@ -40,10 +40,11 @@ interface WxcodeEvent {
 
 ### 2.1 HEADER
 
-**Quando:** Emitido no INÍCIO de cada comando.
+**Quando:** Emitido no INÍCIO de cada comando, imediatamente seguido pelo banner visual `## TITLE` (sem linha em branco entre eles). Isso garante que ambos chegam no mesmo chunk de streaming.
 
 ```
 <!-- WXCODE:HEADER:{"command":"execute-phase","args":"3","title":"WXCODE ▶ EXECUTING PHASE 3"} -->
+## WXCODE ▶ EXECUTING PHASE 3
 ```
 
 **Schema TypeScript:**
@@ -321,6 +322,7 @@ interface ErrorData {
 
 ```
 <!-- WXCODE:HEADER:{"command":"execute-phase","args":"3","title":"WXCODE ▶ EXECUTING PHASE 3"} -->
+## WXCODE ▶ EXECUTING PHASE 3
 
 [conteúdo visual]
 
@@ -347,6 +349,7 @@ interface ErrorData {
 
 ```
 <!-- WXCODE:HEADER:{"command":"plan-phase","args":"2","title":"WXCODE ▶ PLANNING PHASE 2"} -->
+## WXCODE ▶ PLANNING PHASE 2
 
 <!-- WXCODE:STATUS:{"status":"in_progress","message":"Researching phase requirements","progress":25} -->
 
@@ -368,6 +371,8 @@ interface ErrorData {
 
 ```
 <!-- WXCODE:HEADER:{"command":"progress","args":"","title":"WXCODE ▶ PROJECT PROGRESS"} -->
+## WXCODE ▶ PROJECT PROGRESS
+
 <!-- WXCODE:STATUS:{"status":"in_progress","message":"Phase 3 of 5","progress":60,"phase":3} -->
 
 [conteúdo visual - status report]
@@ -379,6 +384,7 @@ interface ErrorData {
 
 ```
 <!-- WXCODE:HEADER:{"command":"verify-work","args":"3","title":"WXCODE ▶ VERIFYING PHASE 3"} -->
+## WXCODE ▶ VERIFYING PHASE 3
 
 <!-- WXCODE:STATUS:{"status":"in_progress","message":"Testing: Login flow","progress":33} -->
 
@@ -588,6 +594,11 @@ Esta especificação segue semantic versioning. Mudanças:
 
 ### Histórico de Versões
 
+**1.2.0** (2026-02-06)
+- HEADER deve ser emitido imediatamente seguido pelo banner visual `## TITLE` (sem linha em branco)
+- Garante que HEADER e banner chegam no mesmo chunk de streaming
+- Atualizado exemplos em todas as seções de fluxo (3.1-3.4)
+
 **1.1.0** (2026-02-04)
 - 100% dos 44 comandos com structured output completo
 - Adicionados ERROR markers para 12 comandos
@@ -601,4 +612,4 @@ Esta especificação segue semantic versioning. Mudanças:
 - Parsers TypeScript e Python
 - Guia de UI
 
-Versão atual: **1.1.0**
+Versão atual: **1.2.0**

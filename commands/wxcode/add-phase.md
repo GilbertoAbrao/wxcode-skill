@@ -25,9 +25,10 @@ Purpose: Add planned work discovered during execution that belongs at the end of
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"add-phase","args":"$ARGUMENTS","title":"WXCODE ▶ ADDING PHASE"} -->
+## WXCODE ▶ ADDING PHASE
 ```
 
 **On status changes:**

@@ -34,9 +34,10 @@ This command conducts deep questioning to understand what you want, then designs
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"discuss","args":"$ARGUMENTS","title":"WXCODE ▶ DISCUSSION"} -->
+## WXCODE ▶ DISCUSSION
 ```
 
 **On status changes:**

@@ -43,9 +43,10 @@ Phase: $ARGUMENTS
 
 Emit structured markers alongside human-readable output. Reference: structured-output.md
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"execute-phase","args":"$ARGUMENTS","title":"WXCODE ▶ EXECUTING PHASE $ARGUMENTS"} -->
+## WXCODE ▶ EXECUTING PHASE $ARGUMENTS
 ```
 
 **Before each significant tool call:**
@@ -77,12 +78,13 @@ Emit structured markers alongside human-readable output. Reference: structured-o
 <process>
 0. **Emit header and resolve Model Profile**
 
-   First emit the structured header:
+   Emit the structured header immediately followed by the visual banner (no blank line):
    ```
    <!-- WXCODE:HEADER:{"command":"execute-phase","args":"$ARGUMENTS","title":"WXCODE ▶ EXECUTING PHASE $ARGUMENTS"} -->
+   ## WXCODE ▶ EXECUTING PHASE $ARGUMENTS
    ```
 
-   Then display visual header and resolve model:
+   Then resolve model:
 
    Read model profile for agent spawning:
    ```bash

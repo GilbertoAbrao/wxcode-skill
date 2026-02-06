@@ -12,9 +12,10 @@ allowed-tools:
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"create-start-dev","args":"$ARGUMENTS","title":"WXCODE ▶ CREATING START-DEV"} -->
+## WXCODE ▶ CREATING START-DEV
 ```
 
 **On status changes:**

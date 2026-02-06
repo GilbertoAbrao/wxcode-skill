@@ -24,9 +24,10 @@ Verify milestone achieved its definition of done. Check requirements coverage, c
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"audit-milestone","args":"$ARGUMENTS","title":"WXCODE ▶ AUDITING MILESTONE"} -->
+## WXCODE ▶ AUDITING MILESTONE
 ```
 
 **On status changes:**

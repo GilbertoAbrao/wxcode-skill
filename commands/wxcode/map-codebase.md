@@ -26,9 +26,10 @@ Output: .planning/codebase/ folder with 7 structured documents about the codebas
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"map-codebase","args":"$ARGUMENTS","title":"WXCODE ▶ MAPPING CODEBASE"} -->
+## WXCODE ▶ MAPPING CODEBASE
 ```
 
 **On status changes:**

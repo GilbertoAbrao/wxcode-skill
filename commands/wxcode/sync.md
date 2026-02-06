@@ -39,9 +39,10 @@ This command:
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"sync","args":"$ARGUMENTS","title":"WXCODE ▶ SYNCING WITH UPSTREAM"} -->
+## WXCODE ▶ SYNCING WITH UPSTREAM
 ```
 
 **On status changes:**

@@ -18,9 +18,10 @@ allowed-tools:
 
 Emit structured markers alongside human-readable output.
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"progress","args":"","title":"WXCODE ▶ PROJECT PROGRESS"} -->
+## WXCODE ▶ PROJECT PROGRESS
 ```
 
 **With status report (emit after loading context):**
@@ -56,6 +57,7 @@ Provides situational awareness before continuing work.
 
 ```
 <!-- WXCODE:HEADER:{"command":"progress","args":"","title":"WXCODE ▶ PROJECT PROGRESS"} -->
+## WXCODE ▶ PROJECT PROGRESS
 ```
 </step>
 

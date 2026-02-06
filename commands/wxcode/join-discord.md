@@ -6,9 +6,10 @@ description: Join the WXCODE Discord community
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"join-discord","args":"$ARGUMENTS","title":"WXCODE ▶ JOIN DISCORD"} -->
+## WXCODE ▶ JOIN DISCORD
 ```
 
 **At command end:**

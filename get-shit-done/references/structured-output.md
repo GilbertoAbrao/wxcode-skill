@@ -32,7 +32,6 @@ Emitted at the start of a command execution.
 
 ```markdown
 <!-- WXCODE:HEADER:{"command":"execute-phase","args":"10","title":"WXCODE ▶ EXECUTING PHASE 10"} -->
-
 ## WXCODE ▶ EXECUTING PHASE 10
 ```
 
@@ -159,7 +158,6 @@ In command markdown files, emit structured output before the human-readable vers
 
 ```markdown
 <!-- WXCODE:HEADER:{"command":"plan-phase","args":"3","title":"WXCODE ▶ PLANNING PHASE 3"} -->
-
 ## WXCODE ▶ PLANNING PHASE 3
 
 Let me analyze the phase requirements and create a detailed plan.
@@ -267,7 +265,8 @@ If `output_language` is not set or is `"en"`, use English.
 4. **Use consistent status values** - pending, in_progress, completed, failed, paused
 5. **Include timing** - `duration_ms` helps with performance tracking
 6. **Emit HEADER first** - Every command should start with a HEADER
-7. **Respect output_language** - Check config for language preference
+7. **Emit HEADER+banner together** - No blank line between HEADER comment and visual `## TITLE` heading. This ensures they arrive in the same streaming chunk.
+8. **Respect output_language** - Check config for language preference
 
 ---
 

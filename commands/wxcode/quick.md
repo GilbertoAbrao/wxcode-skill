@@ -32,9 +32,10 @@ Orchestration is inline - no separate workflow file. Quick mode is deliberately 
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"quick","args":"$ARGUMENTS","title":"WXCODE ▶ QUICK TASK"} -->
+## WXCODE ▶ QUICK TASK
 ```
 
 **On status changes:**

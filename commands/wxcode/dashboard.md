@@ -43,9 +43,10 @@ Generate comprehensive JSON snapshots of project progress for external UI render
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"dashboard","args":"$ARGUMENTS","title":"WXCODE ▶ GENERATING DASHBOARD"} -->
+## WXCODE ▶ GENERATING DASHBOARD
 ```
 
 **On status changes:**
@@ -67,6 +68,7 @@ Generate comprehensive JSON snapshots of project progress for external UI render
 
 ```
 <!-- WXCODE:HEADER:{"command":"dashboard","args":"$ARGUMENTS","title":"WXCODE ▶ GENERATING DASHBOARD"} -->
+## WXCODE ▶ GENERATING DASHBOARD
 ```
 
 ## Step 1: Parse Arguments

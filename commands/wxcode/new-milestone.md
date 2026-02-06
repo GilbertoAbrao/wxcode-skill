@@ -36,9 +36,10 @@ This is the brownfield equivalent of new-project. The project exists, PROJECT.md
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"new-milestone","args":"$ARGUMENTS","title":"WXCODE ▶ NEW MILESTONE"} -->
+## WXCODE ▶ NEW MILESTONE
 ```
 
 **On status changes:**

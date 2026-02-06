@@ -23,9 +23,10 @@ Output: Conversational output only (no file creation) - ends with "What do you t
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"list-phase-assumptions","args":"$ARGUMENTS","title":"WXCODE ▶ PHASE ASSUMPTIONS"} -->
+## WXCODE ▶ PHASE ASSUMPTIONS
 ```
 
 **On status changes:**

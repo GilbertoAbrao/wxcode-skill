@@ -25,9 +25,10 @@ Purpose: Handle urgent work discovered during execution without renumbering enti
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"insert-phase","args":"$ARGUMENTS","title":"WXCODE ▶ INSERTING PHASE"} -->
+## WXCODE ▶ INSERTING PHASE
 ```
 
 **On status changes:**

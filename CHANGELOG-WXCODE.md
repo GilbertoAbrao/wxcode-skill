@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.32] - 2026-02-06
+
+### Fixed
+- **HEADER + visual banner now emitted together** (no blank line between them)
+  - Fixes streaming issue where HEADER comment could arrive in separate chunk from visual title
+  - All 46 commands updated: `## TITLE` immediately follows HEADER comment
+  - Updated structured output specs (v1.2.0) with new pattern and best practice
+  - Pattern: `<!-- WXCODE:HEADER:... -->\n## WXCODE ▶ TITLE` (no blank line)
+
 ## [1.4.31] - 2026-02-06
 
 ### Changed

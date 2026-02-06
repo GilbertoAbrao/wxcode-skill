@@ -12,9 +12,10 @@ allowed-tools:
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"override","args":"$ARGUMENTS","title":"WXCODE ▶ OVERRIDE"} -->
+## WXCODE ▶ OVERRIDE
 ```
 
 **At command end (help/usage):**

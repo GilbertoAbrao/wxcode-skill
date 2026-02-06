@@ -35,9 +35,10 @@ Examples:
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"customize","args":"$ARGUMENTS","title":"WXCODE ▶ CUSTOMIZING WXCODE"} -->
+## WXCODE ▶ CUSTOMIZING WXCODE
 ```
 
 **On status changes:**

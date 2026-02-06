@@ -11,9 +11,10 @@ allowed-tools:
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start:**
+**At command start (emit together with visual banner, no blank line):**
 ```
 <!-- WXCODE:HEADER:{"command":"research-phase","args":"$ARGUMENTS","title":"WXCODE ▶ RESEARCHING PHASE $ARGUMENTS"} -->
+## WXCODE ▶ RESEARCHING PHASE $ARGUMENTS
 ```
 
 **On status changes:**
