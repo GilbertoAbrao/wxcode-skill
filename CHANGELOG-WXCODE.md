@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.33] - 2026-02-06
+
+### Added
+- **Restored 27 GSD commands from upstream `main` branch**
+  - `commands/gsd/` now contains all original GSD commands (was only `help.md`)
+  - Enables non-WXCODE projects (e.g., guest-portal) to use `/gsd:*` commands via symlink
+  - Commands are exact upstream copies with `gsd:` namespace
+  - No changes to installer — it already copies `commands/gsd/` to storage
+  - Commands restored: add-phase, add-todo, audit-milestone, check-todos, complete-milestone, debug, discuss-phase, execute-phase, help, insert-phase, join-discord, list-phase-assumptions, map-codebase, new-milestone, new-project, pause-work, plan-milestone-gaps, plan-phase, progress, quick, remove-phase, research-phase, resume-work, set-profile, settings, update, verify-work
+
 ## [1.4.32] - 2026-02-06
 
 ### Fixed
