@@ -518,7 +518,7 @@ See [CHANGELOG-WXCODE.md](CHANGELOG-WXCODE.md) for full version history.
 
 ### Current Version
 
-- **WXCODE:** 1.4.29
+- **WXCODE:** 1.4.30
 - **Based on GSD:** 1.11.1
 - **Upstream Commit:** 8384575
 

@@ -84,6 +84,27 @@ Example: `/wxcode:new-milestone v1.1 Notifications`
 
 ## Phase 1: Load Context
 
+**Step 0: Ensure WXCODE commands are available in this project:**
+
+```bash
+WXCODE_STORAGE="$HOME/.claude/get-shit-done/commands/wxcode"
+WXCODE_LOCAL=".claude/commands/wxcode"
+
+if [ -L "$WXCODE_LOCAL" ]; then
+    echo "WXCODE commands linked ✓"
+elif [ -d "$WXCODE_LOCAL" ]; then
+    echo "WXCODE commands (local) ✓"
+elif [ -d "$WXCODE_STORAGE" ]; then
+    mkdir -p .claude/commands
+    ln -s "$WXCODE_STORAGE" "$WXCODE_LOCAL"
+    echo "WXCODE commands linked ✓"
+else
+    echo "⚠ WXCODE commands storage not found. Run: npx github:GilbertoAbrao/get-shit-done#main-wxcode --claude --global"
+fi
+```
+
+**Step 1: Load project files:**
+
 - Read PROJECT.md (existing project, Validated requirements, decisions)
 - Read MILESTONES.md (what shipped previously)
 - Read STATE.md (pending todos, blockers)

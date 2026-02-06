@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.30] - 2026-02-06
+
+### Changed
+- **WXCODE commands are now project-level, not global**
+  - `/wxcode:*` commands only visible in projects that opt-in (via symlink)
+  - `/gsd:*` commands remain globally available for all projects
+  - `/wxcode:new-project` automatically creates symlink during Phase 1 Setup
+  - `/wxcode:new-milestone` ensures symlink exists on first run
+  - Only bootstrap commands (`new-project`, `help`, `version`, `update`) stay global
+  - Installer stores all wxcode commands in `~/.claude/get-shit-done/commands/wxcode/`
+  - Old global wxcode commands cleaned up automatically on update
+
+### Fixed
+- **`/wxcode:new-project` dashboard section** no longer references non-existent Python script
+
 ## [1.4.29] - 2026-02-05
 
 ### Fixed
