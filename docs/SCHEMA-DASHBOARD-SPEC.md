@@ -1033,28 +1033,47 @@ The UI can render any table uniformly using the `base` type for icons/colors and
 
 ### 20.4 Watcher Notifications
 
-The `/wxcode:schema-dashboard` command emits notifications when files are updated:
+WXCODE commands emit notifications when files are updated, allowing UI to react in real-time.
+
+#### Schema Dashboard Notifications
 
 ```
 [WXCODE:SCHEMA_DASHBOARD_UPDATED] .planning/schema-dashboard.json
 [WXCODE:SCHEMA_STATUS_UPDATED] .planning/SCHEMA-STATUS.md
 ```
 
+#### Design System Notifications
+
+```
+[WXCODE:DESIGN_TOKENS_UPDATED] design/tokens.json
+[WXCODE:DESIGN_VARIABLES_UPDATED] design/variables.css
+```
+
 **UI Integration:**
 
 ```typescript
-// Watch for schema dashboard updates
-function watchSchemaUpdates(output: string) {
+// Watch for WXCODE updates
+function watchWxcodeUpdates(output: string) {
+  // Schema updates
   const dashboardMatch = output.match(/\[WXCODE:SCHEMA_DASHBOARD_UPDATED\] (.+)/);
   if (dashboardMatch) {
-    const filePath = dashboardMatch[1];
-    reloadSchemaDashboard(filePath);
+    reloadSchemaDashboard(dashboardMatch[1]);
   }
 
   const statusMatch = output.match(/\[WXCODE:SCHEMA_STATUS_UPDATED\] (.+)/);
   if (statusMatch) {
-    const filePath = statusMatch[1];
-    reloadSchemaStatus(filePath);
+    reloadSchemaStatus(statusMatch[1]);
+  }
+
+  // Design system updates
+  const tokensMatch = output.match(/\[WXCODE:DESIGN_TOKENS_UPDATED\] (.+)/);
+  if (tokensMatch) {
+    reloadDesignTokens(tokensMatch[1]);
+  }
+
+  const variablesMatch = output.match(/\[WXCODE:DESIGN_VARIABLES_UPDATED\] (.+)/);
+  if (variablesMatch) {
+    reloadDesignVariables(variablesMatch[1]);
   }
 }
 ```
@@ -1065,11 +1084,17 @@ function watchSchemaUpdates(output: string) {
 |--------------|------|---------|
 | `SCHEMA_DASHBOARD_UPDATED` | `.planning/schema-dashboard.json` | Dashboard regenerated |
 | `SCHEMA_STATUS_UPDATED` | `.planning/SCHEMA-STATUS.md` | Status summary regenerated |
+| `DESIGN_TOKENS_UPDATED` | `design/tokens.json` | Design tokens generated/updated |
+| `DESIGN_VARIABLES_UPDATED` | `design/variables.css` | CSS variables generated/updated |
 
-These notifications are emitted by:
-- `/wxcode:schema-dashboard` (directly)
-- `/wxcode:dashboard --all` (via schema-dashboard)
-- `wxcode-schema-generator` agent (after generate/validate)
+**Emitted by:**
+
+| Command/Agent | Notifications |
+|---------------|---------------|
+| `/wxcode:schema-dashboard` | `SCHEMA_DASHBOARD_UPDATED`, `SCHEMA_STATUS_UPDATED` |
+| `/wxcode:dashboard --all` | All schema notifications (via schema-dashboard) |
+| `/wxcode:design-system` | `DESIGN_TOKENS_UPDATED`, `DESIGN_VARIABLES_UPDATED` |
+| `wxcode-schema-generator` | Schema notifications (after generate/validate) |
 
 ---
 

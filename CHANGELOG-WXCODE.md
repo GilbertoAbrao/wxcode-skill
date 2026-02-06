@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.27] - 2026-02-05
+
+### Added
+- **`/wxcode:design-system` watcher notifications**
+  - Emits `[WXCODE:DESIGN_TOKENS_UPDATED] design/tokens.json` on completion
+  - Emits `[WXCODE:DESIGN_VARIABLES_UPDATED] design/variables.css` on completion
+  - UI can listen for these to refresh design panel
+  - Documented in SCHEMA-DASHBOARD-SPEC.md section 20.4
+
 ## [1.4.26] - 2026-02-05
 
 ### Fixed

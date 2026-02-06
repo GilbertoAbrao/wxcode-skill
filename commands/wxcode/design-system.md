@@ -509,6 +509,12 @@ Token Summary:
 These tokens will be used automatically by the frontend-design skill.
 ```
 
+**Emit watcher notifications:**
+```
+[WXCODE:DESIGN_TOKENS_UPDATED] design/tokens.json
+[WXCODE:DESIGN_VARIABLES_UPDATED] design/variables.css
+```
+
 ```
 <!-- WXCODE:NEXT_ACTION:{"command":"progress","args":"","description":"Continue with project","priority":"recommended"} -->
 ```
@@ -524,6 +530,8 @@ These tokens will be used automatically by the frontend-design skill.
 - [ ] Stack-specific files generated
 - [ ] `design/README.md` created
 - [ ] Completion summary displayed
+- [ ] Emits `[WXCODE:DESIGN_TOKENS_UPDATED]` notification
+- [ ] Emits `[WXCODE:DESIGN_VARIABLES_UPDATED]` notification
 
 </success_criteria>
 
