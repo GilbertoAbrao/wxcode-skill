@@ -8,8 +8,8 @@ This file contains everything needed to work on the WXCODE project effectively.
 
 - **Repository:** GilbertoAbrao/get-shit-done
 - **Branch:** `main` (always work here)
-- **Installs to:** `~/.claude/wxcode-skill/` (skill), `~/.claude/commands/wxcode/` (bootstrap)
-- **Coexists with GSD:** WXCODE installer does NOT touch GSD files (`get-shit-done/`, `commands/gsd/`)
+- **Installs to:** `~/.claude/commands/wxcode/` (all commands), `~/.claude/wxcode-skill/` (references)
+- **Coexists with GSD:** installer does NOT touch GSD files (`get-shit-done/`, `commands/gsd/`)
 
 ---
 
@@ -89,9 +89,8 @@ git push origin main
 2. npm downloads package from GitHub
 3. `bin/install.js` runs
 4. Copies files to `~/.claude/`:
-   - `commands/wxcode/` <- 4 bootstrap commands (global)
+   - `commands/wxcode/` <- all 39+ commands (global)
    - `wxcode-skill/` <- references, templates, workflows
-   - `wxcode-skill/commands/wxcode/` <- all commands (storage for symlinks)
    - `agents/wxcode-*.md` <- agents
    - `hooks/` <- bundled hooks
    - `wxcode-skill/CHANGELOG-WXCODE.md` <- changelog

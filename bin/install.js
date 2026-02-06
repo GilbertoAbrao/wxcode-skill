@@ -1121,41 +1121,20 @@ function install(isGlobal, runtime = 'claude') {
     }
   } else {
     // Claude Code & Gemini: nested structure in commands/ directory
-    // Only wxcode bootstrap commands are global (new-project, help, version, update).
-    // Full commands are stored in wxcode-skill/commands/wxcode/ and
-    // symlinked into projects by /wxcode:new-project.
+    // All wxcode commands are installed globally.
     const commandsDir = path.join(targetDir, 'commands');
     fs.mkdirSync(commandsDir, { recursive: true });
 
-    // Install only bootstrap wxcode commands globally (new-project, help, version, update)
-    // Full commands are installed to storage AFTER wxcode-skill copy below
     const wxcodeGlobalDest = path.join(commandsDir, 'wxcode');
-    fs.mkdirSync(wxcodeGlobalDest, { recursive: true });
-    const bootstrapCommands = ['new-project.md', 'help.md', 'version.md', 'update.md'];
     const wxcodeSrc = path.join(src, 'commands', 'wxcode');
-    for (const cmd of bootstrapCommands) {
-      const cmdSrcPath = path.join(wxcodeSrc, cmd);
-      if (fs.existsSync(cmdSrcPath)) {
-        let content = fs.readFileSync(cmdSrcPath, 'utf8');
-        content = content.replace(/~\/\.claude\//g, pathPrefix);
-        content = processAttribution(content, getCommitAttribution(runtime));
-        if (isGemini) {
-          content = stripSubTags(content);
-          const tomlContent = convertClaudeToGeminiToml(content);
-          fs.writeFileSync(path.join(wxcodeGlobalDest, cmd.replace(/\.md$/, '.toml')), tomlContent);
-        } else {
-          fs.writeFileSync(path.join(wxcodeGlobalDest, cmd), content);
-        }
-      }
+    copyWithPathReplacement(wxcodeSrc, wxcodeGlobalDest, pathPrefix, runtime);
+    if (verifyInstalled(wxcodeGlobalDest, 'commands/wxcode')) {
+      const ext = isGemini ? '.toml' : '.md';
+      const count = fs.readdirSync(wxcodeGlobalDest).filter(f => f.endsWith(ext)).length;
+      console.log(`  ${green}✓${reset} Installed commands/wxcode (${count} commands)`);
+    } else {
+      failures.push('commands/wxcode');
     }
-    // Remove non-bootstrap wxcode commands from global (migration from older versions)
-    for (const file of fs.readdirSync(wxcodeGlobalDest)) {
-      const baseName = file.replace(/\.(md|toml)$/, '.md');
-      if ((file.endsWith('.md') || file.endsWith('.toml')) && !bootstrapCommands.includes(baseName)) {
-        fs.unlinkSync(path.join(wxcodeGlobalDest, file));
-      }
-    }
-    console.log(`  ${green}✓${reset} Installed commands/wxcode (${bootstrapCommands.length} bootstrap commands global)`);
   }
 
   // Copy wxcode-skill references/templates with path replacement
@@ -1168,25 +1147,6 @@ function install(isGlobal, runtime = 'claude') {
     failures.push('wxcode-skill');
   }
 
-  // Copy ALL wxcode commands to storage (project-level via symlink, not global)
-  // This runs AFTER wxcode-skill copy because copyWithPathReplacement does clean install.
-  // Commands are stored in wxcode-skill/commands/wxcode/ and symlinked
-  // into projects. See docs/command-scoping.md for full architecture.
-  if (!isOpencode) {
-    const storageCommandsDir = path.join(targetDir, 'wxcode-skill', 'commands');
-    fs.mkdirSync(storageCommandsDir, { recursive: true });
-
-    // WXCODE commands → storage (bootstrap already installed globally above)
-    const wxcodeCommandsSrc = path.join(src, 'commands', 'wxcode');
-    const wxcodeStorageDest = path.join(storageCommandsDir, 'wxcode');
-    copyWithPathReplacement(wxcodeCommandsSrc, wxcodeStorageDest, pathPrefix, runtime);
-    if (verifyInstalled(wxcodeStorageDest, 'wxcode-skill/commands/wxcode')) {
-      const count = fs.readdirSync(wxcodeStorageDest).filter(f => f.endsWith('.md') || f.endsWith('.toml')).length;
-      console.log(`  ${green}✓${reset} Installed wxcode commands storage (${count} commands for project-level symlink)`);
-    } else {
-      failures.push('wxcode-skill/commands/wxcode');
-    }
-  }
 
   // Copy agents to agents directory
   const agentsSrc = path.join(src, 'agents');

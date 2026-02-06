@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.3] - 2026-02-06
+
+### Changed
+- **All 39+ commands are now global** — removed symlink/storage architecture
+  - All commands installed directly to `~/.claude/commands/wxcode/`
+  - Removed symlink creation from `new-project` and `new-milestone`
+  - Removed `wxcode-skill/commands/` storage directory
+  - Every project sees all `/wxcode:*` commands automatically
+
 ## [2.0.2] - 2026-02-06
 
 ### Fixed

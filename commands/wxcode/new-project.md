@@ -101,31 +101,7 @@ This is the most leveraged moment in any project. Deep questioning here means be
    fi
    ```
 
-3. **Ensure WXCODE commands are available in this project:**
-
-   WXCODE commands are project-level (not global). This step creates a symlink
-   so all `/wxcode:*` commands become available in this project.
-
-   ```bash
-   WXCODE_STORAGE="$HOME/.claude/wxcode-skill/commands/wxcode"
-   WXCODE_LOCAL=".claude/commands/wxcode"
-
-   if [ -L "$WXCODE_LOCAL" ]; then
-       echo "WXCODE commands linked ✓"
-   elif [ -d "$WXCODE_LOCAL" ]; then
-       echo "WXCODE commands (local) ✓"
-   elif [ -d "$WXCODE_STORAGE" ]; then
-       mkdir -p .claude/commands
-       ln -s "$WXCODE_STORAGE" "$WXCODE_LOCAL"
-       echo "WXCODE commands linked ✓"
-   else
-       echo "⚠ WXCODE commands storage not found. Run: npx github:GilbertoAbrao/get-shit-done#main --claude --global"
-   fi
-   ```
-
-   **You MUST execute this bash block using the Bash tool before proceeding.**
-
-4. **Detect existing code (brownfield detection):**
+3. **Detect existing code (brownfield detection):**
    ```bash
    CODE_FILES=$(find . -name "*.ts" -o -name "*.js" -o -name "*.py" -o -name "*.go" -o -name "*.rs" -o -name "*.swift" -o -name "*.java" 2>/dev/null | grep -v node_modules | grep -v .git | head -20)
    HAS_PACKAGE=$([ -f package.json ] || [ -f requirements.txt ] || [ -f Cargo.toml ] || [ -f go.mod ] || [ -f Package.swift ] && echo "yes")
