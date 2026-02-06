@@ -1131,20 +1131,22 @@ function install(isGlobal, runtime = 'claude') {
     }
   } else {
     // Claude Code & Gemini: nested structure in commands/ directory
+    // BOTH gsd and wxcode are project-level (not global).
+    // Only wxcode bootstrap commands are global (new-project, help, version, update).
+    // Full commands are stored in get-shit-done/commands/{gsd,wxcode}/ and
+    // symlinked into projects by /wxcode:new-project or manually.
     const commandsDir = path.join(targetDir, 'commands');
     fs.mkdirSync(commandsDir, { recursive: true });
-    
-    const gsdSrc = path.join(src, 'commands', 'gsd');
-    const gsdDest = path.join(commandsDir, 'gsd');
-    copyWithPathReplacement(gsdSrc, gsdDest, pathPrefix, runtime);
-    if (verifyInstalled(gsdDest, 'commands/gsd')) {
-      console.log(`  ${green}✓${reset} Installed commands/gsd`);
-    } else {
-      failures.push('commands/gsd');
+
+    // Remove old global gsd commands (migration from older versions)
+    const gsdGlobalDest = path.join(commandsDir, 'gsd');
+    if (fs.existsSync(gsdGlobalDest)) {
+      fs.rmSync(gsdGlobalDest, { recursive: true });
+      console.log(`  ${green}✓${reset} Migrated commands/gsd to project-level`);
     }
 
     // Install only bootstrap wxcode commands globally (new-project, help, version, update)
-    // Full wxcode commands are installed to storage AFTER get-shit-done copy below
+    // Full commands are installed to storage AFTER get-shit-done copy below
     const wxcodeGlobalDest = path.join(commandsDir, 'wxcode');
     fs.mkdirSync(wxcodeGlobalDest, { recursive: true });
     const bootstrapCommands = ['new-project.md', 'help.md', 'version.md', 'update.md'];
@@ -1184,14 +1186,28 @@ function install(isGlobal, runtime = 'claude') {
     failures.push('get-shit-done');
   }
 
-  // Copy wxcode commands to storage (project-level via symlink, not global)
+  // Copy ALL commands to storage (project-level via symlink, not global)
   // This runs AFTER get-shit-done copy because copyWithPathReplacement does clean install.
-  // wxcode commands are stored in get-shit-done/commands/wxcode/ and symlinked
-  // into projects by /wxcode:new-project. Only bootstrap commands stay global.
+  // Commands are stored in get-shit-done/commands/{gsd,wxcode}/ and symlinked
+  // into projects. See docs/command-scoping.md for full architecture.
   if (!isOpencode) {
+    const storageCommandsDir = path.join(targetDir, 'get-shit-done', 'commands');
+    fs.mkdirSync(storageCommandsDir, { recursive: true });
+
+    // GSD commands → storage (no global install)
+    const gsdCommandsSrc = path.join(src, 'commands', 'gsd');
+    const gsdStorageDest = path.join(storageCommandsDir, 'gsd');
+    copyWithPathReplacement(gsdCommandsSrc, gsdStorageDest, pathPrefix, runtime);
+    if (verifyInstalled(gsdStorageDest, 'get-shit-done/commands/gsd')) {
+      const count = fs.readdirSync(gsdStorageDest).filter(f => f.endsWith('.md') || f.endsWith('.toml')).length;
+      console.log(`  ${green}✓${reset} Installed gsd commands storage (${count} commands for project-level symlink)`);
+    } else {
+      failures.push('get-shit-done/commands/gsd');
+    }
+
+    // WXCODE commands → storage (bootstrap already installed globally above)
     const wxcodeCommandsSrc = path.join(src, 'commands', 'wxcode');
-    const wxcodeStorageDest = path.join(targetDir, 'get-shit-done', 'commands', 'wxcode');
-    fs.mkdirSync(path.join(targetDir, 'get-shit-done', 'commands'), { recursive: true });
+    const wxcodeStorageDest = path.join(storageCommandsDir, 'wxcode');
     copyWithPathReplacement(wxcodeCommandsSrc, wxcodeStorageDest, pathPrefix, runtime);
     if (verifyInstalled(wxcodeStorageDest, 'get-shit-done/commands/wxcode')) {
       const count = fs.readdirSync(wxcodeStorageDest).filter(f => f.endsWith('.md') || f.endsWith('.toml')).length;

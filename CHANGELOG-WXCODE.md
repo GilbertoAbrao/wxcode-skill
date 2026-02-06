@@ -7,17 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.31] - 2026-02-06
+
+### Changed
+- **ALL commands are now project-level (GSD + WXCODE)**
+  - Neither `/gsd:*` nor `/wxcode:*` commands are globally visible
+  - Only 4 wxcode bootstrap commands stay global (`new-project`, `help`, `version`, `update`)
+  - Installer stores commands in `~/.claude/get-shit-done/commands/{gsd,wxcode}/`
+  - Projects create symlinks to access the commands they need
+  - `/wxcode:new-project` creates wxcode symlink automatically
+  - `/wxcode:new-milestone` ensures wxcode symlink exists
+  - Old global GSD commands cleaned up automatically on update
+  - See `docs/command-scoping.md` for full architecture
+
+### Added
+- **`docs/command-scoping.md`** — complete documentation of command scoping architecture
+  - Local vs cloud deployment scenarios
+  - How symlinks work for each project type
+  - Setup instructions for GSD, WXCODE, and wxcode-ui projects
+  - FAQ section
+
 ## [1.4.30] - 2026-02-06
 
 ### Changed
-- **WXCODE commands are now project-level, not global**
-  - `/wxcode:*` commands only visible in projects that opt-in (via symlink)
-  - `/gsd:*` commands remain globally available for all projects
-  - `/wxcode:new-project` automatically creates symlink during Phase 1 Setup
-  - `/wxcode:new-milestone` ensures symlink exists on first run
-  - Only bootstrap commands (`new-project`, `help`, `version`, `update`) stay global
-  - Installer stores all wxcode commands in `~/.claude/get-shit-done/commands/wxcode/`
-  - Old global wxcode commands cleaned up automatically on update
+- **WXCODE commands are now project-level, not global** (superseded by 1.4.31)
 
 ### Fixed
 - **`/wxcode:new-project` dashboard section** no longer references non-existent Python script
