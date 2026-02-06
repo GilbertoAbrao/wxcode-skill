@@ -952,7 +952,18 @@ EOF
 )"
 ```
 
-## Phase 10: Done
+## Phase 10: Regenerate Dashboards
+
+**MANDATORY:** After milestone initialization, regenerate all dashboards.
+
+Invoke `/wxcode:dashboard --all` to:
+- Update project dashboard: `.planning/dashboard.json`
+- Create milestone dashboard: `.planning/dashboard_<milestone>.json`
+- Regenerate schema dashboard (conversion projects): `.planning/schema-dashboard.json`
+
+This ensures the UI reflects the new milestone state.
+
+## Phase 11: Done
 
 Present completion with next steps:
 
@@ -1014,28 +1025,9 @@ Present completion with next steps:
 
 **Atomic commits:** Each phase commits its artifacts immediately. If context is lost, artifacts persist.
 
-**Dashboards:** After milestone initialization completes:
-- Update project dashboard: `.planning/dashboard.json`
-- Create milestone dashboard: `.planning/dashboard_<milestone>.json`
-- Use hybrid approach for conversion progress (MCP = source of truth)
+- [ ] `/wxcode:dashboard --all` invoked (Phase 10)
+- [ ] Project dashboard updated: `.planning/dashboard.json`
+- [ ] Milestone dashboard created: `.planning/dashboard_<milestone>.json`
+- [ ] (Conversion projects) Schema dashboard regenerated
 </success_criteria>
 
-<dashboard_update>
-
-## Update Dashboards (Final Step)
-
-**MANDATORY:** After state changes, regenerate dashboards using the Python script.
-
-```bash
-python3 ~/.claude/get-shit-done/bin/generate-dashboard.py --all --project-dir .
-```
-
-This script:
-- Parses all `.planning/` files deterministically
-- Extracts tasks from PLAN.md XML blocks
-- Generates proper nested `phases[].plans[].tasks[]` structure
-- Outputs `[WXCODE:DASHBOARD_UPDATED]` notifications
-
-**Do NOT generate dashboard JSON manually via LLM.**
-
-</dashboard_update>

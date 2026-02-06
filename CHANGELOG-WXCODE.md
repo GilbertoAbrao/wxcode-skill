@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.28] - 2026-02-05
+
+### Fixed
+- **`/wxcode:new-milestone` now calls `/wxcode:dashboard --all` at completion**
+  - Added Phase 10 for dashboard regeneration
+  - Removed reference to non-existent Python script
+  - Updates project dashboard, milestone dashboard, and schema dashboard
+  - Ensures UI reflects new milestone state
+
 ## [1.4.27] - 2026-02-05
 
 ### Added
