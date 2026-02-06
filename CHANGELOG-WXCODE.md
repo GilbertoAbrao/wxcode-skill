@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.26] - 2026-02-05
+
+### Fixed
+- **`/wxcode:design-system` now emits structured output markers**
+  - Added HEADER at command start
+  - Added STATUS markers throughout process (Steps 3-7)
+  - Added ERROR marker for missing tokens.json on --regenerate
+  - Added NEXT_ACTION at completion
+  - Compliant with STRUCTURED-OUTPUT-SPEC.md
+
 ## [1.4.25] - 2026-02-05
 
 ### Changed

@@ -69,6 +69,14 @@ design/
 
 <process>
 
+## Step 0: Emit Header
+
+**First, emit the structured header:**
+
+```
+<!-- WXCODE:HEADER:{"command":"design-system","args":"$ARGUMENTS","title":"WXCODE ▶ DESIGN SYSTEM"} -->
+```
+
 ## Step 1: Parse Arguments
 
 ```bash
@@ -100,11 +108,18 @@ fi
 
 If `--regenerate` and no tokens.json exists, error:
 ```
+<!-- WXCODE:ERROR:{"code":"NO_TOKENS_FILE","message":"No design/tokens.json found","recoverable":true} -->
+
 ERROR: No design/tokens.json found.
 Use /wxcode:design-system without --regenerate to create one.
 ```
+**STOP.**
 
 ## Step 3: Method Selection (if no mode specified)
+
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"Selecting design source method","progress":10} -->
+```
 
 If MODE is empty, present options:
 
@@ -136,6 +151,10 @@ questions:
 ## Step 4a: URL Extraction
 
 **If MODE=url:**
+
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"Extracting design from URL","progress":30} -->
+```
 
 1. **Get URL** (if not provided in arguments):
 
@@ -222,6 +241,10 @@ questions:
 
 **If MODE=screenshots:**
 
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"Analyzing screenshots","progress":30} -->
+```
+
 1. **Request images:**
    ```
    Please provide the path(s) to your design mockups or screenshots.
@@ -252,6 +275,10 @@ questions:
 ## Step 4c: Manual Questionnaire
 
 **If MODE=questionnaire:**
+
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"Collecting design preferences","progress":30} -->
+```
 
 Run through 12 structured questions:
 
@@ -287,6 +314,10 @@ Run through 12 structured questions:
 
 **If MODE=regenerate:**
 
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"Regenerating stack files","progress":50} -->
+```
+
 1. Read existing `design/tokens.json`
 2. Detect stack from `.planning/CONVERSION.md` or `package.json`
 3. Regenerate stack-specific files only
@@ -294,6 +325,10 @@ Run through 12 structured questions:
 ---
 
 ## Step 5: Generate DTCG Tokens
+
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"Generating DTCG tokens","progress":60} -->
+```
 
 Create `design/tokens.json` following DTCG spec:
 
@@ -362,6 +397,10 @@ Create `design/tokens.json` following DTCG spec:
 ```
 
 ## Step 6: Generate Stack-Specific Files
+
+```
+<!-- WXCODE:STATUS:{"status":"in_progress","message":"Generating stack-specific files","progress":80} -->
+```
 
 ### Detect Stack
 
@@ -444,6 +483,10 @@ Import `tokens.json` or use `variables.css` in your application.
 ## Step 7: Completion
 
 ```
+<!-- WXCODE:STATUS:{"status":"completed","message":"Design system generated","progress":100} -->
+```
+
+```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  WXCODE ► DESIGN SYSTEM GENERATED ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -464,6 +507,10 @@ Token Summary:
 • 5 border-radius values
 
 These tokens will be used automatically by the frontend-design skill.
+```
+
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"progress","args":"","description":"Continue with project","priority":"recommended"} -->
 ```
 
 </process>
