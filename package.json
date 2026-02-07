@@ -29,11 +29,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GilbertoAbrao/get-shit-done.git"
+    "url": "git+https://github.com/GilbertoAbrao/wxcode-skill.git"
   },
-  "homepage": "https://github.com/GilbertoAbrao/get-shit-done",
+  "homepage": "https://github.com/GilbertoAbrao/wxcode-skill",
   "bugs": {
-    "url": "https://github.com/GilbertoAbrao/get-shit-done/issues"
+    "url": "https://github.com/GilbertoAbrao/wxcode-skill/issues"
   },
   "engines": {
     "node": ">=16.7.0"

@@ -28,7 +28,7 @@ Check for WXCODE updates, install if available, and display what changed.
 
 Provides a better update experience by showing version diff and changelog entries.
 
-**Note:** WXCODE is installed from GitHub (GilbertoAbrao/get-shit-done#main), not npm.
+**Note:** WXCODE is installed from GitHub (GilbertoAbrao/wxcode-skill#main), not npm.
 </objective>
 
 <process>
@@ -58,14 +58,14 @@ Proceed to install step (treat as version 0.0.0 for comparison).
 Check GitHub for latest version (with cache-busting):
 
 ```bash
-curl -s "https://raw.githubusercontent.com/GilbertoAbrao/get-shit-done/main/VERSION?t=$(date +%s)" 2>/dev/null
+curl -s "https://raw.githubusercontent.com/GilbertoAbrao/wxcode-skill/main/VERSION?t=$(date +%s)" 2>/dev/null
 ```
 
 **If GitHub check fails:**
 ```
 Couldn't check for updates (offline or GitHub unavailable).
 
-To update manually: `npx github:GilbertoAbrao/get-shit-done#main --claude --global`
+To update manually: `npx github:GilbertoAbrao/wxcode-skill#main --claude --global`
 ```
 
 STOP here if GitHub unavailable.
@@ -154,7 +154,7 @@ Use AskUserQuestion:
 Clear npm cache to ensure fresh download, then run the update:
 
 ```bash
-npm cache clean --force 2>/dev/null; rm -rf ~/.npm/_npx 2>/dev/null; npx github:GilbertoAbrao/get-shit-done#main --claude --global
+npm cache clean --force 2>/dev/null; rm -rf ~/.npm/_npx 2>/dev/null; npx github:GilbertoAbrao/wxcode-skill#main --claude --global
 ```
 
 Capture output. If install fails, show error and STOP.
@@ -176,7 +176,7 @@ Format completion message (changelog was already shown in confirmation step):
 
 ⚠️  Restart Claude Code to pick up the new commands.
 
-[View full changelog](https://github.com/GilbertoAbrao/get-shit-done/blob/main/CHANGELOG-WXCODE.md)
+[View full changelog](https://github.com/GilbertoAbrao/wxcode-skill/blob/main/CHANGELOG-WXCODE.md)
 ```
 </step>
 

@@ -35,7 +35,7 @@ def get_wxcode_version(provided_version: Optional[str] = None) -> str:
         return provided_version
 
     version_paths = [
-        Path.home() / ".claude" / "get-shit-done" / "VERSION",
+        Path.home() / ".claude" / "wxcode-skill" / "VERSION",
         Path(__file__).parent.parent / "VERSION",
     ]
 

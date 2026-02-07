@@ -6,7 +6,7 @@ This file contains everything needed to work on the WXCODE project effectively.
 
 **WXCODE** is an AI-powered WinDev/WebDev conversion toolkit for Claude Code, OpenCode, and Gemini.
 
-- **Repository:** GilbertoAbrao/get-shit-done
+- **Repository:** GilbertoAbrao/wxcode-skill
 - **Branch:** `main` (always work here)
 - **Installs to:** `~/.claude/commands/wxcode/` (all commands), `~/.claude/wxcode-skill/` (references)
 - **Coexists with GSD:** installer does NOT touch GSD files (`get-shit-done/`, `commands/gsd/`)
@@ -85,7 +85,7 @@ git push origin main
 
 ### How Installation Works
 
-1. User runs: `npx github:GilbertoAbrao/get-shit-done#main --claude --global`
+1. User runs: `npx github:GilbertoAbrao/wxcode-skill#main --claude --global`
 2. npm downloads package from GitHub
 3. `bin/install.js` runs
 4. Copies files to `~/.claude/`:
@@ -251,7 +251,7 @@ ls ~/.claude/wxcode-skill/commands/wxcode/ | wc -l
 ```bash
 # Clear cache and reinstall from GitHub
 npm cache clean --force && rm -rf ~/.npm/_npx
-npx github:GilbertoAbrao/get-shit-done#main --claude --global
+npx github:GilbertoAbrao/wxcode-skill#main --claude --global
 ```
 
 ---
@@ -281,7 +281,7 @@ git push origin main
 ### Force Update
 ```bash
 npm cache clean --force && rm -rf ~/.npm/_npx
-npx github:GilbertoAbrao/get-shit-done#main --claude --global
+npx github:GilbertoAbrao/wxcode-skill#main --claude --global
 ```
 
 ### Check Installed Version

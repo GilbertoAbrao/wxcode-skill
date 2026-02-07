@@ -25,13 +25,13 @@
 
 **From GitHub (recommended):**
 ```bash
-npx github:GilbertoAbrao/get-shit-done#main --claude --global
+npx github:GilbertoAbrao/wxcode-skill#main --claude --global
 ```
 
 **From local clone:**
 ```bash
-git clone https://github.com/GilbertoAbrao/get-shit-done.git
-cd get-shit-done
+git clone https://github.com/GilbertoAbrao/wxcode-skill.git
+cd wxcode-skill
 node bin/install.js --claude --global
 ```
 
@@ -40,7 +40,7 @@ Verify with `/wxcode:help` inside Claude Code.
 ### Updating
 
 ```bash
-npm cache clean --force && rm -rf ~/.npm/_npx && npx github:GilbertoAbrao/get-shit-done#main --claude --global
+npm cache clean --force && rm -rf ~/.npm/_npx && npx github:GilbertoAbrao/wxcode-skill#main --claude --global
 ```
 
 Or use `/wxcode:update` inside Claude Code (handles cache automatically).
@@ -337,5 +337,5 @@ MIT License.
 
 ## Links
 
-- [WXCODE Repository](https://github.com/GilbertoAbrao/get-shit-done)
+- [WXCODE Repository](https://github.com/GilbertoAbrao/wxcode-skill)
 - [Discord](https://discord.gg/5JJgD5svVS)
