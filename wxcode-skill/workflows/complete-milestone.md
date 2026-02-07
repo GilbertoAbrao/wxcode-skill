@@ -366,46 +366,28 @@ Initial user testing showed demand for shape tools.
 
 <step name="reorganize_roadmap">
 
-Update `.planning/ROADMAP.md` to group completed milestone phases.
+Update `.planning/ROADMAP.md` to mark all phases as complete.
 
-Add milestone headers and collapse completed work:
+Phase numbering is LOCAL to each milestone (always starts at 1). The ROADMAP.md only contains phases for the CURRENT milestone.
 
 ```markdown
-# Roadmap: [Project Name]
-
-## Milestones
-
-- ✅ **v1.0 MVP** — Phases 1-4 (shipped YYYY-MM-DD)
-- 🚧 **v1.1 Security** — Phases 5-6 (in progress)
-- 📋 **v2.0 Redesign** — Phases 7-10 (planned)
+# Roadmap: [Project Name] — v[X.Y] [Milestone Name]
 
 ## Phases
-
-<details>
-<summary>✅ v1.0 MVP (Phases 1-4) — SHIPPED YYYY-MM-DD</summary>
 
 - [x] Phase 1: Foundation (2/2 plans) — completed YYYY-MM-DD
 - [x] Phase 2: Authentication (2/2 plans) — completed YYYY-MM-DD
 - [x] Phase 3: Core Features (3/3 plans) — completed YYYY-MM-DD
 - [x] Phase 4: Polish (1/1 plan) — completed YYYY-MM-DD
 
-</details>
-
-### 🚧 v[Next] [Name] (In Progress / Planned)
-
-- [ ] Phase 5: [Name] ([N] plans)
-- [ ] Phase 6: [Name] ([N] plans)
-
 ## Progress
 
-| Phase             | Milestone | Plans Complete | Status      | Completed  |
-| ----------------- | --------- | -------------- | ----------- | ---------- |
-| 1. Foundation     | v1.0      | 2/2            | Complete    | YYYY-MM-DD |
-| 2. Authentication | v1.0      | 2/2            | Complete    | YYYY-MM-DD |
-| 3. Core Features  | v1.0      | 3/3            | Complete    | YYYY-MM-DD |
-| 4. Polish         | v1.0      | 1/1            | Complete    | YYYY-MM-DD |
-| 5. Security Audit | v1.1      | 0/1            | Not started | -          |
-| 6. Hardening      | v1.1      | 0/2            | Not started | -          |
+| Phase             | Plans Complete | Status   | Completed  |
+| ----------------- | -------------- | -------- | ---------- |
+| 1. Foundation     | 2/2            | Complete | YYYY-MM-DD |
+| 2. Authentication | 2/2            | Complete | YYYY-MM-DD |
+| 3. Core Features  | 3/3            | Complete | YYYY-MM-DD |
+| 4. Polish         | 1/1            | Complete | YYYY-MM-DD |
 ```
 
 </step>
@@ -460,7 +442,7 @@ Extract completed milestone details and create archive file.
    ✅ ROADMAP.md deleted (fresh one for next milestone)
    ```
 
-**Note:** Phase directories (`.planning/phases/`) are NOT deleted. They accumulate across milestones as the raw execution history. Phase numbering continues (v1.0 phases 1-4, v1.1 phases 5-8, etc.).
+**Note:** Phase directories (`.planning/phases/`) are NOT deleted for the current milestone. Each milestone has LOCAL phase numbering starting at 1. When archiving, phases belong to this milestone only.
 
 </step>
 

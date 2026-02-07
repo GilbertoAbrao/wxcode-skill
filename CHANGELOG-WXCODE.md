@@ -7,6 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-02-06
+
+### Added
+- **Git worktree support for parallel milestone development**
+  - Multiple developers can work on different milestones simultaneously
+  - Each milestone gets its own branch and worktree
+  - `new-milestone` creates placeholder on main (reserves version), then branch + worktree
+  - `complete-milestone` offers merge to main (squash/regular), worktree cleanup
+  - Enabled via `"worktree": true` in `.planning/config.json`
+  - Version collision prevention: MILESTONE.json placeholders committed on main atomically
+
+- **MILESTONE.json placeholder files**
+  - Created in `.planning/milestones/<version>/MILESTONE.json`
+  - Tracks version, element, status, branch, worktree path, creation date
+  - Prevents version collisions when multiple devs scan for next version
+
+### Changed
+- **Phase numbering is now LOCAL to each milestone** (was global)
+  - Every milestone starts at Phase 1 (01, 02, 03...)
+  - Eliminates phase number collisions between parallel milestones
+  - Updated: `new-milestone.md`, `wxcode-roadmapper`, `add-phase.md`
+  - Updated: `complete-milestone.md` workflow
+
+- **"Current Milestone" moved from PROJECT.md to STATE.md**
+  - PROJECT.md now contains only stable info (stack, decisions, validated requirements)
+  - STATE.md contains volatile milestone info (current milestone, position, target features)
+  - Eliminates merge conflicts when parallel milestones modify PROJECT.md
+
+- **`complete-milestone` now supports worktree flow**
+  - Detects if running in a git worktree
+  - Cleans per-milestone planning files before merge (ROADMAP, REQUIREMENTS, STATE, phases/, research/)
+  - Offers squash merge or regular merge to main
+  - Offers worktree and branch cleanup after merge
+  - Added `AskUserQuestion` to allowed-tools for merge options
+
+- **Version scanning checks MILESTONE.json placeholders**
+  - Both `new-milestone` (conversion) and Phase 3 (greenfield) scan placeholders
+  - Prevents two devs from reserving the same version
+
 ## [2.0.3] - 2026-02-06
 
 ### Changed

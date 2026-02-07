@@ -7,6 +7,7 @@ allowed-tools:
   - Read
   - Write
   - Bash
+  - AskUserQuestion
   - mcp__wxcode-kb__get_conversion_stats
   - mcp__wxcode-kb__update_milestone_status
 ---
@@ -156,7 +157,98 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
    - `.planning/dashboard.json` — project dashboard
    - `.planning/dashboard_v{{version}}-*.json` — milestone dashboard with archived status
 
-10. **Offer next steps:**
+10. **Worktree merge and cleanup (if running in worktree):**
+
+    Detect if we're in a worktree:
+    ```bash
+    IS_WORKTREE=$(git rev-parse --git-common-dir 2>/dev/null | grep -v "^\.git$" && echo "true" || echo "false")
+    ```
+
+    **If NOT in a worktree:** Skip to step 11.
+
+    **If in a worktree:**
+
+    a) **Clean planning files** (these are per-milestone, shouldn't go to main):
+    ```bash
+    rm -f .planning/ROADMAP.md
+    rm -f .planning/REQUIREMENTS.md
+    rm -f .planning/STATE.md
+    rm -rf .planning/phases/
+    rm -rf .planning/research/
+    ```
+
+    b) **Update MILESTONE.json status:**
+    ```bash
+    # Update the placeholder that was committed on main
+    # (it's in .planning/milestones/${MILESTONE_FOLDER}/MILESTONE.json)
+    ```
+    Update status to "completed", add `completed_at` and `tag` fields.
+
+    c) **Commit cleanup:**
+    ```bash
+    git add -A .planning/
+    git commit -m "chore: prepare v{{version}} for merge to main"
+    ```
+
+    d) **Offer merge options:**
+
+    Use AskUserQuestion:
+    - header: "Merge"
+    - question: "How should this milestone be merged to main?"
+    - options:
+      - "Squash merge (Recommended)" — One clean commit on main with all milestone work
+      - "Regular merge" — Preserve all individual commits on main
+      - "Skip" — I'll merge manually later
+
+    **If "Squash merge":**
+    ```bash
+    MAIN_PATH=$(git rev-parse --git-common-dir | sed 's/\.git$//')
+    BRANCH_NAME=$(git branch --show-current)
+    git -C "${MAIN_PATH}" merge --squash ${BRANCH_NAME}
+    git -C "${MAIN_PATH}" commit -m "feat: convert ${ELEMENT_NAME} (v{{version}})"
+    ```
+
+    **If "Regular merge":**
+    ```bash
+    git -C "${MAIN_PATH}" merge ${BRANCH_NAME}
+    ```
+
+    **If "Skip":** Display merge instructions for later.
+
+    e) **Handle merge conflicts (if any):**
+    - Display conflicting files
+    - Instruct user to resolve in main directory
+    - Offer: "Conflicts are typically in barrel/index files — add both imports"
+
+    f) **Cleanup worktree:**
+
+    Use AskUserQuestion:
+    - header: "Cleanup"
+    - question: "Remove this worktree and branch?"
+    - options:
+      - "Yes, clean up (Recommended)" — Remove worktree and delete branch
+      - "Keep worktree" — I may need to reference this later
+
+    **If "Yes, clean up":**
+    ```bash
+    WORKTREE_PATH=$(pwd)
+    BRANCH_NAME=$(git branch --show-current)
+
+    # Must leave worktree before removing
+    cd "${MAIN_PATH}"
+    git worktree remove "${WORKTREE_PATH}"
+    git branch -d "${BRANCH_NAME}" 2>/dev/null || echo "Branch preserved (has unmerged commits)"
+    ```
+
+    Display:
+    ```
+    ✓ Worktree removed: ${WORKTREE_PATH}
+    ✓ Branch deleted: ${BRANCH_NAME}
+
+    Continue working in your main project directory.
+    ```
+
+11. **Offer next steps:**
     - `/wxcode:new-milestone` — start next milestone (questioning → research → requirements → roadmap)
 
 </process>
@@ -172,6 +264,10 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
 - Commit successful
 - Milestone status updated in KB via MCP (`status="completed"`)
 - Dashboard updated
+- **(If worktree)** Planning files cleaned (ROADMAP, REQUIREMENTS, STATE, phases/, research/)
+- **(If worktree)** MILESTONE.json updated to completed
+- **(If worktree)** Merge to main offered (squash/regular/skip)
+- **(If worktree)** Worktree removal offered
 - User knows next steps (including need for fresh requirements)
 </success_criteria>
 

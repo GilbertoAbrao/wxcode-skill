@@ -83,6 +83,7 @@ Parse current values (default to `true` if not present):
 - `model_profile` — which model each agent uses (default: `balanced`)
 - `output_language` — language for human-readable output (default: `"en"`)
 - `git.branching_strategy` — branching approach (default: `"none"`)
+- `worktree` — enable git worktree per milestone for multi-dev (default: `false`)
 
 ## 3. Present Settings
 
@@ -146,6 +147,15 @@ AskUserQuestion([
       { label: "Per Phase", description: "Create branch for each phase (gsd/phase-{N}-{name})" },
       { label: "Per Milestone", description: "Create branch for entire milestone (gsd/{version}-{name})" }
     ]
+  },
+  {
+    question: "Enable git worktree per milestone? (for parallel multi-dev)",
+    header: "Worktree",
+    multiSelect: false,
+    options: [
+      { label: "No (Recommended)", description: "Single working directory, one milestone at a time" },
+      { label: "Yes", description: "Each milestone gets branch + worktree for parallel development" }
+    ]
   }
 ])
 ```
@@ -173,7 +183,8 @@ Merge new settings into existing config.json:
   },
   "git": {
     "branching_strategy": "none" | "phase" | "milestone"
-  }
+  },
+  "worktree": true/false
 }
 ```
 
@@ -214,7 +225,7 @@ Quick commands:
 
 <success_criteria>
 - [ ] Current config read
-- [ ] User presented with 6 settings (profile + language + 3 workflow toggles + git branching)
-- [ ] Config updated with model_profile, output_language, workflow, and git sections
+- [ ] User presented with 7 settings (profile + language + 3 workflow toggles + git branching + worktree)
+- [ ] Config updated with model_profile, output_language, workflow, git, and worktree sections
 - [ ] Changes confirmed to user
 </success_criteria>

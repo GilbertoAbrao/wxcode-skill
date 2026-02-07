@@ -79,11 +79,11 @@ Read roadmap content for parsing.
 </step>
 
 <step name="find_current_milestone">
-Parse the roadmap to find the current milestone section:
+Parse the roadmap to find the current milestone's phases:
 
-1. Locate the "## Current Milestone:" heading
+1. Locate the milestone heading in ROADMAP.md (or scan all `### Phase N:` headings)
 2. Extract milestone name and version
-3. Identify all phases under this milestone (before next "---" separator or next milestone heading)
+3. Identify all phases (phase numbering is LOCAL per milestone, always starts at 1)
 4. Parse existing phase numbers (including decimals if present)
 
 Example structure:
@@ -91,9 +91,9 @@ Example structure:
 ```
 ## Current Milestone: v1.0 Foundation
 
-### Phase 4: Focused Command System
-### Phase 5: Path Routing & Validation
-### Phase 6: Documentation & Distribution
+### Phase 1: Focused Command System
+### Phase 2: Path Routing & Validation
+### Phase 3: Documentation & Distribution
 ```
 
 </step>

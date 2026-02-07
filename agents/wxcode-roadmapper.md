@@ -186,8 +186,9 @@ Track coverage as you go.
 - Execute between integers: 1 → 1.1 → 1.2 → 2
 
 **Starting number:**
-- New milestone: Start at 1
-- Continuing milestone: Check existing phases, start at last + 1
+- Always start at 1 — phases are LOCAL to each milestone
+- Each milestone has its own independent phase sequence (01, 02, 03...)
+- This enables parallel milestone development via git worktrees
 
 ## Depth Calibration
 

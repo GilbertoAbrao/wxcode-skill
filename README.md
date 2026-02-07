@@ -2,7 +2,7 @@
 
 **WXCODE** is an AI-powered toolkit for **WinDev/WebDev code conversion projects**, built for Claude Code, OpenCode, and Gemini.
 
-**Current Version:** 2.0.3
+**Current Version:** 2.1.0
 
 ---
 

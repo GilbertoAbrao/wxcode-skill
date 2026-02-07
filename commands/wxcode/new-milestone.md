@@ -20,7 +20,7 @@ This is the brownfield equivalent of new-project. The project exists, PROJECT.md
 - `.planning/PROJECT.md` — updated with new milestone goals
 - `.planning/research/` — domain research (optional, focuses on NEW features)
 - `.planning/REQUIREMENTS.md` — scoped requirements for this milestone
-- `.planning/ROADMAP.md` — phase structure (continues numbering)
+- `.planning/ROADMAP.md` — phase structure (starts from phase 1, local to milestone)
 - `.planning/STATE.md` — reset for new milestone
 
 **After this command:** Run `/wxcode:plan-phase [N]` to start execution.
@@ -176,13 +176,19 @@ Example:
 
 ### Step 2: Determine version automatically
 
-Scan existing milestone dashboards to find highest version:
+Scan existing milestone dashboards AND placeholder files to find highest version:
 ```bash
+# Check dashboards (completed or active milestones)
 ls -1 .planning/dashboard_v*.json 2>/dev/null | sort -V | tail -1
+
+# Also check MILESTONE.json placeholders (reserved versions from parallel worktrees)
+ls -1 .planning/milestones/v*/MILESTONE.json 2>/dev/null
 ```
 
+Parse the highest version from BOTH sources. Placeholder files reserve versions for in-progress milestones that may be running in parallel worktrees.
+
 **Version logic:**
-- No existing milestones → `v1.0`
+- No existing milestones or placeholders → `v1.0`
 - Highest is `v1.0` → `v1.1`
 - Highest is `v1.5` → `v1.6`
 - Highest is `v1.9` → `v2.0`
@@ -194,15 +200,31 @@ MILESTONE_FOLDER_NAME="${WXCODE_VERSION}-${ELEMENT_NAME}"
 # Example: "v1.0-PAGE_Login"
 ```
 
-### Step 3: Create milestone folder
+### Step 3: Create milestone folder and placeholder
 
 ```bash
 mkdir -p .planning/milestones/${MILESTONE_FOLDER_NAME}
 ```
 
+Create MILESTONE.json placeholder to **reserve this version** (prevents collision with parallel milestones):
+
+```bash
+cat > .planning/milestones/${MILESTONE_FOLDER_NAME}/MILESTONE.json << EOF
+{
+  "version": "${WXCODE_VERSION}",
+  "element": "${ELEMENT_NAME}",
+  "status": "in_progress",
+  "branch": "milestone/${WXCODE_VERSION}-${ELEMENT_NAME}",
+  "worktree": "../$(basename $PWD)-${WXCODE_VERSION}-${ELEMENT_NAME}",
+  "created_at": "$(date +%Y-%m-%d)"
+}
+EOF
+```
+
 Display:
 ```
 ✓ Milestone folder: .planning/milestones/${MILESTONE_FOLDER_NAME}
+✓ Placeholder: MILESTONE.json (version reserved)
 ```
 
 ### Step 4: Create Milestone in MongoDB (CRITICAL - DO NOT SKIP)
@@ -274,6 +296,78 @@ Go back to Phase 1.6 Step 4 and call:
 Cannot continue without MongoDB milestone record.
 ```
 **STOP and go back to Step 4.**
+
+---
+
+## Phase 1.75: Create Worktree (Optional — Multi-Dev)
+
+**Check config for worktree mode:**
+
+```bash
+WORKTREE_MODE=$(cat .planning/config.json 2>/dev/null | grep -o '"worktree"[[:space:]]*:[[:space:]]*[^,}]*' | grep -o 'true\|false' || echo "false")
+```
+
+**If `worktree` is `false` (default):** Skip to Phase 1.8.
+
+**If `worktree` is `true`:**
+
+This enables parallel milestone development. Each milestone gets its own branch and worktree so multiple developers can work simultaneously.
+
+### Step 1: Commit placeholder on main
+
+The placeholder MILESTONE.json was created in Phase 1.6 Step 3. Commit it on main to **reserve the version atomically**:
+
+```bash
+COMMIT_PLANNING_DOCS=$(cat .planning/config.json 2>/dev/null | grep -o '"commit_docs"[[:space:]]*:[[:space:]]*[^,}]*' | grep -o 'true\|false' || echo "true")
+
+if [ "$COMMIT_PLANNING_DOCS" = "true" ]; then
+  git add .planning/milestones/${MILESTONE_FOLDER_NAME}/MILESTONE.json
+  git commit -m "docs: reserve milestone ${WXCODE_VERSION}-${ELEMENT_NAME}"
+  git push origin main 2>/dev/null || echo "⚠ Push failed — manual push needed before another dev starts a milestone"
+fi
+```
+
+Display:
+```
+✓ Version ${WXCODE_VERSION} reserved on main
+```
+
+### Step 2: Create branch and worktree
+
+```bash
+BRANCH_NAME="milestone/${WXCODE_VERSION}-${ELEMENT_NAME}"
+WORKTREE_PATH="../$(basename $PWD)-${WXCODE_VERSION}-${ELEMENT_NAME}"
+
+git branch ${BRANCH_NAME}
+git worktree add ${WORKTREE_PATH} ${BRANCH_NAME}
+```
+
+Display:
+```
+✓ Branch: ${BRANCH_NAME}
+✓ Worktree: ${WORKTREE_PATH}
+```
+
+### Step 3: Instruct developer
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║  WORKTREE CREATED — Open in a new IDE window                 ║
+╚══════════════════════════════════════════════════════════════╝
+
+Open the worktree directory in your IDE:
+  ${WORKTREE_PATH}
+
+Then run in the new session:
+  /wxcode:progress
+
+The remaining steps (requirements, roadmap, planning) happen
+in the worktree, not here on main.
+```
+
+**STOP HERE** — remaining phases execute in the worktree's session.
+
+The user opens the worktree in their IDE. A fresh Claude Code session in that worktree picks up from `.planning/` state and continues the workflow (Phase 2+).
 
 ---
 
@@ -362,31 +456,79 @@ Task(wxcode-schema-generator):
 ## Phase 3: Determine Milestone Version
 
 - Parse last version from MILESTONES.md
+- Also check `.planning/milestones/v*/MILESTONE.json` for reserved versions (parallel worktrees)
 - Suggest next version (v1.0 → v1.1, or v2.0 for major)
 - Confirm with user
 
+### Phase 3.5: Create Placeholder and Worktree (If Enabled)
+
+**Check config for worktree mode:**
+
+```bash
+WORKTREE_MODE=$(cat .planning/config.json 2>/dev/null | grep -o '"worktree"[[:space:]]*:[[:space:]]*[^,}]*' | grep -o 'true\|false' || echo "false")
+```
+
+**If `worktree` is `false` (default):** Skip to Phase 4.
+
+**If `worktree` is `true`:**
+
+Create milestone placeholder to reserve version:
+
+```bash
+MILESTONE_FOLDER_NAME="v${VERSION}-${MILESTONE_NAME_SLUG}"
+mkdir -p .planning/milestones/${MILESTONE_FOLDER_NAME}
+
+cat > .planning/milestones/${MILESTONE_FOLDER_NAME}/MILESTONE.json << EOF
+{
+  "version": "v${VERSION}",
+  "name": "${MILESTONE_NAME}",
+  "status": "in_progress",
+  "branch": "milestone/v${VERSION}-${MILESTONE_NAME_SLUG}",
+  "worktree": "../$(basename $PWD)-v${VERSION}-${MILESTONE_NAME_SLUG}",
+  "created_at": "$(date +%Y-%m-%d)"
+}
+EOF
+```
+
+Commit on main and create worktree (same as Phase 1.75):
+
+```bash
+git add .planning/milestones/${MILESTONE_FOLDER_NAME}/MILESTONE.json
+git commit -m "docs: reserve milestone v${VERSION}-${MILESTONE_NAME_SLUG}"
+git push origin main 2>/dev/null || echo "⚠ Push failed"
+
+BRANCH_NAME="milestone/v${VERSION}-${MILESTONE_NAME_SLUG}"
+WORKTREE_PATH="../$(basename $PWD)-v${VERSION}-${MILESTONE_NAME_SLUG}"
+git branch ${BRANCH_NAME}
+git worktree add ${WORKTREE_PATH} ${BRANCH_NAME}
+```
+
+Display same worktree instructions as Phase 1.75 Step 3.
+
+**STOP HERE if worktree created** — remaining phases execute in the worktree.
+
 ## Phase 4: Update PROJECT.md
 
-Add/update these sections:
+Update these sections (stable info only — no volatile milestone state):
+
+- Update Active requirements section with new goals
+- Update "Last updated" footer
+- Do NOT add "Current Milestone" section here — that goes in STATE.md (avoids merge conflicts in worktree scenarios)
+
+## Phase 5: Update STATE.md
+
+Add current milestone info and reset position:
 
 ```markdown
-## Current Milestone: v[X.Y] [Name]
+## Current Milestone
 
+**Milestone:** v[X.Y] [Name]
 **Goal:** [One sentence describing milestone focus]
-
 **Target features:**
 - [Feature 1]
 - [Feature 2]
 - [Feature 3]
-```
 
-Update Active requirements section with new goals.
-
-Update "Last updated" footer.
-
-## Phase 5: Update STATE.md
-
-```markdown
 ## Current Position
 
 Phase: Not started (defining requirements)
@@ -396,6 +538,8 @@ Last activity: [today] — Milestone v[X.Y] started
 ```
 
 Keep Accumulated Context section (decisions, blockers) from previous milestone.
+
+**Why STATE.md:** Each worktree has its own STATE.md, so there's zero conflict when milestones run in parallel. PROJECT.md stays stable with just validated requirements and decisions.
 
 ## Phase 6: Cleanup and Commit
 
@@ -821,10 +965,9 @@ Display stage banner:
 ◆ Spawning roadmapper...
 ```
 
-**Determine starting phase number:**
+**Phase numbering is LOCAL to each milestone — always starts at 1.**
 
-Read MILESTONES.md to find the last phase number from previous milestone.
-New phases continue from there (e.g., if v1.0 ended at phase 5, v1.1 starts at phase 6).
+This enables parallel milestone development via git worktrees. Each milestone's phases are numbered independently (01, 02, 03...) regardless of previous milestones.
 
 Spawn wxcode-roadmapper agent with context:
 
@@ -844,14 +987,11 @@ Task(prompt="
 **Config:**
 @.planning/config.json
 
-**Previous milestone (for phase numbering):**
-@.planning/MILESTONES.md
-
 </planning_context>
 
 <instructions>
 Create roadmap for milestone v[X.Y]:
-1. Start phase numbering from [N] (continues from previous milestone)
+1. Start phase numbering from 1 (phases are LOCAL to each milestone)
 2. Derive phases from THIS MILESTONE's requirements (don't include validated/existing)
 3. Map every requirement to exactly one phase
 4. Derive 2-5 success criteria per phase (observable user behaviors)
@@ -1010,10 +1150,14 @@ Present completion with next steps:
 - [ ] **(Conversion projects)** Arguments parsed: --element and --output-project
 - [ ] **(Conversion projects)** Version determined automatically (v1.0, v1.1, etc.)
 - [ ] **(Conversion projects)** Milestone folder created: `.planning/milestones/<folder>`
+- [ ] **(Conversion projects)** MILESTONE.json placeholder created (version reserved)
+- [ ] **(If worktree enabled)** Placeholder committed on main
+- [ ] **(If worktree enabled)** Branch and worktree created
+- [ ] **(If worktree enabled)** User instructed to open worktree in new IDE window
 - [ ] **(Conversion projects - CRITICAL)** `mcp__wxcode-kb__create_milestone` called with confirm=true
 - [ ] **(Conversion projects - CRITICAL)** MONGODB_MILESTONE_ID stored from MCP response
-- [ ] PROJECT.md updated with Current Milestone section
-- [ ] STATE.md reset for new milestone
+- [ ] PROJECT.md updated (stable info only, no volatile milestone state)
+- [ ] STATE.md updated with Current Milestone section and reset position
 - [ ] MILESTONE-CONTEXT.md consumed and deleted (if existed)
 - [ ] Research completed (if selected) — 4 parallel agents spawned, milestone-aware
 - [ ] Requirements gathered (from research or conversation)
@@ -1022,7 +1166,7 @@ Present completion with next steps:
 - [ ] wxcode-roadmapper spawned with phase numbering context
 - [ ] Roadmap files written immediately (not draft)
 - [ ] User feedback incorporated (if any)
-- [ ] ROADMAP.md created with phases continuing from previous milestone
+- [ ] ROADMAP.md created with phases starting from 1 (local to milestone)
 - [ ] All commits made (if planning docs committed)
 - [ ] User knows next step is `/wxcode:discuss-phase [N]`
 
