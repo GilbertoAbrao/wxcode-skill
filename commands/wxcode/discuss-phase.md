@@ -9,6 +9,8 @@ allowed-tools:
   - Glob
   - Grep
   - AskUserQuestion
+  - mcp__wxcode-kb__get_business_rules
+  - mcp__wxcode-kb__semantic_search
 ---
 
 <objective>

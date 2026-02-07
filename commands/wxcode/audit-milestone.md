@@ -9,6 +9,7 @@ allowed-tools:
   - Bash
   - Task
   - Write
+  - mcp__wxcode-kb__get_business_rules
 ---
 
 <objective>
@@ -110,6 +111,20 @@ From each VERIFICATION.md, extract:
 
 If a phase is missing VERIFICATION.md, flag it as "unverified phase" — this is a blocker.
 
+## 2.5 Verify Business Rule Coverage (Conversion Projects Only)
+
+If `.planning/CONVERSION.md` exists:
+
+For each element converted in this milestone (from SUMMARYs):
+1. Call `mcp__wxcode-kb__get_business_rules(element_name)`
+2. Check if each rule appears in SUMMARY.md conversion notes
+3. Flag rules with no coverage as "potentially lost"
+
+Track:
+- preserved_rules: N (mentioned in SUMMARYs)
+- missing_rules: [list] (not found in SUMMARYs)
+- coverage_pct: N%
+
 ## 3. Spawn Integration Checker
 
 With phase context collected:
@@ -167,6 +182,11 @@ tech_debt:  # Non-critical, deferred
   - phase: 03-dashboard
     items:
       - "Deferred: mobile responsive layout"
+business_rules:  # Conversion projects only
+  total: N
+  preserved: N
+  missing: [...]
+  coverage: N%
 ---
 ```
 
@@ -295,5 +315,6 @@ All requirements met. No critical blockers. Accumulated tech debt needs review.
 - [ ] Tech debt and deferred gaps aggregated
 - [ ] Integration checker spawned for cross-phase wiring
 - [ ] v{version}-MILESTONE-AUDIT.md created
+- [ ] (Conversion projects) Business rule coverage checked
 - [ ] Results presented with actionable next steps
 </success_criteria>

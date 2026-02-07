@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-02-07
+
+### Added
+- **Comprehension pipeline integration** — agents and commands now consume business rules, explanations, and semantic search from MCP
+- `wxcode-legacy-analyzer` loads business rules and similar elements during analysis (Phase 1.5)
+- `wxcode-executor` consults business rules before conversion, documents preservation in SUMMARY.md
+- `wxcode-planner` includes business rule verification in conversion task specs, reads LEGACY.md
+- `discuss-phase` surfaces business rules as gray area for user confirmation
+- `audit-milestone` verifies business rule coverage for conversion projects (Step 2.5)
+- `new-milestone` loads comprehension data at milestone start (Phase 1.85)
+- MCP tools documentation updated with 4 new tools: `get_business_rules`, `get_business_rule`, `semantic_search`, `find_similar_by_embedding` (25 → 29 tools)
+
 ## [2.1.0] - 2026-02-06
 
 ### Added

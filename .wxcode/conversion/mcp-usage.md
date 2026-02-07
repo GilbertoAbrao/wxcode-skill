@@ -1,6 +1,6 @@
 # MCP Tools Usage Guide
 
-Reference for using the 25 MCP tools available from WXCODE Conversor.
+Reference for using the 29 MCP tools available from WXCODE Conversor.
 
 ## Tool Categories
 
@@ -15,6 +15,8 @@ Reference for using the 25 MCP tools available from WXCODE Conversor.
 | Stack | 1 | Target stack conventions |
 | Planes | 1 | Tabs/wizard/views detection |
 | WLanguage | 3 | H* function reference |
+| Comprehension | 2 | Business rules and explanations |
+| Semantic Search | 2 | Natural language and vector search |
 | Similarity | 1 | Find similar converted elements |
 | PDF | 1 | Documentation and screenshots |
 
@@ -471,6 +473,105 @@ Output: {
 
 ---
 
+## Comprehension (2)
+
+### get_business_rules
+
+Returns business rules extracted from an element's procedures.
+
+**When to use:** Understanding critical business logic that must be preserved during conversion.
+
+```
+Input: element_name (string), optional: project_name, category, text_filter
+Output: {
+  "rules": [
+    {
+      "id": "rule_001",
+      "description": "CPF must be validated before save",
+      "category": "validation",
+      "confidence": 0.95,
+      "source_procedure": "ValidaCPF",
+      "source_element": "PAGE_Login"
+    }
+  ]
+}
+```
+
+**Key fields:**
+- `category` - Rule category (validation, calculation, workflow, access_control, etc.)
+- `confidence` - Extraction confidence (0-1)
+- `source_procedure` - Procedure where rule was found
+
+### get_business_rule
+
+Returns detailed information about a single business rule.
+
+**When to use:** Getting full context for a specific rule including source procedure explanation.
+
+```
+Input: rule_id (string)
+Output: {
+  "id": "rule_001",
+  "description": "CPF must be validated before save",
+  "category": "validation",
+  "confidence": 0.95,
+  "source_procedure": "ValidaCPF",
+  "explanation": "L2 explanation of the procedure logic...",
+  "source_code": "// Original WLanguage code..."
+}
+```
+
+---
+
+## Semantic Search (2)
+
+### semantic_search
+
+Natural language search across the knowledge base with project scoping.
+
+**When to use:** Finding elements by what they DO rather than what they're named.
+
+```
+Input: query (string), optional: project_name, type_filter, search_mode (hybrid|vector|fulltext)
+Output: {
+  "results": [
+    {
+      "name": "PAGE_Login",
+      "type": "page",
+      "score": 0.92,
+      "snippet": "Handles user authentication with CPF validation..."
+    }
+  ]
+}
+```
+
+**Search modes:**
+- `hybrid` (default) - Combines vector similarity and full-text search
+- `vector` - Pure semantic similarity
+- `fulltext` - Traditional text matching
+
+### find_similar_by_embedding
+
+Find semantically similar elements using stored vector embeddings.
+
+**When to use:** Finding elements with similar behavior or structure regardless of naming.
+
+```
+Input: element_name (string), optional: limit, type_filter
+Output: {
+  "similar": [
+    {
+      "name": "PAGE_LoginMobile",
+      "type": "page",
+      "similarity": 0.89,
+      "conversion_status": "converted"
+    }
+  ]
+}
+```
+
+---
+
 ## Similarity (1)
 
 ### search_converted_similar
@@ -522,8 +623,10 @@ Output: {
 2. get_controls {name}          → UI structure
 3. get_element_planes {name}    → Detect tabs/wizard
 4. get_procedures {name}        → Business logic
-5. get_dependencies {name}      → Prerequisites
-6. search_converted_similar     → Learn from similar
+5. get_business_rules {name}    → Extracted business rules
+6. get_dependencies {name}      → Prerequisites
+7. search_converted_similar     → Learn from similar
+8. semantic_search {name}       → Find related elements
 ```
 
 ### Before Planning
@@ -534,6 +637,15 @@ Output: {
    - Converted? → Can import
    - Pending? → May need to convert first
 3. get_wlanguage_reference for H* functions found
+```
+
+### Before Conversion
+
+```
+1. get_business_rules {element}  → Rules to preserve
+2. find_similar_by_embedding     → Similar already-converted elements
+3. Use rules to guide implementation
+4. Document rule preservation in SUMMARY.md
 ```
 
 ### After Conversion

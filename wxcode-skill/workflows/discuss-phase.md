@@ -162,6 +162,18 @@ Analyze the phase to identify gray areas worth discussing.
 
 3. **Skip assessment** — If no meaningful gray areas exist (pure infrastructure, clear-cut implementation), the phase may not need discussion.
 
+**For conversion projects** (`.planning/CONVERSION.md` exists):
+
+Check for business rules via MCP:
+```
+mcp__wxcode-kb__get_business_rules(element_name=ELEMENT_NAME)
+```
+
+If rules exist, add automatic gray area:
+- "Business Rule Handling" — "Legacy system has N business rules for this element. Review which to preserve exactly, adapt, or drop."
+
+Surface the rules in the discussion so user can confirm/adjust before planning.
+
 **Output your analysis internally, then present to user.**
 
 Example analysis for "Post Feed" phase:

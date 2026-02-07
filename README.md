@@ -2,7 +2,7 @@
 
 **WXCODE** is an AI-powered toolkit for **WinDev/WebDev code conversion projects**, built for Claude Code, OpenCode, and Gemini.
 
-**Current Version:** 2.1.0
+**Current Version:** 2.2.0
 
 ---
 
@@ -117,7 +117,7 @@ Each phase uses fresh context windows. Parallel execution where possible. Atomic
 
 ## MCP Integration
 
-WXCODE workflows use **25 MCP tools** to access legacy code stored in MongoDB/Neo4j.
+WXCODE workflows use **29 MCP tools** to access legacy code stored in MongoDB/Neo4j.
 
 | Category | Tools | Description |
 |----------|-------|-------------|
@@ -127,6 +127,8 @@ WXCODE workflows use **25 MCP tools** to access legacy code stored in MongoDB/Ne
 | **Schema** | `get_schema`, `get_table` | Database schema |
 | **Graph** | `get_dependencies`, `get_impact`, `get_path`, `find_hubs`, `find_dead_code`, `find_cycles` | Dependency analysis (Neo4j) |
 | **Conversion** | `get_conversion_candidates`, `get_topological_order`, `get_conversion_stats`, `mark_converted`, `mark_project_initialized` | Conversion workflow |
+| **Comprehension** | `get_business_rules`, `get_business_rule` | Business rules and explanations |
+| **Semantic Search** | `semantic_search`, `find_similar_by_embedding` | Natural language and vector search |
 | **Stack** | `get_stack_conventions` | Target stack conventions |
 | **Planes** | `get_element_planes` | Tabs/wizard/views detection |
 | **WLanguage** | `get_wlanguage_reference`, `list_wlanguage_functions`, `get_wlanguage_pattern` | H* function reference |

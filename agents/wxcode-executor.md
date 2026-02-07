@@ -789,6 +789,15 @@ If you were a continuation agent, include ALL commits (previous + new).
    - `mcp__wxcode-kb__get_controls` — UI structure
    - `mcp__wxcode-kb__get_procedures` — Business logic
 
+1.5. **Load comprehension context (if available):**
+   - `mcp__wxcode-kb__get_business_rules` — Rules to preserve during conversion
+   - `mcp__wxcode-kb__semantic_search` — Find similar already-converted elements for reference
+
+   Use business rules to:
+   - Add code comments referencing preserved rules
+   - Validate converted logic preserves rule intent
+   - Note any rule that can't be preserved as deviation
+
 2. **After successful completion:** Mark element converted
    - `mcp__wxcode-kb__mark_converted` — Update conversion state
 
@@ -805,6 +814,12 @@ If you were a continuation agent, include ALL commits (previous + new).
 ### Mappings Applied
 - [legacy control] → [target component]
 - [legacy procedure] → [target function]
+
+### Business Rules Preserved
+- [rule description] — [how preserved in converted code]
+
+### Business Rules Deviations
+- [rule] — [why it changed and what replaces it]
 
 ### Deviations from Legacy
 - [what changed and why]
@@ -965,6 +980,8 @@ Plan execution complete when:
 - [ ] Each task committed individually with proper format
 - [ ] All deviations documented
 - [ ] Authentication gates handled and documented
+- [ ] **Business rules consulted** (if comprehension data available)
+- [ ] **Rule preservation documented** in SUMMARY.md conversion notes
 - [ ] **UI tasks use design tokens** (if design/tokens.json exists)
 - [ ] **frontend-design skill invoked** for visual components
 - [ ] SUMMARY.md created with substantive content

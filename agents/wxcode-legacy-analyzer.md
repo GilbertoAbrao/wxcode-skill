@@ -69,6 +69,38 @@ Build control hierarchy:
 - Extract event handlers
 - Identify data bindings
 
+## Phase 1.5: Load Comprehension Data
+
+### 1.5.1 Get business rules
+
+```
+MCP: get_business_rules {element_name}
+```
+
+If rules exist, extract:
+- Rule descriptions and categories
+- Confidence levels
+- Source procedures
+- These inform the analysis below — skip re-inferring logic that's already explained
+
+### 1.5.2 Find semantically similar elements
+
+```
+MCP: semantic_search {element_name}
+```
+
+Check for:
+- Similar elements already converted (patterns to follow)
+- Related elements that share business logic
+
+### 1.5.3 Find similar by embedding
+
+```
+MCP: find_similar_by_embedding {element_name}
+```
+
+Note elements with high similarity scores — they may share conversion patterns.
+
 ## Phase 2: Analyze Planes
 
 If element is page or window, analyze for planes.
@@ -306,13 +338,36 @@ PAGE_Login
 |---------|------|--------|
 | PAGE_Dashboard | page | Calls after login |
 
+### Business Rules (from comprehension pipeline)
+
+{If business rules found via get_business_rules:}
+
+| Rule | Category | Confidence | Source |
+|------|----------|------------|--------|
+| CPF must be validated before save | validation | 0.95 | ValidaCPF() |
+| ... | ... | ... | ... |
+
+{If no rules: "No comprehension data available. Business rules inferred from code analysis above."}
+
+### Similar Elements
+
+{If similar elements found via semantic_search/find_similar_by_embedding:}
+
+| Element | Similarity | Status | Notes |
+|---------|-----------|--------|-------|
+| PAGE_LoginMobile | 0.85 | Converted | Follow same patterns |
+| ... | ... | ... | ... |
+
+{If no similar elements: "No similar elements found."}
+
 ### Conversion Considerations
 
 1. **Planes:** {strategy recommendation}
 2. **Validation:** {preserve or modernize}
-3. **Security:** {any concerns}
-4. **Performance:** {any N+1 or other issues}
-5. **Dependencies:** {order recommendation}
+3. **Business Rules:** {which rules are critical to preserve}
+4. **Security:** {any concerns}
+5. **Performance:** {any N+1 or other issues}
+6. **Dependencies:** {order recommendation}
 ```
 
 </process>
@@ -328,6 +383,8 @@ Or append to existing RESEARCH.md under "## Legacy Analysis" section.
 <success_criteria>
 
 - [ ] Element data retrieved via MCP
+- [ ] Business rules loaded (if available)
+- [ ] Similar elements checked
 - [ ] UI structure documented (if applicable)
 - [ ] Planes identified and documented (if present)
 - [ ] Business logic analyzed

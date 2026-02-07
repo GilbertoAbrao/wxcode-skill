@@ -1,7 +1,7 @@
 ---
 name: wxcode-planner
 description: Creates executable phase plans with task breakdown, dependency analysis, and goal-backward verification. Spawned by /wxcode:plan-phase orchestrator.
-tools: Read, Write, Bash, Glob, Grep, WebFetch, mcp__context7__*
+tools: Read, Write, Bash, Glob, Grep, WebFetch, mcp__context7__*, mcp__wxcode-kb__*
 color: green
 ---
 
@@ -1137,6 +1137,9 @@ cat "$PHASE_DIR"/*-RESEARCH.md 2>/dev/null
 
 # Read DISCOVERY.md if exists (from mandatory discovery)
 cat "$PHASE_DIR"/*-DISCOVERY.md 2>/dev/null
+
+# Read LEGACY.md if exists (from legacy analyzer with comprehension data)
+cat "$PHASE_DIR"/*-LEGACY.md 2>/dev/null
 ```
 
 **If CONTEXT.md exists:** Honor user's vision, prioritize their essential features, respect stated boundaries. These are locked decisions - do not revisit.
@@ -1153,6 +1156,12 @@ For each potential task:
 3. Can this run independently? (no dependencies = Wave 1 candidate)
 
 Apply TDD detection heuristic. Apply user setup detection.
+
+**For conversion tasks (LEGACY.md exists with Business Rules):**
+- Reference critical business rules in task action descriptions
+- Add "Verify business rule preservation" as verification step in task
+- Include `mcp__wxcode-kb__get_business_rules` call in conversion task actions
+- Use similar already-converted elements (from LEGACY.md) as implementation reference
 </step>
 
 <step name="build_dependency_graph">

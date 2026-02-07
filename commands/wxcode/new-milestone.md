@@ -441,6 +441,40 @@ Task(wxcode-schema-generator):
 
 ---
 
+## Phase 1.85: Load Comprehension Data (Conversion Projects Only)
+
+**Skip if not a conversion project** (no `.planning/CONVERSION.md`).
+
+### Step 1: Get business rules
+
+```
+mcp__wxcode-kb__get_business_rules(element_name=ELEMENT_NAME)
+```
+
+### Step 2: Get similar elements
+
+```
+mcp__wxcode-kb__semantic_search(query=ELEMENT_NAME, search_mode="hybrid")
+```
+
+### Step 3: Display context
+
+If comprehension data found:
+```
+✓ Comprehension data loaded
+  - {N} business rules found
+  - {M} similar elements ({K} already converted)
+```
+
+If no data: Skip gracefully:
+```
+ℹ No comprehension data for ${ELEMENT_NAME} (run `wxcode comprehend` first)
+```
+
+Business rules and similar elements inform research and roadmap phases.
+
+---
+
 ## Phase 2: Gather Milestone Goals
 
 **If MILESTONE-CONTEXT.md exists:**
@@ -1156,6 +1190,7 @@ Present completion with next steps:
 - [ ] **(If worktree enabled)** User instructed to open worktree in new IDE window
 - [ ] **(Conversion projects - CRITICAL)** `mcp__wxcode-kb__create_milestone` called with confirm=true
 - [ ] **(Conversion projects - CRITICAL)** MONGODB_MILESTONE_ID stored from MCP response
+- [ ] **(Conversion projects)** Comprehension data loaded (if available)
 - [ ] PROJECT.md updated (stable info only, no volatile milestone state)
 - [ ] STATE.md updated with Current Milestone section and reset position
 - [ ] MILESTONE-CONTEXT.md consumed and deleted (if existed)

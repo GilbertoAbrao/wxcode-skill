@@ -134,7 +134,7 @@ wxcode/
 │   ├── config.md               # WXCODE identity
 │   └── conversion/             # Conversion-specific docs
 │       ├── context-md-spec.md  # CONTEXT.md format spec
-│       ├── mcp-usage.md        # 25 MCP tools guide
+│       ├── mcp-usage.md        # 29 MCP tools guide
 │       └── ...
 │
 ├── wxcode-skill/               # Reference documentation
@@ -156,7 +156,7 @@ wxcode/
 
 ## MCP Integration
 
-WXCODE uses **25 MCP tools** to access legacy WinDev/WebDev code.
+WXCODE uses **29 MCP tools** to access legacy WinDev/WebDev code.
 
 ### Tool Categories
 
