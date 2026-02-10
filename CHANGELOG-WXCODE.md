@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.4] - 2026-02-10
+
+### Changed
+- Remove `get_business_rule` (singular) — consolidated into `get_business_rules` which now returns full details including element explanation and all BR fields
+- MCP tool count: 29 → 28
+
 ## [2.2.3] - 2026-02-10
 
 ### Fixed
