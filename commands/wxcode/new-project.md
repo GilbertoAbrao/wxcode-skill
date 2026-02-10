@@ -1283,6 +1283,9 @@ mcp__wxcode-kb__mark_project_initialized()
 /wxcode:start-dev
 
 ───────────────────────────────────────────────────────────────
+
+⚠ Run `/clear` before `/wxcode:new-milestone` — project initialization
+consumes most of the context window.
 ```
 
 **IMPORTANT:** Do NOT suggest next steps. IDE tooling will handle navigation.
