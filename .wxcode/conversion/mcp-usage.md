@@ -1,6 +1,6 @@
 # MCP Tools Usage Guide
 
-Reference for using the 29 MCP tools available from WXCODE Conversor.
+Reference for using the 28 MCP tools available from WXCODE Conversor.
 
 ## Tool Categories
 
@@ -501,25 +501,6 @@ Output: {
 - `category` - Rule category (validation, calculation, workflow, access_control, etc.)
 - `confidence` - Extraction confidence (0-1)
 - `source_procedure` - Procedure where rule was found
-
-### get_business_rule
-
-Returns detailed information about a single business rule.
-
-**When to use:** Getting full context for a specific rule including source procedure explanation.
-
-```
-Input: rule_id (string)
-Output: {
-  "id": "rule_001",
-  "description": "CPF must be validated before save",
-  "category": "validation",
-  "confidence": 0.95,
-  "source_procedure": "ValidaCPF",
-  "explanation": "L2 explanation of the procedure logic...",
-  "source_code": "// Original WLanguage code..."
-}
-```
 
 ---
 

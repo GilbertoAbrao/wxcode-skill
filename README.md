@@ -127,7 +127,7 @@ WXCODE workflows use **29 MCP tools** to access legacy code stored in MongoDB/Ne
 | **Schema** | `get_schema`, `get_table` | Database schema |
 | **Graph** | `get_dependencies`, `get_impact`, `get_path`, `find_hubs`, `find_dead_code`, `find_cycles` | Dependency analysis (Neo4j) |
 | **Conversion** | `get_conversion_candidates`, `get_topological_order`, `get_conversion_stats`, `mark_converted`, `mark_project_initialized` | Conversion workflow |
-| **Comprehension** | `get_business_rules`, `get_business_rule` | Business rules and explanations |
+| **Comprehension** | `get_business_rules` | Business rules and explanations |
 | **Semantic Search** | `semantic_search`, `find_similar_by_embedding` | Natural language and vector search |
 | **Stack** | `get_stack_conventions` | Target stack conventions |
 | **Planes** | `get_element_planes` | Tabs/wizard/views detection |

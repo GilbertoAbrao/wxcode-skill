@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `discuss-phase` surfaces business rules as gray area for user confirmation
 - `audit-milestone` verifies business rule coverage for conversion projects (Step 2.5)
 - `new-milestone` loads comprehension data at milestone start (Phase 1.85)
-- MCP tools documentation updated with 4 new tools: `get_business_rules`, `get_business_rule`, `semantic_search`, `find_similar_by_embedding` (25 → 29 tools)
+- MCP tools documentation updated with 3 new tools: `get_business_rules`, `semantic_search`, `find_similar_by_embedding` (25 → 28 tools)
 
 ## [2.1.0] - 2026-02-06
 
