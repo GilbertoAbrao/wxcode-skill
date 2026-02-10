@@ -160,6 +160,11 @@ kill $(cat /tmp/[PROJECT_NAME].pid) # Stop server
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
+**Emit watcher notification:**
+```
+[WXCODE:SERVER_READY] http://localhost:[PORT_BACKEND]
+```
+
 **If server failed:**
 
 ```
@@ -200,5 +205,6 @@ Executes start-dev.sh and displays server status with access URLs.
 - [ ] Server process running
 - [ ] Access URLs displayed
 - [ ] Log file location shown
+- [ ] Emits `[WXCODE:SERVER_READY]` notification
 
 </success_criteria>

@@ -230,6 +230,11 @@ http://localhost:[PORT_BACKEND] (API)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
+**Emit watcher notification:**
+```
+[WXCODE:START_DEV_CREATED] start-dev.sh
+```
+
 ## Phase 5: Start Development Server
 
 After displaying the result, automatically invoke:
@@ -260,6 +265,7 @@ Creates `start-dev.sh` in project root with:
 - [ ] start-dev.sh created (ALWAYS, even if exists)
 - [ ] Permissions set (chmod +x)
 - [ ] Configuration summary displayed
+- [ ] Emits `[WXCODE:START_DEV_CREATED]` notification
 - [ ] /wxcode:start-dev invoked automatically
 
 </success_criteria>

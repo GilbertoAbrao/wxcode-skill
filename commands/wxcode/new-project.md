@@ -1035,6 +1035,12 @@ Generate `app/static/css/tokens.css` (or equivalent path):
 These tokens will be used automatically when generating UI components.
 ```
 
+**Emit watcher notifications:**
+```
+[WXCODE:DESIGN_TOKENS_UPDATED] design/tokens.json
+[WXCODE:DESIGN_VARIABLES_UPDATED] [stack-specific file path]
+```
+
 **Continue to next phase.**
 
 ## Phase C3: Schema Decision
@@ -1974,6 +1980,12 @@ Generate `static/css/tokens.css` (or equivalent path):
 These tokens will be used automatically when generating UI components.
 ```
 
+**Emit watcher notifications:**
+```
+[WXCODE:DESIGN_TOKENS_UPDATED] design/tokens.json
+[WXCODE:DESIGN_VARIABLES_UPDATED] [stack-specific file path]
+```
+
 **Continue to next phase.**
 
 ## Phase 6: Research Decision
@@ -2587,6 +2599,8 @@ Present completion with next steps:
 - [ ] config.json has workflow mode, depth, parallelization → **committed**
 - [ ] **Design system collected** (URL, screenshot, questionnaire, or defaults)
 - [ ] **design/tokens.json created** with DTCG format
+- [ ] **Emits `[WXCODE:DESIGN_TOKENS_UPDATED]`** notification
+- [ ] **Emits `[WXCODE:DESIGN_VARIABLES_UPDATED]`** notification (if stack-specific file generated)
 - [ ] Research completed (if selected) — 4 parallel agents spawned → **committed**
 - [ ] Requirements gathered (from research or conversation)
 - [ ] User scoped each category (v1/v2/out of scope)
@@ -2611,6 +2625,8 @@ Present completion with next steps:
 - [ ] **Design system collected** (URL, screenshot, questionnaire, or defaults)
 - [ ] **design/tokens.json created** with DTCG format
 - [ ] **Stack-specific design config generated** (tailwind.config.js or tokens.css)
+- [ ] **Emits `[WXCODE:DESIGN_TOKENS_UPDATED]`** notification
+- [ ] **Emits `[WXCODE:DESIGN_VARIABLES_UPDATED]`** notification
 - [ ] Schema decision made (all now / on-demand)
 - [ ] Models generated (if "all now" selected)
 - [ ] config.json created with workflow preferences → **committed**

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.5] - 2026-02-10
+
+### Added
+- Watcher notification `[WXCODE:START_DEV_CREATED]` in `create-start-dev` command
+- Watcher notification `[WXCODE:SERVER_READY]` in `start-dev` command
+- Watcher notifications `[WXCODE:DESIGN_TOKENS_UPDATED]` and `[WXCODE:DESIGN_VARIABLES_UPDATED]` in `new-project` after design system creation (both conversion and greenfield modes)
+
 ## [2.2.4] - 2026-02-10
 
 ### Changed
