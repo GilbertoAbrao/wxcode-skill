@@ -796,12 +796,27 @@ Present extraction results:
 ### Spacing (Low confidence)
 - Base unit: 4px (inferred from patterns)
 
----
-Accept these tokens? (yes / adjust / try different URL)
 ```
 
-If "adjust" → allow inline edits.
-If "try different URL" → return to Step 2A.
+**Confirm tokens via AskUserQuestion:**
+
+```
+questions: [
+  {
+    header: "Tokens",
+    question: "Accept these extracted design tokens?",
+    multiSelect: false,
+    options: [
+      { label: "Yes, use these", description: "Generate design tokens from extracted values" },
+      { label: "Adjust values", description: "Let me modify some colors, fonts, or spacing" },
+      { label: "Try different URL", description: "Extract from a different reference site" }
+    ]
+  }
+]
+```
+
+If "Adjust values" → allow inline edits, then re-confirm.
+If "Try different URL" → return to Step 2A.
 
 ### Step 2B: Screenshot Analysis
 
@@ -1763,12 +1778,27 @@ Present extraction results:
 ### Spacing (Low confidence)
 - Base unit: 4px (inferred from patterns)
 
----
-Accept these tokens? (yes / adjust / try different URL)
 ```
 
-If "adjust" → allow inline edits.
-If "try different URL" → return to Step 2A.
+**Confirm tokens via AskUserQuestion:**
+
+```
+questions: [
+  {
+    header: "Tokens",
+    question: "Accept these extracted design tokens?",
+    multiSelect: false,
+    options: [
+      { label: "Yes, use these", description: "Generate design tokens from extracted values" },
+      { label: "Adjust values", description: "Let me modify some colors, fonts, or spacing" },
+      { label: "Try different URL", description: "Extract from a different reference site" }
+    ]
+  }
+]
+```
+
+If "Adjust values" → allow inline edits, then re-confirm.
+If "Try different URL" → return to Step 2A.
 
 ### Step 2B: Screenshot Analysis
 

@@ -230,12 +230,28 @@ questions:
 
 4. **Present extracted values** for confirmation
 
-   Show the user what was detected and ask for confirmation/adjustments.
+   Show the user what was detected with confidence levels.
    (See design-system-flow.md for detailed preview format)
 
-5. **Allow adjustments** before generating
+5. **Confirm via AskUserQuestion (MANDATORY — renders as buttons):**
 
-   User can modify any extracted values before final generation.
+   ```
+   questions: [
+     {
+       header: "Tokens",
+       question: "Accept these extracted design tokens?",
+       multiSelect: false,
+       options: [
+         { label: "Yes, use these", description: "Generate design tokens from extracted values" },
+         { label: "Adjust values", description: "Let me modify some colors, fonts, or spacing" },
+         { label: "Try different URL", description: "Extract from a different reference site" }
+       ]
+     }
+   ]
+   ```
+
+   If "Adjust values" → allow inline edits, then re-confirm.
+   If "Try different URL" → return to step 2.
 
 ---
 
