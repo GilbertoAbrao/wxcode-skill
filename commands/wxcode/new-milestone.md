@@ -53,6 +53,15 @@ This is the brownfield equivalent of new-project. The project exists, PROJECT.md
 ```
 </structured_output>
 
+<output_rules>
+**NEVER use `<sub>` tags or backtick-wrapped slash commands in user-facing output.**
+- WRONG: `<sub>/clear first → fresh context window</sub>`
+- WRONG: `` `/wxcode:plan-phase 1` ``
+- RIGHT: `*Run clear first for fresh context window*`
+- RIGHT: `Run: wxcode:plan-phase 1`
+
+Slash commands in output get parsed as command invocations. Always use plain text.
+</output_rules>
 
 
 <context>
@@ -1166,14 +1175,14 @@ Present completion with next steps:
 
 **Phase [N]: [Phase Name]** — [Goal from ROADMAP.md]
 
-`/wxcode:discuss-phase [N]` — gather context and clarify approach
+Run: wxcode:discuss-phase [N] — gather context and clarify approach
 
 *Run clear first for fresh context window*
 
 ---
 
 **Also available:**
-- `/wxcode:plan-phase [N]` — skip discussion, plan directly
+- wxcode:plan-phase [N] — skip discussion, plan directly
 
 ───────────────────────────────────────────────────────────────
 ```

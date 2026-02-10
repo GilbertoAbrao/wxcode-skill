@@ -78,7 +78,15 @@ This is the most leveraged moment in any project. Deep questioning here means be
 ```
 </structured_output>
 
+<output_rules>
+**NEVER use `<sub>` tags or backtick-wrapped slash commands in user-facing output.**
+- WRONG: `<sub>/clear first → fresh context window</sub>`
+- WRONG: `` `/wxcode:plan-phase 1` ``
+- RIGHT: `*Run clear first for fresh context window*`
+- RIGHT: `Run: wxcode:plan-phase 1`
 
+Slash commands in output get parsed as command invocations. Always use plain text.
+</output_rules>
 
 <process>
 

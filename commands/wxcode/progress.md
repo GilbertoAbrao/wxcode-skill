@@ -43,6 +43,16 @@ or
 ```
 </structured_output>
 
+<output_rules>
+**NEVER use `<sub>` tags or backtick-wrapped slash commands in user-facing output.**
+- WRONG: `<sub>/clear first → fresh context window</sub>`
+- WRONG: `` `/wxcode:plan-phase 1` ``
+- RIGHT: `*Run clear first for fresh context window*`
+- RIGHT: `Run: wxcode:plan-phase 1`
+
+Slash commands in output get parsed as command invocations. Always use plain text.
+</output_rules>
+
 <objective>
 Check project progress, summarize recent work and what's ahead, then intelligently route to the next action - either executing an existing plan or creating the next one.
 

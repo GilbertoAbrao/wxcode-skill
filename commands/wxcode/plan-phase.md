@@ -49,6 +49,16 @@ Emit structured markers alongside human-readable output. Reference: structured-o
 ```
 </structured_output>
 
+<output_rules>
+**NEVER use `<sub>` tags or backtick-wrapped slash commands in user-facing output.**
+- WRONG: `<sub>/clear first → fresh context window</sub>`
+- WRONG: `` `/wxcode:execute-phase 1` ``
+- RIGHT: `*Run clear first for fresh context window*`
+- RIGHT: `Run: wxcode:execute-phase 1`
+
+Slash commands in output get parsed as command invocations. Always use plain text.
+</output_rules>
+
 <objective>
 Create executable phase prompts (PLAN.md files) for a roadmap phase with integrated research and verification.
 

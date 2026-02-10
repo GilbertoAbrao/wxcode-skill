@@ -267,6 +267,11 @@ If `output_language` is not set or is `"en"`, use English.
 6. **Emit HEADER first** - Every command should start with a HEADER
 7. **Emit HEADER+banner together** - No blank line between HEADER comment and visual `## TITLE` heading. This ensures they arrive in the same streaming chunk.
 8. **Respect output_language** - Check config for language preference
+9. **NEVER use `<sub>` tags or backtick-wrapped slash commands in user-facing output** — they get parsed as command invocations. Use plain text instead:
+   - WRONG: `<sub>/clear first → fresh context window</sub>`
+   - WRONG: `` `/wxcode:plan-phase 1` ``
+   - RIGHT: `*Run clear first for fresh context window*`
+   - RIGHT: `Run: wxcode:plan-phase 1`
 
 ---
 

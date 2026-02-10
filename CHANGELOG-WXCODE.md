@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.3] - 2026-02-10
+
+### Fixed
+- Add `<output_rules>` anti-pattern to 5 key commands preventing model from generating `<sub>/clear</sub>` or backtick-wrapped slash commands in user output
+- Add rule 9 to `structured-output.md` reference: never use `<sub>` tags or backtick-wrapped slash commands
+- Strip `/` prefix from command suggestions in `new-milestone.md` Next Up section
+
 ## [2.2.2] - 2026-02-10
 
 ### Fixed
