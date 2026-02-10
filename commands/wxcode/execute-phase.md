@@ -272,7 +272,7 @@ Goal verified ✓
 
 /wxcode:discuss-phase {Z+1} — gather context and clarify approach
 
-<sub>/clear first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ───────────────────────────────────────────────────────────────
 
@@ -308,7 +308,7 @@ All phase goals verified ✓
 
 /wxcode:audit-milestone
 
-<sub>/clear first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ───────────────────────────────────────────────────────────────
 
@@ -348,7 +348,7 @@ Report: .planning/phases/{phase_dir}/{phase}-VERIFICATION.md
 
 /wxcode:plan-phase {Z} --gaps
 
-<sub>/clear first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ───────────────────────────────────────────────────────────────
 

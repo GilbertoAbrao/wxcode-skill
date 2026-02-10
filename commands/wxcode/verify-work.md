@@ -120,7 +120,7 @@ This command requires the wxcode-kb MCP server.
    - Spawn wxcode-planner in --gaps mode to create fix plans
    - Spawn wxcode-plan-checker to verify fix plans
    - Iterate planner ↔ checker until plans pass (max 3)
-   - Present ready status with `/clear` then `/wxcode:execute-phase`
+   - Present ready status with clear then execute-phase
 </process>
 
 <anti_patterns>
@@ -162,7 +162,7 @@ UAT complete ✓
 
 /wxcode:discuss-phase {Z+1} — gather context and clarify approach
 
-<sub>/clear first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ───────────────────────────────────────────────────────────────
 
@@ -193,7 +193,7 @@ Final phase verified ✓
 
 /wxcode:audit-milestone
 
-<sub>/clear first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ───────────────────────────────────────────────────────────────
 
@@ -228,7 +228,7 @@ Fix plans verified ✓
 
 /wxcode:execute-phase {Z} --gaps-only
 
-<sub>/clear first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ───────────────────────────────────────────────────────────────
 

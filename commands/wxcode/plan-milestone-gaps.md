@@ -212,7 +212,7 @@ git commit -m "docs(roadmap): add gap closure phases {N}-{M}"
 
 `/wxcode:plan-phase {N}`
 
-<sub>`/clear` first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ---
 

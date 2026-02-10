@@ -214,7 +214,7 @@ Project state updated: .planning/STATE.md
 
 `/wxcode:plan-phase {decimal_phase}`
 
-<sub>`/clear` first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ---
 

@@ -211,7 +211,7 @@ Read its `<objective>` section.
 
 `/wxcode:execute-phase {phase}`
 
-<sub>`/clear` first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ---
 
@@ -237,7 +237,7 @@ Check if `{phase}-CONTEXT.md` exists in phase directory.
 
 `/wxcode:plan-phase {phase-number}`
 
-<sub>`/clear` first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ---
 
@@ -256,7 +256,7 @@ Check if `{phase}-CONTEXT.md` exists in phase directory.
 
 `/wxcode:discuss-phase {phase}` — gather context and clarify approach
 
-<sub>`/clear` first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ---
 
@@ -285,7 +285,7 @@ UAT.md exists with gaps (diagnosed issues). User needs to plan fixes.
 
 `/wxcode:plan-phase {phase} --gaps`
 
-<sub>`/clear` first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ---
 
@@ -350,7 +350,7 @@ Read ROADMAP.md to get that phase's name and goal.
 
 `/wxcode:discuss-phase {Z+1}` — gather context and clarify approach
 
-<sub>`/clear` first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ---
 
@@ -381,7 +381,7 @@ All {N} phases finished!
 
 `/wxcode:complete-milestone`
 
-<sub>`/clear` first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ---
 
@@ -415,7 +415,7 @@ Ready to plan the next milestone.
 
 `/wxcode:new-milestone`
 
-<sub>`/clear` first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ---
 

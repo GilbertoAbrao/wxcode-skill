@@ -1284,7 +1284,7 @@ mcp__wxcode-kb__mark_project_initialized()
 
 ───────────────────────────────────────────────────────────────
 
-⚠ Run `/clear` before `/wxcode:new-milestone` — project initialization
+⚠ Run clear before starting a new milestone — project initialization
 consumes most of the context window.
 ```
 
@@ -2527,7 +2527,7 @@ Present completion with next steps:
 
 /wxcode:discuss-phase 1 — gather context and clarify approach
 
-<sub>/clear first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ---
 

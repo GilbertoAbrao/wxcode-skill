@@ -571,7 +571,7 @@ Verification: {Passed | Passed with override | Skipped}
 
 /wxcode:execute-phase {X}
 
-<sub>/clear first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ───────────────────────────────────────────────────────────────
 

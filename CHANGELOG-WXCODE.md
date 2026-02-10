@@ -7,10 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.2] - 2026-02-10
+
+### Fixed
+- Replace all `/clear` references in commands with plain text to prevent parsing as command invocations
+- Affects 11 commands: verify-work, execute-phase, new-project, new-milestone, insert-phase, add-phase, plan-phase, progress, audit-milestone, plan-milestone-gaps
+
 ## [2.2.1] - 2026-02-10
 
 ### Fixed
-- `new-project` (conversion mode) now warns to `/clear` before `/wxcode:new-milestone` to avoid context window exhaustion
+- `new-project` (conversion mode) now warns to run clear before new-milestone to avoid context window exhaustion
 
 ## [2.2.0] - 2026-02-07
 

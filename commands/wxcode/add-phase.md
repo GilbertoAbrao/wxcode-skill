@@ -195,7 +195,7 @@ Project state updated: .planning/STATE.md
 
 `/wxcode:plan-phase {N}`
 
-<sub>`/clear` first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ---
 

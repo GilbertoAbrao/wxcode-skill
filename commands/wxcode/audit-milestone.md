@@ -225,7 +225,7 @@ All requirements covered. Cross-phase integration verified. E2E flows complete.
 
 /wxcode:complete-milestone {version}
 
-<sub>/clear first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ───────────────────────────────────────────────────────────────
 
@@ -262,7 +262,7 @@ All requirements covered. Cross-phase integration verified. E2E flows complete.
 
 /wxcode:plan-milestone-gaps
 
-<sub>/clear first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ───────────────────────────────────────────────────────────────
 
@@ -304,7 +304,7 @@ All requirements met. No critical blockers. Accumulated tech debt needs review.
 
 /wxcode:plan-milestone-gaps
 
-<sub>/clear first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ───────────────────────────────────────────────────────────────
 </offer_next>

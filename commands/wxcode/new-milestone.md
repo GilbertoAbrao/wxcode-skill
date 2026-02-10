@@ -1168,7 +1168,7 @@ Present completion with next steps:
 
 `/wxcode:discuss-phase [N]` — gather context and clarify approach
 
-<sub>`/clear` first → fresh context window</sub>
+*Run clear first for fresh context window*
 
 ---
 
