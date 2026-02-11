@@ -10,6 +10,7 @@ allowed-tools:
   - AskUserQuestion
   - mcp__wxcode-kb__get_conversion_stats
   - mcp__wxcode-kb__update_milestone_status
+  - mcp__wxcode-kb__mark_converted
 ---
 
 <objective>
@@ -147,6 +148,22 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
 
    - This updates the MongoDB record to reflect completion
 
+   **Mark ALL elements as converted:**
+
+   Read ELEMENT_LIST from MILESTONE.json (`"elements"` array, fallback to `["element"]`):
+
+   ```
+   For each ELEM in ELEMENT_LIST:
+     mcp__wxcode-kb__mark_converted(
+       element_name=ELEM,
+       project_name=<project_name>,
+       confirm=true,
+       notes="Converted in milestone v{{version}}"
+     )
+   ```
+
+   Display: `✓ Marked ${ELEMENT_COUNT} element(s) as converted`
+
 9. **Regenerate dashboards (MANDATORY):**
 
    ```bash
@@ -201,12 +218,24 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
       - "Skip" — I'll merge manually later
 
     **If "Squash merge":**
+
+    Read MILESTONE.json to determine element(s):
+    ```bash
+    MILESTONE_JSON=$(cat .planning/milestones/*/MILESTONE.json 2>/dev/null | head -1)
+    # Parse elements array and element_count
+    ```
+
     ```bash
     MAIN_PATH=$(git rev-parse --git-common-dir | sed 's/\.git$//')
     BRANCH_NAME=$(git branch --show-current)
     git -C "${MAIN_PATH}" merge --squash ${BRANCH_NAME}
-    git -C "${MAIN_PATH}" commit -m "feat: convert ${ELEMENT_NAME} (v{{version}})"
+
+    # Commit message depends on element count:
+    # Single element:  "feat: convert PAGE_Login (v1.0)"
+    # Multi-element:   "feat: convert 3 elements (v1.0)"
     ```
+    If single element: `git -C "${MAIN_PATH}" commit -m "feat: convert ${ELEMENT_NAME} (v{{version}})"`
+    If multi-element: `git -C "${MAIN_PATH}" commit -m "feat: convert ${ELEMENT_COUNT} elements (v{{version}})"`
 
     **If "Regular merge":**
     ```bash

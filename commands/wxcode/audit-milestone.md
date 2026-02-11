@@ -115,8 +115,10 @@ If a phase is missing VERIFICATION.md, flag it as "unverified phase" — this is
 
 If `.planning/CONVERSION.md` exists:
 
-For each element converted in this milestone (from SUMMARYs):
-1. Call `mcp__wxcode-kb__get_business_rules(element_name)`
+**Determine element list:** Read MILESTONE.json from `.planning/milestones/*/MILESTONE.json` (find the active milestone folder). Use the `"elements"` array. Fallback to `["element"]` if `"elements"` is missing (backward compat with older milestones).
+
+For each element in ELEMENT_LIST:
+1. Call `mcp__wxcode-kb__get_business_rules(element_name=ELEM)`
 2. Check if each rule appears in SUMMARY.md conversion notes
 3. Flag rules with no coverage as "potentially lost"
 

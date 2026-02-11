@@ -2,7 +2,7 @@
 
 **WXCODE** is an AI-powered toolkit for **WinDev/WebDev code conversion projects**, built for Claude Code, OpenCode, and Gemini.
 
-**Current Version:** 2.2.6
+**Current Version:** 2.3.0
 
 ---
 
@@ -69,9 +69,10 @@ Creates the **complete project foundation**:
 
 ```
 /wxcode:new-milestone --element=PAGE_Login --output-project=<id>
+/wxcode:new-milestone --elements=PAGE_Login,PAGE_Dashboard --name=auth-pages --output-project=<id>
 ```
 
-Each milestone converts one WinDev/WebDev element:
+Each milestone converts one or more WinDev/WebDev elements:
 1. Queries Knowledge Base for source code (MCP is Source of Truth)
 2. Plans conversion phases with research and verification
 3. Converts to target stack

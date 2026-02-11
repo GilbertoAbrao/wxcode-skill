@@ -22,7 +22,9 @@ Schema for `.planning/dashboard.json`. This is the **project-level** dashboard w
       "folder_name": "string - e.g., 'v1.0-PAGE_Login'",
       "mongodb_id": "string | null - from MCP create_milestone",
       "wxcode_version": "string - e.g., 'v1.0'",
-      "element_name": "string - e.g., 'PAGE_Login'",
+      "element_name": "string - primary element e.g., 'PAGE_Login'",
+      "elements": ["string array - all elements in milestone"],
+      "display_name": "string | null - user-provided name via --name",
       "status": "pending | in_progress | completed | failed",
       "created_at": "ISO8601 string",
       "completed_at": "ISO8601 string | null"

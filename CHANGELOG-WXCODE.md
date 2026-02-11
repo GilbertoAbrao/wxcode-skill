@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-02-11
+
+### Added
+- **Multi-element milestones** — group related elements into a single milestone to save tokens
+  - New `--elements=A,B,C` argument (comma-separated) alongside existing `--element=A` (backward compat)
+  - Optional `--name=auth-pages` for custom milestone folder name
+  - Folder naming: single `v1.0-PAGE_Login`, multi `v1.0-PAGE_Login+2more`, named `v1.0-auth-pages`
+  - MILESTONE.json always has both `"element"` (primary, backward compat) and `"elements"` (array)
+  - Primary element gets full MCP context (MILESTONE-CONTEXT.md + JSONs), additional elements get lightweight summary
+  - Table dependencies collected from ALL elements (union + deduplicate) for schema generation
+  - Comprehension data (business rules, similar elements) loaded for ALL elements
+  - Roadmapper instructed on cross-element vs per-element phase organization
+  - `complete-milestone` marks ALL elements as converted via `mark_converted` loop
+  - `audit-milestone` reads element list from MILESTONE.json for business rule coverage
+  - Dashboard generator reads MILESTONE.json for authoritative `elements` array with regex fallback
+  - Dashboard schemas updated with `elements` array and `display_name` fields
+
 ## [2.2.6] - 2026-02-10
 
 ### Fixed

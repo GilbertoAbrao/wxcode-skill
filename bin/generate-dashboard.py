@@ -481,14 +481,31 @@ def generate_milestone_dashboard(
         is_archived: Whether this milestone is archived
     """
 
-    # Parse milestone info from folder name
-    match = re.match(r'(v[\d.]+)-(.+)', milestone_name)
-    if match:
-        version = match.group(1)
-        element = match.group(2)
+    # Try to read MILESTONE.json for authoritative element data
+    milestone_json_path = planning_dir / "MILESTONE.json"
+    milestone_meta = None
+    if milestone_json_path.exists():
+        try:
+            milestone_meta = json.loads(milestone_json_path.read_text())
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    # Parse milestone info from MILESTONE.json or fall back to folder name regex
+    if milestone_meta:
+        version = milestone_meta.get("version", "v1.0")
+        element = milestone_meta.get("element", milestone_name)
+        elements = milestone_meta.get("elements", [element])
+        display_name = milestone_meta.get("display_name")
     else:
-        version = "v1.0"
-        element = milestone_name
+        match = re.match(r'(v[\d.]+)-(.+)', milestone_name)
+        if match:
+            version = match.group(1)
+            element = match.group(2)
+        else:
+            version = "v1.0"
+            element = milestone_name
+        elements = [element]
+        display_name = None
 
     # Use root_planning_dir for fallback if provided
     if root_planning_dir is None:
@@ -611,6 +628,8 @@ def generate_milestone_dashboard(
             "mongodb_id": None,  # Would need MCP to get this
             "wxcode_version": version,
             "element_name": element,
+            "elements": elements,
+            "display_name": display_name,
             "status": milestone_status,
             "created_at": datetime.now().isoformat() + "Z",
             "completed_at": datetime.now().isoformat() + "Z" if is_archived else None
@@ -740,19 +759,38 @@ def generate_project_dashboard(
     # Build milestones array
     milestones_array = []
     for m in milestones:
-        match = re.match(r'(v[\d.]+)-(.+)', m["folder_name"])
-        if match:
-            version = match.group(1)
-            element = match.group(2)
+        # Try to read MILESTONE.json for authoritative element data
+        milestone_json_path = m["path"] / "MILESTONE.json"
+        milestone_meta = None
+        if milestone_json_path.exists():
+            try:
+                milestone_meta = json.loads(milestone_json_path.read_text())
+            except (json.JSONDecodeError, OSError):
+                pass
+
+        if milestone_meta:
+            version = milestone_meta.get("version", "v1.0")
+            element = milestone_meta.get("element", m["folder_name"])
+            elements = milestone_meta.get("elements", [element])
+            display_name = milestone_meta.get("display_name")
         else:
-            version = "v1.0"
-            element = m["folder_name"]
+            match = re.match(r'(v[\d.]+)-(.+)', m["folder_name"])
+            if match:
+                version = match.group(1)
+                element = match.group(2)
+            else:
+                version = "v1.0"
+                element = m["folder_name"]
+            elements = [element]
+            display_name = None
 
         milestones_array.append({
             "folder_name": m["folder_name"],
             "mongodb_id": None,
             "wxcode_version": version,
             "element_name": element,
+            "elements": elements,
+            "display_name": display_name,
             "status": "completed" if m["archived"] else "in_progress",
             "created_at": datetime.now().isoformat() + "Z",
             "completed_at": None

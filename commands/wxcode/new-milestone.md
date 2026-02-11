@@ -1,7 +1,7 @@
 ---
 name: wxcode:new-milestone
 description: Start a new milestone cycle — update PROJECT.md and route to requirements
-argument-hint: "--element=PAGE_Login --output-project=xxx (for conversion projects)"
+argument-hint: "--element=PAGE_Login --output-project=xxx OR --elements=A,B,C --output-project=xxx"
 allowed-tools:
   - Read
   - Write
@@ -68,10 +68,15 @@ Slash commands in output get parsed as command invocations. Always use plain tex
 **Arguments parsing:**
 
 For **conversion projects** (UI-triggered):
-- `--element=PAGE_Login`: Element name to convert (required)
+- `--element=PAGE_Login`: Single element to convert (backward compat)
+- `--elements=PAGE_Login,PAGE_Dashboard`: Comma-separated list of elements (multi-element milestone)
 - `--output-project=xxx`: MongoDB OutputProject ID (required)
+- `--name=auth-pages`: Custom milestone display name (optional, for multi-element)
 
-Example: `/wxcode:new-milestone --element=PAGE_Login --output-project=507f1f77bcf86cd799439011`
+**Rules:** Use `--element` OR `--elements`, not both. If neither provided, error.
+
+Example (single): `/wxcode:new-milestone --element=PAGE_Login --output-project=507f1f77...`
+Example (multi): `/wxcode:new-milestone --elements=PAGE_Login,PAGE_Dashboard --name=auth-pages --output-project=507f1f77...`
 
 For **greenfield projects** (CLI):
 - Milestone name as positional argument (optional - will prompt if not provided)
@@ -164,22 +169,37 @@ Tried 3 times with 10s delay between attempts.
 
 Parse from $ARGUMENTS:
 ```
---element=PAGE_Login     → ELEMENT_NAME
---output-project=xxx     → OUTPUT_PROJECT_ID
+--element=PAGE_Login             → single element (backward compat)
+--elements=PAGE_Login,PAGE_Dash  → comma-separated list
+--output-project=xxx             → OUTPUT_PROJECT_ID
+--name=auth-pages                → MILESTONE_DISPLAY_NAME (optional)
 ```
 
-**If missing `--element` or `--output-project`:**
+**Derive:**
+```
+If --elements: ELEMENT_LIST = split by comma; ELEMENT_NAME = first; IS_MULTI = true
+If --element:  ELEMENT_LIST = [value]; ELEMENT_NAME = value; IS_MULTI = false
+If both: ERROR — use --element OR --elements, not both
+If neither: ERROR (see below)
+```
+
+**ELEMENT_COUNT** = length of ELEMENT_LIST.
+
+**If missing element arg or `--output-project`:**
 ```
 ╔══════════════════════════════════════════════════════════════╗
 ║  ERROR: Missing required arguments                            ║
 ╚══════════════════════════════════════════════════════════════╝
 
 Conversion projects require:
-  --element=<element_name>
+  --element=<element_name>  OR  --elements=<A,B,C>
   --output-project=<output_project_id>
 
-Example:
+Example (single):
   /wxcode:new-milestone --element=PAGE_Login --output-project=507f1f77...
+
+Example (multi):
+  /wxcode:new-milestone --elements=PAGE_Login,PAGE_Dashboard --output-project=507f1f77...
 ```
 **STOP.**
 
@@ -205,8 +225,18 @@ Parse the highest version from BOTH sources. Placeholder files reserve versions 
 Store:
 ```
 WXCODE_VERSION="v1.0"  # determined automatically
-MILESTONE_FOLDER_NAME="${WXCODE_VERSION}-${ELEMENT_NAME}"
-# Example: "v1.0-PAGE_Login"
+
+# Folder naming:
+If IS_MULTI and MILESTONE_DISPLAY_NAME:
+  MILESTONE_FOLDER_NAME="${WXCODE_VERSION}-${MILESTONE_DISPLAY_NAME}"
+  # Example: "v1.0-auth-pages"
+Elif IS_MULTI:
+  REMAINING = ELEMENT_COUNT - 1
+  MILESTONE_FOLDER_NAME="${WXCODE_VERSION}-${ELEMENT_NAME}+${REMAINING}more"
+  # Example: "v1.0-PAGE_Login+2more"
+Else:
+  MILESTONE_FOLDER_NAME="${WXCODE_VERSION}-${ELEMENT_NAME}"
+  # Example: "v1.0-PAGE_Login"
 ```
 
 ### Step 3: Create milestone folder and placeholder
@@ -222,13 +252,20 @@ cat > .planning/milestones/${MILESTONE_FOLDER_NAME}/MILESTONE.json << EOF
 {
   "version": "${WXCODE_VERSION}",
   "element": "${ELEMENT_NAME}",
+  "elements": ${JSON_ARRAY_OF_ELEMENT_LIST},
+  "display_name": ${MILESTONE_DISPLAY_NAME or null},
   "status": "in_progress",
-  "branch": "milestone/${WXCODE_VERSION}-${ELEMENT_NAME}",
-  "worktree": "../$(basename $PWD)-${WXCODE_VERSION}-${ELEMENT_NAME}",
+  "branch": "milestone/${MILESTONE_FOLDER_NAME}",
+  "worktree": "../$(basename $PWD)-${MILESTONE_FOLDER_NAME}",
   "created_at": "$(date +%Y-%m-%d)"
 }
 EOF
 ```
+
+**Notes:**
+- `"element"` is always the primary (first) element — backward compatible
+- `"elements"` is always an array (even for single: `["PAGE_Login"]`)
+- `"display_name"` is null if not provided via `--name`
 
 Display:
 ```
@@ -261,11 +298,26 @@ mcp__wxcode-kb__create_milestone(
 MONGODB_MILESTONE_ID=[returned milestone_id]
 ```
 
+**If IS_MULTI:** For each additional element (all except primary), enrich the MILESTONE-CONTEXT.md with a lightweight summary. Do NOT generate full JSONs — detailed data is fetched on-demand via MCP during execution.
+
+For each additional element:
+1. Call `mcp__wxcode-kb__get_element(element_name=ELEM)` — get type, layer, stats
+2. Call `mcp__wxcode-kb__get_dependencies(element_name=ELEM, direction="uses")` — get table deps
+
+Append to MILESTONE-CONTEXT.md:
+```markdown
+## Additional Element: ${ELEM}
+- **Type:** ${type} | **Layer:** ${layer}
+- **Controls:** ${control_count} (${controls_with_code} with code)
+- **Procedures:** ${procedure_count}
+- **Table dependencies:** ${table_list}
+```
+
 Display confirmation:
 ```
 ✓ Milestone created in MongoDB: ${MONGODB_MILESTONE_ID}
 ✓ Version: ${WXCODE_VERSION}
-✓ Element: ${ELEMENT_NAME}
+✓ Elements: ${ELEMENT_LIST} (${ELEMENT_COUNT} total)
 ```
 
 **If MCP call fails:**
@@ -384,15 +436,20 @@ The user opens the worktree in their IDE. A fresh Claude Code session in that wo
 
 **Purpose:** The new application accesses the EXISTING legacy database. Before converting an element, ensure all required table models exist.
 
-**Step 1: Get element's table dependencies**
+**Step 1: Get table dependencies for ALL elements**
 
+For each element in ELEMENT_LIST:
 ```
-mcp__wxcode-kb__get_dependencies(element_name, direction="uses")
+mcp__wxcode-kb__get_dependencies(element_name=ELEM, direction="uses")
 ```
 
-Filter for TABLE dependencies:
+Filter for TABLE dependencies and **union + deduplicate** across all elements:
 ```python
-table_deps = [dep for dep in dependencies if dep.type == "TABLE"]
+all_table_deps = set()
+for elem in ELEMENT_LIST:
+    deps = get_dependencies(elem, direction="uses")
+    all_table_deps |= {dep for dep in deps if dep.type == "TABLE"}
+table_deps = sorted(all_table_deps)
 ```
 
 **Step 2: Check which models already exist**
@@ -412,7 +469,7 @@ grep -r "__tablename__" app/models/ 2>/dev/null | grep -oE '"[A-Z_]+"' | tr -d '
 If tables are missing models:
 
 ```
-◆ Element ${ELEMENT_NAME} needs tables: [TABLE_A, TABLE_B, ...]
+◆ Elements need tables: [TABLE_A, TABLE_B, ...] (combined from ${ELEMENT_COUNT} elements)
   Missing models: [TABLE_A]
   Generating...
 ```
@@ -441,7 +498,7 @@ Task(wxcode-schema-generator):
 **Step 4: Confirm models ready**
 
 ```
-✓ Database models ready for ${ELEMENT_NAME}
+✓ Database models ready for ${ELEMENT_COUNT} element(s)
   - Existing: [N] tables
   - Generated: [M] tables
 ```
@@ -454,30 +511,36 @@ Task(wxcode-schema-generator):
 
 **Skip if not a conversion project** (no `.planning/CONVERSION.md`).
 
-### Step 1: Get business rules
+### Step 1: Get business rules for ALL elements
 
+For each element in ELEMENT_LIST:
 ```
-mcp__wxcode-kb__get_business_rules(element_name=ELEMENT_NAME)
+mcp__wxcode-kb__get_business_rules(element_name=ELEM)
 ```
 
-### Step 2: Get similar elements
+Aggregate all rules, deduplicating by rule ID.
 
+### Step 2: Get similar elements for ALL elements
+
+For each element in ELEMENT_LIST:
 ```
-mcp__wxcode-kb__semantic_search(query=ELEMENT_NAME, search_mode="hybrid")
+mcp__wxcode-kb__semantic_search(query=ELEM, search_mode="hybrid")
 ```
+
+Deduplicate similar elements across queries.
 
 ### Step 3: Display context
 
 If comprehension data found:
 ```
-✓ Comprehension data loaded
+✓ Comprehension data loaded for ${ELEMENT_COUNT} element(s)
   - {N} business rules found
   - {M} similar elements ({K} already converted)
 ```
 
 If no data: Skip gracefully:
 ```
-ℹ No comprehension data for ${ELEMENT_NAME} (run `wxcode comprehend` first)
+ℹ No comprehension data found (run `wxcode comprehend` first)
 ```
 
 Business rules and similar elements inform research and roadmap phases.
@@ -1042,6 +1105,13 @@ Create roadmap for milestone v[X.Y]:
 6. Write files immediately (ROADMAP.md, STATE.md, update REQUIREMENTS.md traceability)
 7. Return ROADMAP CREATED with summary
 
+**Multi-element milestone:** This milestone converts ${ELEMENT_COUNT} element(s): ${ELEMENT_LIST}
+- If elements share tables/procedures: organize phases cross-element
+  (Phase 1 = shared models, Phase 2 = shared routes, Phase 3 = per-element templates)
+- If elements are independent: organize per-element
+  (Phase 1 = Element A complete, Phase 2 = Element B complete)
+- The agent fetches detailed element data on-demand via MCP during planning.
+
 Write files first, then return. This ensures artifacts persist even if context is lost.
 </instructions>
 ", subagent_type="wxcode-roadmapper", model="{roadmapper_model}", description="Create roadmap")
@@ -1190,16 +1260,20 @@ Run: wxcode:discuss-phase [N] — gather context and clarify approach
 </process>
 
 <success_criteria>
-- [ ] **(Conversion projects)** Arguments parsed: --element and --output-project
+- [ ] **(Conversion projects)** Arguments parsed: --element/--elements and --output-project
+- [ ] **(Conversion projects)** ELEMENT_LIST derived correctly (single or multi)
 - [ ] **(Conversion projects)** Version determined automatically (v1.0, v1.1, etc.)
-- [ ] **(Conversion projects)** Milestone folder created: `.planning/milestones/<folder>`
-- [ ] **(Conversion projects)** MILESTONE.json placeholder created (version reserved)
+- [ ] **(Conversion projects)** Milestone folder named correctly (single: `v1.0-PAGE_Login`, multi: `v1.0-PAGE_Login+2more` or `v1.0-auth-pages`)
+- [ ] **(Conversion projects)** MILESTONE.json has both `"element"` (primary) and `"elements"` (array) fields
 - [ ] **(If worktree enabled)** Placeholder committed on main
 - [ ] **(If worktree enabled)** Branch and worktree created
 - [ ] **(If worktree enabled)** User instructed to open worktree in new IDE window
 - [ ] **(Conversion projects - CRITICAL)** `mcp__wxcode-kb__create_milestone` called with confirm=true
 - [ ] **(Conversion projects - CRITICAL)** MONGODB_MILESTONE_ID stored from MCP response
-- [ ] **(Conversion projects)** Comprehension data loaded (if available)
+- [ ] **(Multi-element)** Additional elements enriched in MILESTONE-CONTEXT.md (lightweight summary)
+- [ ] **(Conversion projects)** Table dependencies collected from ALL elements (union + deduplicate)
+- [ ] **(Conversion projects)** Comprehension data loaded for ALL elements (if available)
+- [ ] **(Multi-element)** Roadmapper instructed on cross-element vs per-element phase organization
 - [ ] PROJECT.md updated (stable info only, no volatile milestone state)
 - [ ] STATE.md updated with Current Milestone section and reset position
 - [ ] MILESTONE-CONTEXT.md consumed and deleted (if existed)
