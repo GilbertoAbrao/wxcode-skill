@@ -293,16 +293,19 @@ mcp__wxcode-kb__create_milestone(
 )
 ```
 
-**After MCP call succeeds**, store the returned ID:
+**After MCP call succeeds**, store the returned values:
 ```
 MONGODB_MILESTONE_ID=[returned milestone_id]
 ```
 
+**Extract PROJECT_NAME from MILESTONE-CONTEXT.md:**
+Read the generated MILESTONE-CONTEXT.md and extract the project name (e.g., `Linkpay_Comissao_1c7aac45`). Store as `PROJECT_NAME`. This is **required** for all subsequent MCP calls to avoid element disambiguation errors.
+
 **If IS_MULTI:** For each additional element (all except primary), enrich the MILESTONE-CONTEXT.md with a lightweight summary. Do NOT generate full JSONs — detailed data is fetched on-demand via MCP during execution.
 
 For each additional element:
-1. Call `mcp__wxcode-kb__get_element(element_name=ELEM)` — get type, layer, stats
-2. Call `mcp__wxcode-kb__get_dependencies(element_name=ELEM, direction="uses")` — get table deps
+1. Call `mcp__wxcode-kb__get_element(element_name=ELEM, project_name=PROJECT_NAME)` — get type, layer, stats
+2. Call `mcp__wxcode-kb__get_dependencies(element_name=ELEM, project_name=PROJECT_NAME, direction="uses")` — get table deps
 
 Append to MILESTONE-CONTEXT.md:
 ```markdown
@@ -331,6 +334,7 @@ Display confirmation:
 These values are used in later phases:
 - `ELEMENT_NAME` — for context gathering
 - `OUTPUT_PROJECT_ID` — for MCP calls
+- `PROJECT_NAME` — for MCP element disambiguation (CRITICAL: pass to ALL MCP calls)
 - `WXCODE_VERSION` — for dashboard and STATE.md
 - `MILESTONE_FOLDER_NAME` — for dashboard filename
 - `MONGODB_MILESTONE_ID` — for dashboard content
@@ -440,7 +444,7 @@ The user opens the worktree in their IDE. A fresh Claude Code session in that wo
 
 For each element in ELEMENT_LIST:
 ```
-mcp__wxcode-kb__get_dependencies(element_name=ELEM, direction="uses")
+mcp__wxcode-kb__get_dependencies(element_name=ELEM, project_name=PROJECT_NAME, direction="uses")
 ```
 
 Filter for TABLE dependencies and **union + deduplicate** across all elements:
@@ -515,27 +519,40 @@ Task(wxcode-schema-generator):
 
 For each element in ELEMENT_LIST:
 ```
-mcp__wxcode-kb__get_business_rules(element_name=ELEM)
+mcp__wxcode-kb__get_business_rules(element_name=ELEM, project_name=PROJECT_NAME)
 ```
 
 Aggregate all rules, deduplicating by rule ID.
 
-### Step 2: Get similar elements for ALL elements
+### Step 2: Get screenshots and planes for ALL elements
 
 For each element in ELEMENT_LIST:
 ```
-mcp__wxcode-kb__semantic_search(query=ELEM, search_mode="hybrid")
+mcp__wxcode-kb__get_element_screenshot(element_name=ELEM, project_name=PROJECT_NAME)
+mcp__wxcode-kb__get_element_planes(element_name=ELEM, project_name=PROJECT_NAME)
+```
+
+If screenshots exist, **read the image files** to visually understand the UI. This informs the roadmapper about layout, visual patterns, and component choices.
+
+Store screenshot paths for inclusion in MILESTONE-CONTEXT.md or roadmapper prompt.
+
+### Step 3: Get similar elements for ALL elements
+
+For each element in ELEMENT_LIST:
+```
+mcp__wxcode-kb__semantic_search(query=ELEM, project_name=PROJECT_NAME, search_mode="hybrid")
 ```
 
 Deduplicate similar elements across queries.
 
-### Step 3: Display context
+### Step 4: Display context
 
 If comprehension data found:
 ```
 ✓ Comprehension data loaded for ${ELEMENT_COUNT} element(s)
   - {N} business rules found
   - {M} similar elements ({K} already converted)
+  - {P} screenshots loaded
 ```
 
 If no data: Skip gracefully:
@@ -543,7 +560,7 @@ If no data: Skip gracefully:
 ℹ No comprehension data found (run `wxcode comprehend` first)
 ```
 
-Business rules and similar elements inform research and roadmap phases.
+Business rules, screenshots, and similar elements inform research and roadmap phases.
 
 ---
 

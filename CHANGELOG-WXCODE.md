@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.1] - 2026-02-11
+
+### Fixed
+- **MCP disambiguation** — all MCP calls in `new-milestone` now pass `project_name` to avoid "found in multiple projects" errors
+  - Extract `PROJECT_NAME` from MILESTONE-CONTEXT.md after `create_milestone` and store for all subsequent calls
+  - Applies to `get_dependencies`, `get_business_rules`, `get_element_screenshot`, `get_element_planes`, `semantic_search`
+
+### Added
+- **Element screenshots** — `new-milestone` now explicitly loads and views element screenshots during comprehension phase
+- **Planes detection** — `new-milestone` now calls `get_element_planes` during comprehension for tab/wizard detection
+
 ## [2.3.0] - 2026-02-11
 
 ### Added
