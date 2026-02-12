@@ -11,7 +11,9 @@ allowed-tools:
   - Grep
   - Task
   - WebFetch
+  - AskUserQuestion
   - mcp__context7__*
+  - mcp__wxcode-kb__*
 ---
 
 <execution_context>
@@ -307,7 +309,94 @@ RESEARCH_CONTENT=$(cat "${PHASE_DIR}"/*-RESEARCH.md 2>/dev/null)
 # Gap closure files (only if --gaps mode)
 VERIFICATION_CONTENT=$(cat "${PHASE_DIR}"/*-VERIFICATION.md 2>/dev/null)
 UAT_CONTENT=$(cat "${PHASE_DIR}"/*-UAT.md 2>/dev/null)
+
+# Milestone context (conversion projects only)
+MILESTONE_CONTEXT_CONTENT=""
+if [ -f .planning/CONVERSION.md ]; then
+  # Find the active milestone directory
+  MILESTONE_DIR=$(ls -d .milestones/v*/ 2>/dev/null | tail -1)
+  if [ -n "$MILESTONE_DIR" ]; then
+    MILESTONE_CONTEXT_CONTENT=$(cat "${MILESTONE_DIR}/MILESTONE-CONTEXT.md" 2>/dev/null)
+  fi
+fi
 ```
+
+## 7.5. Ensure Dependency Strategy (Conversion Projects Only)
+
+**Skip if:** `.planning/CONVERSION.md` does not exist (greenfield project).
+**Skip if:** `MILESTONE_CONTEXT_CONTENT` already contains "## Dependency Strategy".
+
+If this is a conversion project and the milestone context has NO dependency strategy section, the milestone was created before v2.4.0. Run the dependency tree analysis now.
+
+**Step 1: Identify elements from milestone context**
+
+Extract element names from MILESTONE-CONTEXT.md (look for element names in the header or element list section).
+
+```bash
+# Extract element names from milestone context
+ELEMENT_LIST=$(grep -oP '(?<=element_name["\s:]+)[A-Za-z_]+' "${MILESTONE_DIR}/MILESTONE-CONTEXT.md" 2>/dev/null)
+# Or from the milestone folder name
+if [ -z "$ELEMENT_LIST" ]; then
+  MILESTONE_FOLDER=$(basename "$MILESTONE_DIR")
+  ELEMENT_LIST=$(echo "$MILESTONE_FOLDER" | sed 's/^v[0-9.]*-//' | tr '+' '\n' | sed 's/[0-9]*more//')
+fi
+```
+
+Also extract PROJECT_NAME from CONVERSION.md:
+```bash
+PROJECT_NAME=$(grep -oP 'project_name["\s:]+\K[^"]+' .planning/CONVERSION.md 2>/dev/null | head -1)
+```
+
+**Step 2: Build dependency tree (same as new-milestone Phase 1.86)**
+
+For each element, build the tree using recursive `get_dependencies` calls:
+
+```
+# Level D1: Direct dependencies
+D1 = mcp__wxcode-kb__get_dependencies(element_name=ELEM, project_name=PROJECT_NAME, direction="uses")
+     → filter to Procedure and Class only (exclude TABLE)
+     → exclude local procedures (names containing "ELEM." prefix)
+
+# Level D2: Dependencies of D1
+For each D1 item (parallel where possible):
+  D2 = mcp__wxcode-kb__get_dependencies(element_name=D1_ITEM.name, project_name=PROJECT_NAME, direction="uses")
+
+# Level D3: Dependencies of D2
+For each D2 item (parallel where possible):
+  D3 = mcp__wxcode-kb__get_dependencies(element_name=D2_ITEM.name, project_name=PROJECT_NAME, direction="uses")
+```
+
+Track visited nodes for deduplication. Keep shallowest depth per node.
+
+**Step 3: Get signatures**
+
+```
+For each unique procedure:
+  mcp__wxcode-kb__get_procedure(procedure_name=PROC_NAME, project_name=PROJECT_NAME)
+  → extract: signature, parameters[], return_type
+```
+
+**Step 4: Display tree and ask user for depth**
+
+Present the dependency tree (same format as new-milestone Phase 1.86) and use AskUserQuestion:
+
+```
+header: "Dep depth"
+question: "Até qual nível de dependências deseja implementar neste milestone?"
+options:
+  - "D0 — Apenas o elemento (Stubs para todas as dependências)"
+  - "D1 — Dependências diretas (Recommended)"
+  - "D2 — Até segundo nível"
+  - "D3 — Todas as dependências"
+```
+
+**Step 5: Write dependency strategy to MILESTONE-CONTEXT.md**
+
+Append the "## Dependency Strategy" section with IMPLEMENT_LIST, STUB_LIST, and Already Converted tables (same format as new-milestone Phase 1.86 Step 5).
+
+Update `MILESTONE_CONTEXT_CONTENT` with the new content.
+
+Display: `✓ Dependency strategy defined — D${N}: ${IMPLEMENT_LIST.length} to implement, ${STUB_LIST.length} stubs`
 
 ## 8. Spawn wxcode-planner Agent
 
@@ -352,6 +441,9 @@ IMPORTANT: If phase context exists below, it contains USER DECISIONS from /wxcod
 **Gap Closure (if --gaps mode):**
 {verification_content}
 {uat_content}
+
+**Milestone Context (conversion projects only):**
+{milestone_context_content}
 
 </planning_context>
 
@@ -604,6 +696,8 @@ Verification: {Passed | Passed with override | Skipped}
 - [ ] Plans created (PLANNING COMPLETE or CHECKPOINT handled)
 - [ ] wxcode-plan-checker spawned with CONTEXT.md (verifies context compliance)
 - [ ] Verification passed OR user override OR max iterations with user decision
+- [ ] **(Conversion projects)** Dependency strategy ensured in MILESTONE-CONTEXT.md before planning
+- [ ] **(Conversion projects)** Milestone context passed to planner agent
 - [ ] User sees status between agent spawns
 - [ ] User knows next steps (execute or review)
 </success_criteria>

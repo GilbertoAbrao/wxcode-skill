@@ -184,12 +184,25 @@ N/A (conversion-only phase).
 
 ---
 
-## Command: plan-phase
+## Command: plan-phase (Step 7.5)
 
 ### Standard Behavior
 Creates PLAN.md with tasks.
 
 ### Conversion Extension
+
+**Dependency strategy fallback (Step 7.5):**
+
+If MILESTONE-CONTEXT.md exists but has no "Dependency Strategy" section (milestone created before v2.4.0), `plan-phase` runs the same dependency tree analysis as `new-milestone` Phase 1.86:
+
+1. Extract element names and project_name from milestone context / CONVERSION.md
+2. Build recursive dependency tree (D1→D2→D3) via `get_dependencies`
+3. Get procedure signatures via `get_procedure`
+4. Display tree, ask user for depth via AskUserQuestion
+5. Write "Dependency Strategy" section to MILESTONE-CONTEXT.md
+6. Pass full milestone context to planner agent
+
+This ensures milestones created with older WXCODE versions still get dependency-aware planning.
 
 **Plans must include conversion context:**
 
@@ -247,6 +260,7 @@ Executes plans, spawns executors.
 **Executor context includes:**
 - Legacy analysis from RESEARCH.md
 - Conversion decisions from CONTEXT.md
+- MILESTONE-CONTEXT.md (has dependency signatures for stub generation)
 - MCP tools for runtime queries
 
 **Executor behavior:**

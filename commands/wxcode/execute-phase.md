@@ -389,14 +389,26 @@ PLAN_01_CONTENT=$(cat "{plan_01_path}")
 PLAN_02_CONTENT=$(cat "{plan_02_path}")
 PLAN_03_CONTENT=$(cat "{plan_03_path}")
 STATE_CONTENT=$(cat .planning/STATE.md)
+
+# For conversion projects: read MILESTONE-CONTEXT.md (has dependency signatures for stub generation)
+MILESTONE_CONTEXT=""
+if [ -f .planning/CONVERSION.md ]; then
+  MILESTONE_DIR=$(ls -d .milestones/v*/ 2>/dev/null | tail -1)
+  if [ -n "$MILESTONE_DIR" ]; then
+    MILESTONE_CONTEXT=$(cat "${MILESTONE_DIR}/MILESTONE-CONTEXT.md" 2>/dev/null)
+  fi
+fi
 ```
 
 Spawn all plans in a wave with a single message containing multiple Task calls, with inlined content:
 
 ```
-Task(prompt="Execute plan at {plan_01_path}\n\nPlan:\n{plan_01_content}\n\nProject state:\n{state_content}", subagent_type="wxcode-executor", model="{executor_model}")
-Task(prompt="Execute plan at {plan_02_path}\n\nPlan:\n{plan_02_content}\n\nProject state:\n{state_content}", subagent_type="wxcode-executor", model="{executor_model}")
-Task(prompt="Execute plan at {plan_03_path}\n\nPlan:\n{plan_03_content}\n\nProject state:\n{state_content}", subagent_type="wxcode-executor", model="{executor_model}")
+# For conversion projects, append milestone context to each prompt:
+# "\n\nMilestone context:\n{milestone_context}"
+
+Task(prompt="Execute plan at {plan_01_path}\n\nPlan:\n{plan_01_content}\n\nProject state:\n{state_content}\n\nMilestone context:\n{milestone_context}", subagent_type="wxcode-executor", model="{executor_model}")
+Task(prompt="Execute plan at {plan_02_path}\n\nPlan:\n{plan_02_content}\n\nProject state:\n{state_content}\n\nMilestone context:\n{milestone_context}", subagent_type="wxcode-executor", model="{executor_model}")
+Task(prompt="Execute plan at {plan_03_path}\n\nPlan:\n{plan_03_content}\n\nProject state:\n{state_content}\n\nMilestone context:\n{milestone_context}", subagent_type="wxcode-executor", model="{executor_model}")
 ```
 
 All three run in parallel. Task tool blocks until all complete.

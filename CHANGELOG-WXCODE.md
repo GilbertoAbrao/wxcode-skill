@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.1] - 2026-02-11
+
+### Fixed
+- **plan-phase now ensures dependency strategy** — if a milestone was created before v2.4.0, `plan-phase` runs the dependency tree analysis (D1→D3) before spawning the planner, ensuring stubs and IMPLEMENT_LIST are always available
+- **plan-phase passes MILESTONE-CONTEXT.md to planner** — planner agent now receives full dependency strategy (IMPLEMENT_LIST, STUB_LIST, signatures) inline via orchestrator context
+- **execute-phase passes MILESTONE-CONTEXT.md to executors** — executor agents receive milestone context with procedure signatures for accurate stub generation
+- **wxcode-planner reads MILESTONE-CONTEXT.md** — gather_phase_context step now explicitly reads MILESTONE-CONTEXT.md alongside CONTEXT.md, RESEARCH.md, and LEGACY.md
+- **plan-phase allowed-tools updated** — added `AskUserQuestion` and `mcp__wxcode-kb__*` for dependency tree analysis fallback
+
 ## [2.4.0] - 2026-02-11
 
 ### Added

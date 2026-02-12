@@ -1140,11 +1140,17 @@ cat "$PHASE_DIR"/*-DISCOVERY.md 2>/dev/null
 
 # Read LEGACY.md if exists (from legacy analyzer with comprehension data)
 cat "$PHASE_DIR"/*-LEGACY.md 2>/dev/null
+
+# Read MILESTONE-CONTEXT.md if exists (from /wxcode:new-milestone — has dependency strategy)
+MILESTONE_DIR=$(ls -d .milestones/v*/ 2>/dev/null | tail -1)
+cat "$MILESTONE_DIR/MILESTONE-CONTEXT.md" 2>/dev/null
 ```
 
 **If CONTEXT.md exists:** Honor user's vision, prioritize their essential features, respect stated boundaries. These are locked decisions - do not revisit.
 
 **If RESEARCH.md exists:** Use standard_stack, architecture_patterns, dont_hand_roll, common_pitfalls. Research has already identified the right tools.
+
+**If MILESTONE-CONTEXT.md has "Dependency Strategy":** Use IMPLEMENT_LIST, STUB_LIST, and Already Converted tables to plan tasks. This is also provided inline by the orchestrator in `<planning_context>` — check both sources.
 </step>
 
 <step name="break_into_tasks">
