@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.2] - 2026-02-12
+
+### Fixed
+- **Dashboard: active milestones no longer shown as archived** — `find_milestones` now reads MILESTONE.json `status` field instead of assuming all milestones in `.planning/milestones/` are archived; only marks as archived when status is "completed" or "archived"
+- **Dashboard: roadmap phases without directories now included** — phases declared in ROADMAP.md that haven't been planned yet (no phase directory) are shown as "pending" with empty plans, giving complete visibility of all work ahead
+
 ## [2.4.1] - 2026-02-11
 
 ### Fixed

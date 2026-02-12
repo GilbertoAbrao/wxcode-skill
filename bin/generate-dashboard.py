@@ -549,6 +549,21 @@ def generate_milestone_dashboard(
             phase["goal"] = roadmap_info[phase_num].get("goal", "")
             phase["requirements_covered"] = roadmap_info[phase_num].get("requirements", [])
 
+    # Add roadmap phases that don't have directories yet (e.g., Phase 3 not planned yet)
+    existing_phase_nums = {p["number"] for p in phases}
+    for num, info in sorted(roadmap_info.items()):
+        if num not in existing_phase_nums:
+            phases.append({
+                "number": num,
+                "name": info.get("name", f"Phase {num}"),
+                "goal": info.get("goal", ""),
+                "status": "pending",
+                "requirements_covered": info.get("requirements", []),
+                "plans": [],
+                "verified": False
+            })
+    phases.sort(key=lambda p: p["number"])
+
     # Parse requirements - check multiple locations
     requirements_path = None
     req_candidates = [
@@ -712,15 +727,27 @@ def find_milestones(planning_dir: Path) -> list:
                 "archived": False
             })
 
-    # Check for archived milestones (.planning/milestones/v1.0-PAGE_Login/)
+    # Check for milestones in .planning/milestones/
+    # These may be active (placeholder with MILESTONE.json) or archived
     milestones_dir = planning_dir / "milestones"
     if milestones_dir.exists():
         for item in milestones_dir.iterdir():
             if item.is_dir() and re.match(r'v[\d.]+-', item.name):
+                # Determine if truly archived by checking MILESTONE.json status
+                is_archived = True  # safe default for old data
+                milestone_json = item / "MILESTONE.json"
+                if milestone_json.exists():
+                    try:
+                        meta = json.loads(milestone_json.read_text())
+                        ms_status = meta.get("status", "completed")
+                        is_archived = ms_status in ("completed", "archived")
+                    except (json.JSONDecodeError, OSError):
+                        pass
+
                 milestones.append({
                     "folder_name": item.name,
                     "path": item,
-                    "archived": True
+                    "archived": is_archived
                 })
 
     # Check for flat structure (single active milestone)
