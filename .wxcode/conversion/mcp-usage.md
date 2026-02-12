@@ -597,6 +597,34 @@ Output: {
 
 ## Usage Patterns
 
+### Building a Dependency Tree (Recursive Fallback)
+
+No single MCP tool traverses `uses` direction recursively. To build a D1→D2→D3 dependency tree, use N+1 `get_dependencies` calls:
+
+```
+Step 1: D1 = get_dependencies(ELEMENT, direction="uses", project_name=PROJECT)
+        → filter to Procedure/Class only (exclude TABLE)
+        → exclude local procedures (ELEMENT.ProcName pattern)
+
+Step 2: For each D1 item (parallel):
+        D2 = get_dependencies(D1_ITEM, direction="uses", project_name=PROJECT)
+        → filter, deduplicate against visited set
+
+Step 3: For each D2 item (parallel):
+        D3 = get_dependencies(D2_ITEM, direction="uses", project_name=PROJECT)
+        → filter, deduplicate against visited set
+
+Step 4: For each unique procedure across all depths:
+        get_procedure(proc_name, project_name=PROJECT)
+        → extract signature, parameters[], return_type
+```
+
+**Optimization:** Call `get_dependencies` in parallel for each level. Max calls = D1_count + D2_count + D3_count + signature lookups. For typical elements: ~10-20 MCP calls total.
+
+**Stop at max_depth=3** to limit calls. Most dependency chains terminate naturally at D2-D3 (leaf nodes calling only WLanguage built-ins).
+
+**Used by:** `new-milestone` Phase 1.86 for dependency depth selection.
+
 ### Starting a New Element
 
 ```

@@ -1162,6 +1162,22 @@ Apply TDD detection heuristic. Apply user setup detection.
 - Add "Verify business rule preservation" as verification step in task
 - Include `mcp__wxcode-kb__get_business_rules` call in conversion task actions
 - Use similar already-converted elements (from LEGACY.md) as implementation reference
+
+**For conversion tasks with Dependency Strategy (MILESTONE-CONTEXT.md has "Dependency Strategy"):**
+
+Read the Dependency Strategy section and categorize procedures:
+
+| Category | How to Plan |
+|----------|-------------|
+| IMPLEMENT_LIST | Create tasks to convert these procedures. Fetch full code via `mcp__wxcode-kb__get_procedure(name)`. Follow structure-preservation.md for naming. |
+| STUB_LIST | Create a task to generate stubs. Stubs are real files with correct signatures that raise NotImplementedError. Do NOT block on these — stubs ARE the implementation. |
+| Already Converted | Import as-is. Reference existing converted files. No tasks needed. |
+
+**Stubs are a valid strategy, not a failure:**
+- When a task calls a procedure from STUB_LIST, the task imports the stub file (it exists with correct signature)
+- Note in task action: "calls stub X (deferred D2 dependency)"
+- Do NOT create blocking dependencies on STUB_LIST items
+- Do NOT plan to convert STUB_LIST items — they are explicitly deferred
 </step>
 
 <step name="build_dependency_graph">

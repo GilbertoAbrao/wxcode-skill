@@ -127,6 +127,27 @@ Track:
 - missing_rules: [list] (not found in SUMMARYs)
 - coverage_pct: N%
 
+## 2.7 Count Dependency Stubs (Conversion Projects Only)
+
+If `.planning/CONVERSION.md` exists:
+
+**Count stubs in the codebase:**
+
+```bash
+grep -r "WXCODE:STUB" --include="*.py" --include="*.ts" --include="*.js" --include="*.tsx" --include="*.jsx" -l . 2>/dev/null
+```
+
+**For each stub file found:**
+1. Extract the legacy procedure name from the TODO comment
+2. Extract the depth level (D2, D3, etc.)
+3. Extract the legacy element name
+
+**Track:**
+- `stub_count`: Total number of stub files
+- `stub_list`: [{procedure, depth, legacy_element, file_path}]
+
+**Stubs are NOT failures.** They are intentional deferrals from the dependency depth selection in Phase 1.86 of `new-milestone`. Report them as "deferred dependencies" in the audit, not as gaps or tech debt.
+
 ## 3. Spawn Integration Checker
 
 With phase context collected:
@@ -189,6 +210,14 @@ business_rules:  # Conversion projects only
   preserved: N
   missing: [...]
   coverage: N%
+dependency_stubs:  # Conversion projects only
+  count: N
+  stubs:
+    - procedure: "REST_ConfigurarAutenticacao"
+      depth: "D2"
+      legacy_element: "REST_Utils"
+      file: "services/rest_utils.py"
+  note: "Intentional deferrals from dependency depth selection"
 ---
 ```
 
@@ -318,5 +347,6 @@ All requirements met. No critical blockers. Accumulated tech debt needs review.
 - [ ] Integration checker spawned for cross-phase wiring
 - [ ] v{version}-MILESTONE-AUDIT.md created
 - [ ] (Conversion projects) Business rule coverage checked
+- [ ] (Conversion projects) Dependency stubs counted (WXCODE:STUB grep) and reported as deferred (not failure)
 - [ ] Results presented with actionable next steps
 </success_criteria>

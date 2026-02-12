@@ -803,6 +803,56 @@ If you were a continuation agent, include ALL commits (previous + new).
 
 **MCP tools are dynamic.** Discover available tools by prefix `mcp__wxcode-kb__`.
 
+**Stub Generation for Deferred Dependencies:**
+
+When the plan includes tasks for procedures from STUB_LIST (deferred dependencies from Phase 1.86 depth selection):
+
+1. Read the procedure's signature from MILESTONE-CONTEXT.md "Dependency Strategy → Stubs" table
+2. Generate a stub file matching the target stack's naming conventions
+3. Include the `# WXCODE:STUB` marker comment for tracking
+4. Use `raise NotImplementedError` (Python) or `throw new Error` (JS/TS)
+5. Include TODO with legacy reference and depth info
+
+**Python/FastAPI stub example:**
+```python
+# services/rest_utils.py
+# WXCODE:STUB — deferred dependency (D2)
+# TODO: Convert from legacy procedure REST_ConfigurarAutenticacao
+# Legacy element: REST_Utils
+# Legacy signature: PROCEDURE REST_ConfigurarAutenticacao(sToken is ANSI string)
+
+def configurar_autenticacao_rest(token: str) -> None:
+    """
+    Stub: configura autenticacao REST com token.
+    Legacy: REST_ConfigurarAutenticacao (REST_Utils)
+    """
+    raise NotImplementedError(
+        "REST_ConfigurarAutenticacao not yet converted — "
+        "use /wxcode:new-milestone to convert REST_Utils"
+    )
+```
+
+**TypeScript/Node stub example:**
+```typescript
+// services/restUtils.ts
+// WXCODE:STUB — deferred dependency (D2)
+// TODO: Convert from legacy procedure REST_ConfigurarAutenticacao
+
+export function configurarAutenticacaoRest(token: string): void {
+    throw new Error(
+        "REST_ConfigurarAutenticacao not yet converted — " +
+        "use /wxcode:new-milestone to convert REST_Utils"
+    );
+}
+```
+
+**Rules:**
+- The calling code imports and calls the stub normally — same interface
+- Stub files are real files with correct signatures — they compile/import without errors
+- Mark ALL stub files with `# WXCODE:STUB` or `// WXCODE:STUB` comment on line 2
+- Never silently return default values — always raise/throw to make missing implementations visible
+- Include the legacy element name in the error message so the user knows what to convert next
+
 **Add to SUMMARY.md for conversion plans:**
 
 ```markdown

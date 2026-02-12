@@ -564,6 +564,157 @@ Business rules, screenshots, and similar elements inform research and roadmap ph
 
 ---
 
+## Phase 1.86: Dependency Tree Analysis (Conversion Projects Only)
+
+**Skip if not a conversion project** (no `.planning/CONVERSION.md`).
+
+**Purpose:** Show the user the full dependency tree for each element and let them choose how deep to implement in this milestone. Dependencies beyond the selected depth get auto-generated stubs with matching signatures.
+
+### Step 1: Build dependency tree for ALL elements
+
+For each element in ELEMENT_LIST, build a dependency tree using recursive `get_dependencies` calls:
+
+```
+# Level D1: Direct dependencies
+D1 = mcp__wxcode-kb__get_dependencies(element_name=ELEM, project_name=PROJECT_NAME, direction="uses")
+     → filter to Procedure and Class only (exclude TABLE — handled in Phase 1.8)
+     → exclude local procedures (names containing "ELEM." prefix — these are part of the element)
+
+# Level D2: Dependencies of D1
+For each D1 item (parallel where possible):
+  D2 = mcp__wxcode-kb__get_dependencies(element_name=D1_ITEM.name, project_name=PROJECT_NAME, direction="uses")
+       → filter Procedure/Class, exclude TABLE, exclude already-seen nodes
+
+# Level D3: Dependencies of D2
+For each D2 item (parallel where possible):
+  D3 = mcp__wxcode-kb__get_dependencies(element_name=D2_ITEM.name, project_name=PROJECT_NAME, direction="uses")
+       → filter Procedure/Class, exclude TABLE, exclude already-seen nodes
+
+# Stop at D3 by default (max_depth=3) to limit MCP calls
+```
+
+**Deduplication:** Track visited nodes across all depths. If a procedure appears at D1 and D2, keep the shallowest depth.
+
+### Step 2: Get signatures for all unique procedures
+
+For each unique procedure in the tree:
+```
+mcp__wxcode-kb__get_procedure(procedure_name=PROC_NAME, project_name=PROJECT_NAME)
+→ extract: signature, parameters[], return_type
+```
+
+Also check conversion status from the element's `conversion_status` field.
+
+### Step 3: Display tree with depth levels
+
+Present a visual tree to the user. Example:
+
+```
+Dependency Tree — PaginaInicial_New1
+
+D1 (Direct — 5 procedures):
+  ✓ Documento_TemplatePreenchido(sSlug, sContent): (str, str)     [pending]
+  ✓ Documento_ConsultarAceite(sSlug): (str, str)                  [pending]
+  ✓ Documento_RegistrarAceite(sSlug, sContent): (str, str)        [pending]
+  ✓ Thread_GravaLogProcessamento(sMsg): void                      [pending]
+  ● SQLServerConectar(): boolean                                   [converted]
+
+D2 (Dependencies of D1 — 2 procedures):
+  ✓ REST_ConfigurarAutenticacao(sToken): void                     [pending]
+  ✓ Global_PegaTokenAPI(): string                                 [pending]
+
+D3 (Dependencies of D2 — 1 procedure):
+  ✓ Config_LerParametro(sChave): string                           [pending]
+
+Local procedures (included in element conversion):
+  • PaginaInicial_New1.VerificarUsuarioSenha
+  • PaginaInicial_New1.Local_ConfiguraMenu
+  • PaginaInicial_New1.Local_RecuperarEmail
+
+Legend: ✓ = pending, ● = already converted
+
+Summary:
+  D1: 5 total (1 converted, 4 pending)
+  D2: 2 total (0 converted, 2 pending)
+  D3: 1 total (0 converted, 1 pending)
+```
+
+**If no procedure dependencies found:** Skip this phase entirely (element only calls local procedures or WLanguage built-ins).
+
+**If ALL dependencies already converted:** Display tree with all `●` markers and skip depth selection — no stubs needed.
+
+### Step 4: User selects depth
+
+Use AskUserQuestion:
+
+```
+header: "Dep depth"
+question: "Até qual nível de dependências deseja implementar neste milestone?"
+options:
+  - label: "D0 — Apenas o elemento"
+    description: "Stubs para todas as dependências pendentes"
+  - label: "D1 — Dependências diretas (Recommended)"
+    description: "${D1_pending_count} procedures + stubs para D2+"
+  - label: "D2 — Até segundo nível"
+    description: "${D1_pending_count + D2_pending_count} procedures + stubs para D3+"
+  - label: "D3 — Todas as dependências"
+    description: "${total_pending_count} procedures, sem stubs"
+```
+
+**Adjust options dynamically:** Only show depth levels that have pending procedures. If D3 is empty, max option is D2. If D2 is empty, max option is D1. If D1 is empty, skip this phase.
+
+### Step 5: Store selection and generate dependency manifest
+
+Based on user selection:
+
+```
+DEPENDENCY_DEPTH = [selected depth: D0, D1, D2, or D3]
+IMPLEMENT_LIST = [procedures at or below selected depth that are NOT already converted]
+STUB_LIST = [procedures beyond selected depth that are NOT already converted]
+```
+
+**Already-converted procedures** go into neither list — they're imported as-is.
+
+Append to MILESTONE-CONTEXT.md:
+
+```markdown
+## Dependency Strategy
+
+**Depth:** D${N} (${depth_description})
+**Implement:** ${IMPLEMENT_LIST.length} procedures
+**Stub:** ${STUB_LIST.length} procedures (D${N+1}+)
+**Already converted:** ${converted_count} procedures (import as-is)
+
+### To Implement
+| Procedure | Signature | Element | Depth |
+|-----------|-----------|---------|-------|
+| Documento_TemplatePreenchido | (sSlug, sContent) → (str,str) | Comunicacao_APIDocs | D1 |
+| ... | ... | ... | ... |
+
+### Stubs (Deferred Dependencies)
+| Procedure | Signature | Element | Depth | Called By |
+|-----------|-----------|---------|-------|----------|
+| REST_ConfigurarAutenticacao | (sToken) → void | REST_Utils | D2 | Documento_TemplatePreenchido |
+| ... | ... | ... | ... | ... |
+
+### Already Converted (Import)
+| Procedure | Element |
+|-----------|---------|
+| SQLServerConectar | ConexaoBD |
+| ... | ... |
+```
+
+Display confirmation:
+```
+✓ Dependency strategy defined
+  - Depth: D${N}
+  - Implement: ${IMPLEMENT_LIST.length} procedures
+  - Stub: ${STUB_LIST.length} procedures (deferred)
+  - Import: ${converted_count} procedures (already converted)
+```
+
+---
+
 ## Phase 2: Gather Milestone Goals
 
 **If MILESTONE-CONTEXT.md exists:**
@@ -1129,6 +1280,12 @@ Create roadmap for milestone v[X.Y]:
   (Phase 1 = Element A complete, Phase 2 = Element B complete)
 - The agent fetches detailed element data on-demand via MCP during planning.
 
+**Dependency strategy (if Phase 1.86 was executed):**
+- IMPLEMENT_LIST: Procedures to convert in this milestone (include as tasks)
+- STUB_LIST: Procedures to generate stubs for (single task: "Generate dependency stubs")
+- Already-converted procedures: Import as-is (don't recreate)
+- Read MILESTONE-CONTEXT.md "Dependency Strategy" section for full lists
+
 Write files first, then return. This ensures artifacts persist even if context is lost.
 </instructions>
 ", subagent_type="wxcode-roadmapper", model="{roadmapper_model}", description="Create roadmap")
@@ -1290,6 +1447,9 @@ Run: wxcode:discuss-phase [N] — gather context and clarify approach
 - [ ] **(Multi-element)** Additional elements enriched in MILESTONE-CONTEXT.md (lightweight summary)
 - [ ] **(Conversion projects)** Table dependencies collected from ALL elements (union + deduplicate)
 - [ ] **(Conversion projects)** Comprehension data loaded for ALL elements (if available)
+- [ ] **(Conversion projects)** Dependency tree built recursively (D1→D2→D3) with signatures
+- [ ] **(Conversion projects)** User selected dependency depth (D0/D1/D2/D3) via AskUserQuestion
+- [ ] **(Conversion projects)** MILESTONE-CONTEXT.md updated with Dependency Strategy (IMPLEMENT_LIST + STUB_LIST)
 - [ ] **(Multi-element)** Roadmapper instructed on cross-element vs per-element phase organization
 - [ ] PROJECT.md updated (stable info only, no volatile milestone state)
 - [ ] STATE.md updated with Current Milestone section and reset position

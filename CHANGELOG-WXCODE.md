@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-02-11
+
+### Added
+- **Dependency tree with depth selection** — `new-milestone` Phase 1.86 analyzes procedure dependencies recursively (D1→D2→D3) and lets the user choose implementation depth
+  - Builds dependency tree using recursive `get_dependencies` + `get_procedure` for signatures
+  - Displays visual tree with conversion status per depth level
+  - User selects depth (D0-D3) via `AskUserQuestion` — determines what to implement vs stub
+  - Generates IMPLEMENT_LIST (procedures to convert) and STUB_LIST (procedures to stub)
+  - Writes "Dependency Strategy" section to MILESTONE-CONTEXT.md
+- **Dependency stubs** — auto-generated stub files with correct signatures for deferred dependencies
+  - `WXCODE:STUB` marker comment for tracking
+  - `raise NotImplementedError` (Python) / `throw new Error` (JS/TS) — strict, no silent defaults
+  - Includes legacy procedure name, element, and depth in stub comments
+  - Stubs compile and import normally — calling code works until the real implementation arrives
+- **Stub-aware agents** — roadmapper, planner, executor, and audit updated for dependency strategy
+  - `wxcode-roadmapper`: includes IMPLEMENT_LIST procedures as tasks, STUB_LIST as single stub task
+  - `wxcode-planner`: treats stubs as valid strategy, doesn't block on STUB_LIST items
+  - `wxcode-executor`: generates stub files with correct signatures and WXCODE:STUB marker
+  - `audit-milestone`: counts stubs via `grep -r "WXCODE:STUB"`, reports as deferred (not failure)
+- **Conversion docs updated** — `injection-points.md` and `mcp-usage.md` document the recursive dependency tree pattern
+
 ## [2.3.1] - 2026-02-11
 
 ### Fixed

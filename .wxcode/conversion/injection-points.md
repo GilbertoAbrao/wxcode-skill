@@ -160,6 +160,30 @@ Researches target stack ecosystem.
 
 ---
 
+## Command: new-milestone (Phase 1.86)
+
+### Standard Behavior
+N/A (conversion-only phase).
+
+### Conversion Extension
+
+**Dependency tree analysis with depth selection:**
+
+1. Build dependency tree recursively using `get_dependencies(direction="uses")` at D1→D2→D3
+2. Get signatures for all unique procedures via `get_procedure`
+3. Display tree with depth levels and conversion status
+4. User selects implementation depth (D0/D1/D2/D3)
+5. Generate IMPLEMENT_LIST (convert) and STUB_LIST (generate stubs)
+6. Write to MILESTONE-CONTEXT.md "Dependency Strategy" section
+
+**Downstream consumers:**
+- **Roadmapper:** Includes IMPLEMENT_LIST procedures as tasks, STUB_LIST as single stub-generation task
+- **Planner:** Treats stubs as valid imports, doesn't block on STUB_LIST items
+- **Executor:** Generates stub files with `WXCODE:STUB` marker and `raise NotImplementedError`
+- **Audit:** Counts stubs via `grep -r "WXCODE:STUB"`, reports as deferred (not failure)
+
+---
+
 ## Command: plan-phase
 
 ### Standard Behavior

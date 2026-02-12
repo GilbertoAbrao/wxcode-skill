@@ -387,6 +387,35 @@ If research/SUMMARY.md provided:
 
 Research informs phase identification but requirements drive coverage.
 
+## Step 3.5: Load Dependency Strategy (Conversion Projects)
+
+If MILESTONE-CONTEXT.md contains a "Dependency Strategy" section:
+
+**Read and parse:**
+- `IMPLEMENT_LIST` — procedures to convert in this milestone
+- `STUB_LIST` — procedures to generate stubs for (deferred dependencies)
+- Already-converted procedures — import as-is
+
+**How this affects roadmapping:**
+- Include each procedure from IMPLEMENT_LIST as work in relevant phases (group logically by parent element or domain)
+- Create ONE dedicated task per phase (or a single phase) for "Generate dependency stubs" covering all STUB_LIST items
+- Do NOT block phases because a dependency is in STUB_LIST — stubs are the implementation strategy
+- Already-converted procedures are just imports — no tasks needed
+
+**Example phase structure with dependency strategy:**
+```
+Phase 1: Element conversion (includes D1 procedures from IMPLEMENT_LIST)
+Phase 2: Dependency stubs (generates stubs for all STUB_LIST items)
+```
+
+Or integrated:
+```
+Phase 1: Element + dependencies
+  - Convert PAGE_Login (element)
+  - Convert Documento_TemplatePreenchido (D1 dependency)
+  - Generate stubs for D2+ dependencies
+```
+
 ## Step 4: Identify Phases
 
 Apply phase identification methodology:

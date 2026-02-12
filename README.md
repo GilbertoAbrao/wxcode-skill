@@ -2,7 +2,7 @@
 
 **WXCODE** is an AI-powered toolkit for **WinDev/WebDev code conversion projects**, built for Claude Code, OpenCode, and Gemini.
 
-**Current Version:** 2.3.1
+**Current Version:** 2.4.0
 
 ---
 
@@ -74,9 +74,10 @@ Creates the **complete project foundation**:
 
 Each milestone converts one or more WinDev/WebDev elements:
 1. Queries Knowledge Base for source code (MCP is Source of Truth)
-2. Plans conversion phases with research and verification
-3. Converts to target stack
-4. Integrates with existing foundation
+2. Analyzes dependency tree — user selects implementation depth (D0-D3)
+3. Plans conversion phases with research and verification
+4. Converts to target stack (generates stubs for deferred dependencies)
+5. Integrates with existing foundation
 
 ### 3. Plan, Execute, Verify
 
