@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.5.3] - 2026-02-12
+## [2.5.4] - 2026-02-12
 
 ### Changed
 - **CONTEXT.md no longer contains inline database schema** — schema is now retrieved from MCP (`get_schema`, `get_table`) at runtime instead of being embedded in CONTEXT.md; reduces context bloat for large schemas (50+ tables)
