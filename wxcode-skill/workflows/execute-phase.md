@@ -398,9 +398,18 @@ Plans with `autonomous: false` require user interaction.
    - Checkpoint type and details for user
    - What's awaited from user
 
-4. **Orchestrator presents checkpoint to user:**
+4. **Update dashboard before presenting checkpoint:**
 
-   Extract and display the "Checkpoint Details" and "Awaiting" sections from agent return:
+   Regenerate dashboard so the UI reflects progress up to the checkpoint:
+   ```bash
+   python3 ~/.claude/wxcode-skill/bin/generate-dashboard.py --all --project-dir .
+   ```
+
+5. **Orchestrator presents checkpoint to user:**
+
+   Extract and display the "Checkpoint Details" and "Awaiting" sections from agent return.
+   **IMPORTANT:** The agent's return already includes a WXCODE:NEXT_ACTION tag after "### Awaiting". Preserve it in the output so the UI can render the approval button.
+
    ```
    ## Checkpoint: [Type]
 
@@ -410,14 +419,16 @@ Plans with `autonomous: false` require user interaction.
    [Checkpoint Details section from agent return]
 
    [Awaiting section from agent return]
+
+   <!-- WXCODE:NEXT_ACTION tag from agent return — preserve as-is -->
    ```
 
-5. **User responds:**
+6. **User responds:**
    - "approved" / "done" → spawn continuation agent
    - Description of issues → spawn continuation agent with feedback
    - Decision selection → spawn continuation agent with choice
 
-6. **Spawn continuation agent (NOT resume):**
+7. **Spawn continuation agent (NOT resume):**
 
    Use the continuation-prompt.md template:
    ```
@@ -435,13 +446,13 @@ Plans with `autonomous: false` require user interaction.
    - `{user_response}`: What user provided
    - `{resume_instructions}`: Based on checkpoint type (see continuation-prompt.md)
 
-7. **Continuation agent executes:**
+8. **Continuation agent executes:**
    - Verifies previous commits exist
    - Continues from resume point
    - May hit another checkpoint (repeat from step 4)
    - Or completes plan
 
-8. **Repeat until plan completes or user stops**
+9. **Repeat until plan completes or user stops**
 
 **Why fresh agent instead of resume:**
 Resume relies on Claude Code's internal serialization which breaks with parallel tool calls.
@@ -525,6 +536,11 @@ Phase goal verified. Proceed to update_roadmap.
 
 **If human_needed:**
 
+Regenerate dashboard before presenting to user:
+```bash
+python3 ~/.claude/wxcode-skill/bin/generate-dashboard.py --all --project-dir .
+```
+
 ```markdown
 ## ✓ Phase {X}: {Name} — Human Verification Required
 
@@ -539,6 +555,8 @@ All automated checks passed. {N} items need human testing:
 **After testing:**
 - "approved" → continue to update_roadmap
 - Report issues → will route to gap closure planning
+
+<!-- WXCODE:NEXT_ACTION:{"command":"approved","args":"","description":"Approve human verification and continue","priority":"required"} -->
 ```
 
 If user approves → continue to update_roadmap.

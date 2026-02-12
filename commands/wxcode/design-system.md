@@ -534,6 +534,7 @@ These tokens will be used automatically by the frontend-design skill.
 ```
 
 ```
+<!-- WXCODE:HEADER:{"command":"design-system","args":"","title":"WXCODE ► DESIGN SYSTEM COMPLETE"} -->
 <!-- WXCODE:NEXT_ACTION:{"command":"progress","args":"","description":"Continue with project","priority":"recommended"} -->
 ```
 

@@ -209,6 +209,7 @@ Find the first PLAN.md without matching SUMMARY.md.
 Read its `<objective>` section.
 
 ```
+<!-- WXCODE:HEADER:{"command":"progress","args":"","title":"WXCODE ► READY TO EXECUTE"} -->
 <!-- WXCODE:STATUS:{"status":"in_progress","message":"Phase {N} ready to execute","progress":{calculated},"phase":{N}} -->
 <!-- WXCODE:NEXT_ACTION:{"command":"execute-phase","args":"{phase}","description":"Execute planned tasks","priority":"recommended"} -->
 ```
@@ -234,6 +235,7 @@ Check if `{phase}-CONTEXT.md` exists in phase directory.
 **If CONTEXT.md exists:**
 
 ```
+<!-- WXCODE:HEADER:{"command":"progress","args":"","title":"WXCODE ► READY TO PLAN"} -->
 <!-- WXCODE:STATUS:{"status":"in_progress","message":"Phase {N} ready to plan","progress":{calculated},"phase":{N}} -->
 <!-- WXCODE:NEXT_ACTION:{"command":"plan-phase","args":"{phase}","description":"Create execution plan","priority":"recommended"} -->
 ```
@@ -254,6 +256,7 @@ Check if `{phase}-CONTEXT.md` exists in phase directory.
 **If CONTEXT.md does NOT exist:**
 
 ```
+<!-- WXCODE:HEADER:{"command":"progress","args":"","title":"WXCODE ► NEEDS CONTEXT"} -->
 <!-- WXCODE:STATUS:{"status":"in_progress","message":"Phase {N} needs context","progress":{calculated},"phase":{N}} -->
 <!-- WXCODE:NEXT_ACTION:{"command":"discuss-phase","args":"{phase}","description":"Gather context before planning","priority":"recommended"} -->
 ```
@@ -283,6 +286,7 @@ Check if `{phase}-CONTEXT.md` exists in phase directory.
 UAT.md exists with gaps (diagnosed issues). User needs to plan fixes.
 
 ```
+<!-- WXCODE:HEADER:{"command":"progress","args":"","title":"WXCODE ► UAT GAPS FOUND"} -->
 <!-- WXCODE:STATUS:{"status":"failed","message":"Phase {N} has UAT gaps","progress":{calculated},"phase":{N}} -->
 <!-- WXCODE:NEXT_ACTION:{"command":"plan-phase","args":"{phase} --gaps","description":"Plan fixes for UAT gaps","priority":"required"} -->
 ```
@@ -346,6 +350,7 @@ Find the **next incomplete phase** — either the next sequential phase, or if a
 Read ROADMAP.md to get that phase's name and goal.
 
 ```
+<!-- WXCODE:HEADER:{"command":"progress","args":"","title":"WXCODE ► PHASE {Z} COMPLETE"} -->
 <!-- WXCODE:STATUS:{"status":"completed","message":"Phase {Z} complete","progress":{calculated},"phase":{Z}} -->
 <!-- WXCODE:NEXT_ACTION:{"command":"discuss-phase","args":"{Z+1}","description":"Gather context for next phase","priority":"recommended"} -->
 ```
@@ -375,6 +380,7 @@ Read ROADMAP.md to get that phase's name and goal.
 **Route D: Milestone complete**
 
 ```
+<!-- WXCODE:HEADER:{"command":"progress","args":"","title":"WXCODE ► MILESTONE COMPLETE"} -->
 <!-- WXCODE:STATUS:{"status":"completed","message":"Milestone complete","progress":100} -->
 <!-- WXCODE:NEXT_ACTION:{"command":"complete-milestone","args":"","description":"Archive milestone","priority":"recommended"} -->
 ```
@@ -409,6 +415,7 @@ A milestone was completed and archived. Ready to start the next milestone cycle.
 Read MILESTONES.md to find the last completed milestone version.
 
 ```
+<!-- WXCODE:HEADER:{"command":"progress","args":"","title":"WXCODE ► BETWEEN MILESTONES"} -->
 <!-- WXCODE:STATUS:{"status":"completed","message":"Between milestones","progress":100} -->
 <!-- WXCODE:NEXT_ACTION:{"command":"new-milestone","args":"","description":"Start next milestone cycle","priority":"recommended"} -->
 ```

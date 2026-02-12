@@ -318,7 +318,7 @@ Output this markdown directly (not as a code block). Route based on status.
 | Status | Route |
 |--------|-------|
 | `gaps_found` | Route C (gap closure) |
-| `human_needed` | Present checklist, then re-route based on approval |
+| `human_needed` | Route D (human verification) |
 | `passed` + more phases | Route A (next phase) |
 | `passed` + last phase | Route B (milestone complete) |
 
@@ -327,6 +327,7 @@ Output this markdown directly (not as a code block). Route based on status.
 **Route A: Phase verified, more phases remain**
 
 ```
+<!-- WXCODE:HEADER:{"command":"execute-phase","args":"{Z}","title":"WXCODE ► PHASE {Z} COMPLETE"} -->
 <!-- WXCODE:STATUS:{"status":"completed","message":"Phase {Z} complete","progress":100,"phase":{Z}} -->
 <!-- WXCODE:NEXT_ACTION:{"command":"discuss-phase","args":"{Z+1}","description":"Gather context for next phase","priority":"recommended"} -->
 ```
@@ -363,6 +364,7 @@ Goal verified ✓
 **Route B: Phase verified, milestone complete**
 
 ```
+<!-- WXCODE:HEADER:{"command":"execute-phase","args":"{Z}","title":"WXCODE ► MILESTONE COMPLETE"} -->
 <!-- WXCODE:STATUS:{"status":"completed","message":"Milestone complete","progress":100} -->
 <!-- WXCODE:NEXT_ACTION:{"command":"audit-milestone","args":"","description":"Verify requirements and cross-phase integration","priority":"recommended"} -->
 ```
@@ -399,6 +401,7 @@ All phase goals verified ✓
 **Route C: Gaps found — need additional planning**
 
 ```
+<!-- WXCODE:HEADER:{"command":"execute-phase","args":"{Z}","title":"WXCODE ► PHASE {Z} GAPS FOUND"} -->
 <!-- WXCODE:STATUS:{"status":"failed","message":"Phase {Z} has gaps","progress":75,"phase":{Z}} -->
 <!-- WXCODE:NEXT_ACTION:{"command":"plan-phase","args":"{Z} --gaps","description":"Create plans to close the gaps","priority":"required"} -->
 ```
@@ -442,6 +445,44 @@ After user runs /wxcode:plan-phase {Z} --gaps:
 3. User runs /wxcode:execute-phase {Z} again
 4. Execute-phase runs incomplete plans (04, 05...)
 5. Verifier runs again → loop until passed
+
+---
+
+**Route D: Human verification needed**
+
+Regenerate dashboard before presenting to user:
+```bash
+python3 ~/.claude/wxcode-skill/bin/generate-dashboard.py --all --project-dir .
+```
+
+```
+<!-- WXCODE:HEADER:{"command":"execute-phase","args":"{Z}","title":"WXCODE ► PHASE {Z} HUMAN VERIFICATION"} -->
+<!-- WXCODE:STATUS:{"status":"paused","message":"Phase {Z} awaiting human verification","progress":90,"phase":{Z}} -->
+<!-- WXCODE:NEXT_ACTION:{"command":"approved","args":"","description":"Approve human verification and continue","priority":"required"} -->
+```
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ WXCODE ► PHASE {Z} HUMAN VERIFICATION ✋
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**Phase {Z}: {Name}**
+
+All automated checks passed. {N} items need human testing:
+
+### Human Verification Checklist
+
+{Extract from VERIFICATION.md human_verification section}
+
+───────────────────────────────────────────────────────────────
+
+**After testing:**
+- Type "approved" to continue
+- Describe issues to route to gap closure
+
+───────────────────────────────────────────────────────────────
+
+If user approves → continue to update_roadmap (Route A or B based on remaining phases).
+If user reports issues → treat as gaps_found (Route C).
 </offer_next>
 
 <wave_execution>

@@ -389,6 +389,8 @@ For visual/functional verification after you automated something.
 ### Awaiting
 
 Type "approved" or describe issues to fix.
+
+<!-- WXCODE:NEXT_ACTION:{"command":"approved","args":"","description":"Approve checkpoint and continue execution","priority":"required"} -->
 ```
 
 **checkpoint:decision (9% of checkpoints)**
@@ -435,6 +437,8 @@ For truly unavoidable manual steps (email link, 2FA code).
 ### Awaiting
 
 Type "done" when complete.
+
+<!-- WXCODE:NEXT_ACTION:{"command":"approved","args":"done","description":"Confirm manual action complete","priority":"required"} -->
 ```
 
 </checkpoint_types>
@@ -470,7 +474,14 @@ When you hit a checkpoint or auth gate, return this EXACT structure:
 ### Awaiting
 
 [What user needs to do/provide]
+
+<!-- WXCODE:NEXT_ACTION:{"command":"approved","args":"[approved|done|option]","description":"[action-specific description]","priority":"required"} -->
 ```
+
+**IMPORTANT:** Always include the WXCODE:NEXT_ACTION tag after the Awaiting section. Adjust `args` and `description` based on checkpoint type:
+- **human-verify:** `args=""`, description="Approve checkpoint and continue execution"
+- **human-action:** `args="done"`, description="Confirm manual action complete"
+- **decision:** `args="[selected-option]"`, description="Select option and continue"
 
 **Why this structure:**
 

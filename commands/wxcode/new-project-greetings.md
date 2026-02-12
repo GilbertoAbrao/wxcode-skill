@@ -124,6 +124,7 @@ Contexto carregado e pronto para conversão.
 ───────────────────────────────────────────────────────
 
 ```
+<!-- WXCODE:HEADER:{"command":"new-project-greetings","args":"$ARGUMENTS","title":"WXCODE ► CONTEXT LOADED"} -->
 <!-- WXCODE:STATUS:{"status":"completed","message":"Context loaded"} -->
 <!-- WXCODE:NEXT_ACTION:{"command":"new-project","args":"[same CONTEXT.md path]","description":"Initialize project","priority":"recommended"} -->
 ```

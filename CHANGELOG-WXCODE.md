@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.3] - 2026-02-12
+
+### Changed
+- **CONTEXT.md no longer contains inline database schema** — schema is now retrieved from MCP (`get_schema`, `get_table`) at runtime instead of being embedded in CONTEXT.md; reduces context bloat for large schemas (50+ tables)
+
+### Added
+- **WXCODE:NEXT_ACTION tags on checkpoints** — executor agent checkpoint output now includes structured `<!-- WXCODE:NEXT_ACTION:{"command":"approved",...} -->` tags so the UI can render clickable approval buttons for human-verify, human-action, and decision checkpoints
+- **`/wxcode:approved` command** — minimal command for UI compatibility; when the user clicks the approval button rendered from a NEXT_ACTION tag, this command signals checkpoint approval
+- **Route D (human_needed) in execute-phase** — explicit structured output route with WXCODE tags for phase verification requiring human testing
+- **Dashboard update on checkpoints** — dashboards are regenerated before presenting checkpoints and human verification to user, so UI reflects progress while waiting for approval
+- **WXCODE:HEADER on all offer_next routes** — all final output blocks across `execute-phase` (4 routes), `progress` (7 routes), `dashboard`, `design-system`, and `new-project-greetings` now emit HEADER tag so the UI renders the message correctly
+
 ## [2.5.2] - 2026-02-12
 
 ### Fixed

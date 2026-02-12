@@ -219,25 +219,22 @@ Mapping from HyperFile types to target language types.
 
 Include all 28 HyperFile type codes.
 
-### 8. Database Schema (REQUIRED)
+### 8. Database Schema (MCP-BASED)
 
-Full schema with all tables.
+Schema is retrieved from MCP at runtime — **NOT** included inline in CONTEXT.md.
 
 ```markdown
-## Database Schema ({N} tables)
+## Database Schema
 
-### {TableName}
+Schema is available via MCP tools. Use these to retrieve it:
 
-| Column | Type | Nullable | PK | Indexed | Auto |
-|--------|------|----------|----|---------| -----|
-| {column_name} | {type} | {Yes/No} | {Yes/} | {Yes/} | {Yes/} |
+- `mcp__wxcode-kb__get_schema(project_name="PROJECT_NAME")` — Full schema (all tables)
+- `mcp__wxcode-kb__get_table(table_name="TABLE", project_name="PROJECT_NAME")` — Single table details
 
-**Indexes:**
-- `{index_name}`: {columns} {(unique)} {(primary)}
-
-### {NextTable}
-...
+The schema includes {N} tables with columns, types, constraints, and indexes.
 ```
+
+**Why not inline?** Schema can be large (50+ tables) and consumes significant context. MCP provides the same data on demand without bloating CONTEXT.md.
 
 ---
 
@@ -433,25 +430,14 @@ The CONTEXT.md should be **data only**, not workflow instructions.
 | 27 | str |
 | 28 | str |
 
-## Database Schema (50 tables)
+## Database Schema
 
-### Usuario
+Schema is available via MCP tools. Use these to retrieve it:
 
-| Column | Type | Nullable | PK | Indexed | Auto |
-|--------|------|----------|----|---------| -----|
-| IDusuario | int | No | Yes | Yes | Yes |
-| Nome | str | No | | | |
-| Email | str | No | | Yes | |
-| Senha | str | No | | | |
-| Ativo | bool | No | | | |
-| DataCadastro | datetime | No | | | |
+- `mcp__wxcode-kb__get_schema(project_name="Linkpay_ADM_46382b52")` — Full schema (all tables)
+- `mcp__wxcode-kb__get_table(table_name="TABLE", project_name="Linkpay_ADM_46382b52")` — Single table details
 
-**Indexes:**
-- `pk_Usuario`: IDusuario (unique) (primary)
-- `idx_Usuario_Email`: Email
-
-### Cliente
-...
+The schema includes 50 tables with columns, types, constraints, and indexes.
 
 ## MCP Tools (25 tools)
 

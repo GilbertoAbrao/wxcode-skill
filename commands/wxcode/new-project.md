@@ -288,10 +288,10 @@ The CONTEXT.md contains:
 - Project name and target stack
 - File structure and naming conventions
 - Type mappings for database conversion
-- Database schema from WinDev/WebDev
+- MCP instructions for retrieving database schema and source code
 
 **IMPORTANT:** CONTEXT.md is a **snapshot**. The MCP (wxcode-kb) is the **Source of Truth**.
-Always consult MCP for current data when needed.
+Always use MCP tools (`get_schema`, `get_table`) for database schema — it is NOT inline in CONTEXT.md.
 
 **→ Skip to [Phase C1: Conversion Mode](#phase-c1-conversion-mode-setup)**
 
@@ -323,8 +323,17 @@ Continue with standard greenfield flow (Phase 2 below).
 - File structure (from "File Structure" section)
 - Naming conventions (from "Naming Conventions" section)
 - Type mappings (from "Type Mappings" section)
-- Database schema (all tables with columns, types, indexes)
+- Source project name (from "Source Project" section — needed for MCP queries)
+- Output project ID (from "Output Project" section)
 ```
+
+**Retrieve database schema from MCP (NOT from CONTEXT.md):**
+
+```
+mcp__wxcode-kb__get_schema(project_name=SOURCE_PROJECT_NAME)
+```
+
+This returns all tables, columns, types, indexes, and connections.
 
 **Consult MCP for current stats (SoT):**
 
@@ -1094,9 +1103,11 @@ Task(wxcode-schema-generator):
   prompt: |
     Generate all database models for this conversion project.
 
-    Output Project ID: [output_project_id from CONTEXT.md]
+    Output Project ID: [OUTPUT_PROJECT_ID]
+    Project Name: [SOURCE_PROJECT_NAME]
 
     Use capability: generate_all_models
+    Use MCP get_schema to retrieve the full database schema.
 
     Requirements:
     - Preserve EXACT legacy table names (use __tablename__, @@map, db_table, etc.)

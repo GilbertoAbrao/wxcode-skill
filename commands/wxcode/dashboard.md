@@ -194,6 +194,7 @@ Total: [N] dashboards updated
 
 Emit final marker:
 ```
+<!-- WXCODE:HEADER:{"command":"dashboard","args":"$ARGUMENTS","title":"WXCODE ► DASHBOARDS REGENERATED"} -->
 <!-- WXCODE:NEXT_ACTION:{"command":"progress","args":"","description":"Check project progress","priority":"recommended"} -->
 ```
 
