@@ -636,6 +636,15 @@ def generate_milestone_dashboard(
     else:
         milestone_status = "completed"
 
+    # Load business rules summary cache (written by wxcode-rules-verifier agent)
+    rules_summary = None
+    rules_summary_path = root_planning_dir / "rules-summary.json" if root_planning_dir else planning_dir / "rules-summary.json"
+    if rules_summary_path.exists():
+        try:
+            rules_summary = json.loads(rules_summary_path.read_text())
+        except (json.JSONDecodeError, OSError):
+            pass
+
     # Build dashboard
     dashboard = {
         "milestone": {
@@ -661,6 +670,7 @@ def generate_milestone_dashboard(
         "phases": phases,
         "requirements": requirements,
         "blockers": [],
+        "business_rules": rules_summary if rules_summary else None,
         "meta": {
             "generated_at": datetime.now().isoformat() + "Z",
             "wxcode_version": wxcode_version,

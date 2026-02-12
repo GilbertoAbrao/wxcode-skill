@@ -10,6 +10,8 @@ allowed-tools:
   - Task
   - Write
   - mcp__wxcode-kb__get_business_rules
+  - mcp__wxcode-kb__get_rules_verification_summary
+  - mcp__wxcode-kb__get_milestone_rules
 ---
 
 <objective>
@@ -115,7 +117,37 @@ If a phase is missing VERIFICATION.md, flag it as "unverified phase" — this is
 
 If `.planning/CONVERSION.md` exists:
 
-**Determine element list:** Read MILESTONE.json from `.planning/milestones/*/MILESTONE.json` (find the active milestone folder). Use the `"elements"` array. Fallback to `["element"]` if `"elements"` is missing (backward compat with older milestones).
+**Determine milestone ID:** Read MILESTONE.json from `.planning/milestones/*/MILESTONE.json` (find the active milestone folder).
+
+```bash
+MILESTONE_DIR=$(ls -d .planning/milestones/v*/ 2>/dev/null | tail -1)
+MILESTONE_ID=$(cat "${MILESTONE_DIR}/MILESTONE.json" 2>/dev/null | grep -o '"mongodb_id"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"')
+```
+
+**If MILESTONE_ID exists (rules tracking initialized):**
+
+Get comprehensive rules verification summary from MCP:
+
+```
+summary = mcp__wxcode-kb__get_rules_verification_summary(milestone_id=MILESTONE_ID)
+```
+
+This returns aggregated counts by status, category, element, and procedure, plus:
+- `coverage_percentage`: how many rules have been checked (not pending/deferred)
+- `implementation_rate`: of checked rules, how many passed (implemented + adapted)
+
+Track:
+- total_rules: summary.total_rules
+- by_status: summary.by_status (implemented, adapted, missing, deferred, pending, not_applicable)
+- coverage_pct: summary.coverage_percentage
+- implementation_rate: summary.implementation_rate
+- missing_rules: get details via `mcp__wxcode-kb__get_milestone_rules(milestone_id, status="missing")`
+
+**If MILESTONE_ID is empty (legacy milestone without rules tracking):**
+
+Fall back to element-based approach:
+
+**Determine element list:** Use the `"elements"` array from MILESTONE.json. Fallback to `["element"]` if `"elements"` is missing (backward compat).
 
 For each element in ELEMENT_LIST:
 1. Call `mcp__wxcode-kb__get_business_rules(element_name=ELEM)`
@@ -207,9 +239,16 @@ tech_debt:  # Non-critical, deferred
       - "Deferred: mobile responsive layout"
 business_rules:  # Conversion projects only
   total: N
-  preserved: N
-  missing: [...]
-  coverage: N%
+  by_status:
+    implemented: N
+    adapted: N
+    missing: N
+    deferred: N
+    pending: N
+    not_applicable: N
+  coverage_percentage: N  # (total - pending - deferred) / total
+  implementation_rate: N  # (implemented + adapted) / (implemented + adapted + missing)
+  missing_rules: [...]    # Details of missing rules for action
 dependency_stubs:  # Conversion projects only
   count: N
   stubs:

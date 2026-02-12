@@ -109,6 +109,7 @@ Slash commands in output get parsed as command invocations. Always use plain tex
    |-------|---------|----------|--------|
    | wxcode-executor | opus | sonnet | sonnet |
    | wxcode-verifier | sonnet | sonnet | haiku |
+   | wxcode-rules-verifier | sonnet | sonnet | haiku |
 
    Store resolved models for use in Task calls below.
 
@@ -224,6 +225,61 @@ Slash commands in output get parsed as command invocations. Always use plain tex
      - `passed` → continue to step 8
      - `human_needed` → present items, get approval or feedback
      - `gaps_found` → present gaps, offer `/wxcode:plan-phase {X} --gaps`
+
+7.5. **Verify business rules (Conversion Projects Only)**
+   Check if this is a conversion project AND rules tracking is initialized:
+   ```bash
+   CONVERSION_EXISTS=$([ -f .planning/CONVERSION.md ] && echo "yes" || echo "no")
+   RULES_SUMMARY_EXISTS=$([ -f .planning/rules-summary.json ] && echo "yes" || echo "no")
+   ```
+
+   Also check config toggle:
+   ```bash
+   WORKFLOW_RULES_VERIFIER=$(cat .planning/config.json 2>/dev/null | grep -o '"rules_verifier"[[:space:]]*:[[:space:]]*[^,}]*' | grep -o 'true\|false' || echo "true")
+   ```
+
+   **If `CONVERSION_EXISTS=yes` AND `WORKFLOW_RULES_VERIFIER` is not `false`:**
+
+   Get milestone ID from MILESTONE.json:
+   ```bash
+   MILESTONE_DIR=$(ls -d .planning/milestones/v*/ 2>/dev/null | tail -1)
+   MILESTONE_ID=$(cat "${MILESTONE_DIR}/MILESTONE.json" 2>/dev/null | grep -o '"mongodb_id"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"')
+   ```
+
+   **If MILESTONE_ID exists (rules tracking was initialized in Phase 1.87):**
+
+   Spawn `wxcode-rules-verifier` subagent:
+
+   ```
+   Task(
+     prompt="Verify business rules for Phase ${PHASE_NUMBER} of milestone ${MILESTONE_ID}.
+
+   Phase directory: ${PHASE_DIR}
+   Milestone ID: ${MILESTONE_ID}
+   Phase number: ${PHASE_NUMBER}
+
+   1. Call get_milestone_rules(milestone_id=${MILESTONE_ID}, status='pending', include_rule_details=true)
+   2. For each pending rule: search converted code for evidence (Grep/Read)
+   3. Determine status: implemented/adapted/missing/not_applicable
+   4. Call batch_update_rule_verifications with results (confirm=true)
+   5. Write rules-summary.json cache
+   6. Generate RULES-CHECK.md report in phase directory",
+     subagent_type="wxcode-rules-verifier",
+     model="{verifier_model}"
+   )
+   ```
+
+   Display result:
+   ```
+   ✓ Business rules check complete
+     Rules: {implemented + adapted} / {total checked} verified
+     Missing: {missing_count}
+     Report: .planning/phases/{phase_dir}/{phase}-RULES-CHECK.md
+   ```
+
+   **This check is ADVISORY** — missing rules do NOT block phase completion. They are reported for awareness and tracked in MongoDB for the milestone audit.
+
+   **If MILESTONE_ID is empty or rules tracking not initialized:** Skip silently.
 
 8. **Update roadmap and state**
    - Update ROADMAP.md, STATE.md
@@ -482,6 +538,8 @@ After all plans in phase complete (step 7):
 - [ ] Each plan has SUMMARY.md
 - [ ] Phase goal verified (must_haves checked against codebase)
 - [ ] VERIFICATION.md created in phase directory
+- [ ] (Conversion projects) Business rules verified (advisory) — RULES-CHECK.md created
+- [ ] (Conversion projects) rules-summary.json cache updated
 - [ ] STATE.md reflects phase completion
 - [ ] ROADMAP.md updated
 - [ ] REQUIREMENTS.md updated (phase requirements marked Complete)

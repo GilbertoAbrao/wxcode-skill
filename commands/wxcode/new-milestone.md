@@ -715,6 +715,80 @@ Display confirmation:
 
 ---
 
+## Phase 1.87: Persist Procedures and Business Rules (Conversion Projects Only)
+
+**Skip if not a conversion project** (no `.planning/CONVERSION.md`).
+**Skip if Phase 1.86 was skipped** (no dependency tree, no IMPLEMENT_LIST).
+
+**Purpose:** Persist the IMPLEMENT_LIST/STUB_LIST and associated business rules to MongoDB via MCP. This enables rule-by-rule verification tracking throughout the milestone lifecycle.
+
+### Step 1: Build implement_list and stub_list dicts
+
+From Phase 1.86 output, build the lists with required fields:
+
+```python
+# For each procedure in IMPLEMENT_LIST:
+implement_list = [
+    {
+        "procedure_name": "VerificarUsuarioSenha",
+        "element_name": "PaginaInicial_New1",
+        "depth": 0,
+        "is_control_event": False
+    },
+    {
+        "procedure_name": "BTN_Login.event_851980",
+        "element_name": "PaginaInicial_New1",
+        "depth": 0,
+        "is_control_event": True  # events contain "event_" in name
+    },
+    {
+        "procedure_name": "Documento_TemplatePreenchido",
+        "element_name": "Comunicacao_APIDocs",
+        "depth": 1,
+        "is_control_event": False
+    }
+]
+
+# For each procedure in STUB_LIST:
+stub_list = [
+    {
+        "procedure_name": "REST_ConfigurarAutenticacao",
+        "element_name": "REST_Utils",
+        "depth": 2,
+        "is_control_event": False
+    }
+]
+```
+
+**Include control events:** Get all procedures for each element:
+```
+mcp__wxcode-kb__get_procedures(element_name=ELEM, project_name=PROJECT_NAME)
+```
+Filter: those with `event_` in the name are control events. Add them to implement_list with `is_control_event=true` and `depth=0`.
+
+### Step 2: Call populate_milestone_rules
+
+```
+mcp__wxcode-kb__populate_milestone_rules(
+    milestone_id=MONGODB_MILESTONE_ID,
+    implement_list=implement_list,
+    stub_list=stub_list,
+    confirm=true
+)
+```
+
+### Step 3: Display confirmation
+
+```
+✓ Business rules tracking initialized
+  - Procedures tracked: ${procedures_created}
+  - Business rules: ${rules_created} (${pending} pending, ${deferred} deferred)
+```
+
+**If MCP call fails:** Log warning and continue — rules tracking is advisory, not blocking.
+
+---
+
 ## Phase 2: Gather Milestone Goals
 
 **If MILESTONE-CONTEXT.md exists:**
@@ -1450,6 +1524,8 @@ Run: wxcode:discuss-phase [N] — gather context and clarify approach
 - [ ] **(Conversion projects)** Dependency tree built recursively (D1→D2→D3) with signatures
 - [ ] **(Conversion projects)** User selected dependency depth (D0/D1/D2/D3) via AskUserQuestion
 - [ ] **(Conversion projects)** MILESTONE-CONTEXT.md updated with Dependency Strategy (IMPLEMENT_LIST + STUB_LIST)
+- [ ] **(Conversion projects)** `mcp__wxcode-kb__populate_milestone_rules` called with IMPLEMENT_LIST + STUB_LIST (Phase 1.87)
+- [ ] **(Conversion projects)** Business rules tracking initialized in MongoDB (procedures + rule verifications)
 - [ ] **(Multi-element)** Roadmapper instructed on cross-element vs per-element phase organization
 - [ ] PROJECT.md updated (stable info only, no volatile milestone state)
 - [ ] STATE.md updated with Current Milestone section and reset position
