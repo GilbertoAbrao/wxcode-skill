@@ -8,11 +8,9 @@ allowed-tools:
 <structured_output>
 ## Structured Output (MANDATORY)
 
-**At command start (emit together with visual banner, no blank line):**
-```
-<!-- WXCODE:HEADER:{"command":"new-project-greetings","args":"$ARGUMENTS","title":"WXCODE ▶ WELCOME"} -->
-## WXCODE ▶ WELCOME
-```
+**NOTE:** This is a display-only command. No HEADER tag — the welcome banner IS the content.
+HEADER tags cause the UI watcher to buffer the message waiting for completion signals,
+but this command's content arrives as assistant_text which doesn't trigger buffer release.
 
 **At command end (success):**
 ```
@@ -124,7 +122,6 @@ Contexto carregado e pronto para conversão.
 ───────────────────────────────────────────────────────
 
 ```
-<!-- WXCODE:HEADER:{"command":"new-project-greetings","args":"$ARGUMENTS","title":"WXCODE ► CONTEXT LOADED"} -->
 <!-- WXCODE:STATUS:{"status":"completed","message":"Context loaded"} -->
 <!-- WXCODE:NEXT_ACTION:{"command":"new-project","args":"[same CONTEXT.md path]","description":"Initialize project","priority":"recommended"} -->
 ```

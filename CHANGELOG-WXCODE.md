@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.5] - 2026-02-12
+
+### Fixed
+- **Remove HEADER from new-project-greetings** — the HEADER tag added in v2.5.4 caused the UI watcher to buffer the greetings message (waiting for completion signal), but the welcome content arrives as `assistant_text` which doesn't trigger buffer release; greetings is a display-only command and doesn't need HEADER
+
 ## [2.5.4] - 2026-02-12
 
 ### Changed
@@ -17,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`/wxcode:approved` command** — minimal command for UI compatibility; when the user clicks the approval button rendered from a NEXT_ACTION tag, this command signals checkpoint approval
 - **Route D (human_needed) in execute-phase** — explicit structured output route with WXCODE tags for phase verification requiring human testing
 - **Dashboard update on checkpoints** — dashboards are regenerated before presenting checkpoints and human verification to user, so UI reflects progress while waiting for approval
-- **WXCODE:HEADER on all offer_next routes** — all final output blocks across `execute-phase` (4 routes), `progress` (7 routes), `dashboard`, `design-system`, and `new-project-greetings` now emit HEADER tag so the UI renders the message correctly
+- **WXCODE:HEADER on all offer_next routes** — all final output blocks across `execute-phase` (4 routes), `progress` (7 routes), `dashboard`, and `design-system` now emit HEADER tag so the UI renders the message correctly
 
 ## [2.5.2] - 2026-02-12
 
