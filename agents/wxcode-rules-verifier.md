@@ -173,13 +173,23 @@ mcp__wxcode-kb__batch_update_rule_verifications(
 
 ## Step 6: Write Rules Summary Cache
 
-Write a local cache file for the dashboard generator (which cannot call MCP):
+Write a local cache file for the dashboard generator (which cannot call MCP).
 
+**Step 6a:** Get the aggregated summary:
 ```
-mcp__wxcode-kb__get_rules_verification_summary(milestone_id=MILESTONE_ID)
+summary = mcp__wxcode-kb__get_rules_verification_summary(milestone_id=MILESTONE_ID)
 ```
 
-Write result to `.planning/rules-summary.json`:
+**Step 6b:** Get ALL rules with their current status (for individual rule display in dashboard):
+```
+all_rules = mcp__wxcode-kb__get_milestone_rules(
+    milestone_id=MILESTONE_ID,
+    include_rule_details=true,
+    limit=500
+)
+```
+
+**Step 6c:** Write combined result to `.planning/rules-summary.json`:
 
 ```json
 {
@@ -193,12 +203,48 @@ Write result to `.planning/rules-summary.json`:
     "pending": 30,
     "not_applicable": 0
   },
+  "by_category": {
+    "validation": {"total": 12, "implemented": 8, "adapted": 2, "missing": 1, "deferred": 1, "pending": 0, "not_applicable": 0},
+    "workflow": {"total": 18, "implemented": 10, "adapted": 3, "missing": 0, "deferred": 2, "pending": 3, "not_applicable": 0}
+  },
   "coverage_percentage": 48,
   "implementation_rate": 72,
   "last_verified_phase": 2,
-  "generated_at": "2026-02-12T10:00:00Z"
+  "generated_at": "2026-02-12T10:00:00Z",
+  "rules": [
+    {
+      "rule_id": "698a8f06f9936aefd5687fcf",
+      "rule_name": "usuario_deve_estar_ativo",
+      "procedure_name": "VerificarUsuarioSenha",
+      "element_name": "PaginaInicial_New1",
+      "category": "validation",
+      "status": "implemented",
+      "verified_in_phase": 2,
+      "evidence_file": "app/services/auth_service.py",
+      "evidence_line": 45,
+      "evidence_snippet": "if not user.bit_ativo: raise HTTPException(403)",
+      "notes": null,
+      "description": "Somente usuarios com status ativo podem fazer login"
+    },
+    {
+      "rule_id": "698a8f06f9936aefd5687fd0",
+      "rule_name": "senha_validada_hash",
+      "procedure_name": "VerificarUsuarioSenha",
+      "element_name": "PaginaInicial_New1",
+      "category": "validation",
+      "status": "adapted",
+      "verified_in_phase": 2,
+      "evidence_file": "app/services/auth_service.py",
+      "evidence_line": 52,
+      "evidence_snippet": "if not bcrypt.checkpw(password, user.senha_hash):",
+      "notes": "Uses bcrypt instead of legacy MD5",
+      "description": "Senha do usuario validada contra hash armazenado"
+    }
+  ]
 }
 ```
+
+**The `rules` array includes ALL rules** (not just verified ones) so the dashboard can display individual statuses. Each entry has: rule_id, rule_name, procedure_name, element_name, category, status, verified_in_phase, evidence_file, evidence_line, evidence_snippet, notes, and description (from the business_rules collection).
 
 ## Step 7: Generate RULES-CHECK.md Report
 

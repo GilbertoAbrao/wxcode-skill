@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Business rules tracking in new-milestone** — Phase 1.87 persists IMPLEMENT_LIST/STUB_LIST procedures and associated business rules to MongoDB via `populate_milestone_rules` MCP tool
 - **Per-phase rules verification in execute-phase** — Step 7.5 spawns wxcode-rules-verifier after phase goal verification (advisory, not blocking) with RULES-CHECK.md report
 - **MCP-based rules audit in audit-milestone** — Step 2.5 uses `get_rules_verification_summary` MCP tool for comprehensive coverage/implementation rate metrics instead of SUMMARY.md grep
-- **Business rules in dashboard** — milestone dashboard includes `business_rules` section from rules-summary.json cache (coverage_percentage, implementation_rate, status breakdown)
+- **Business rules in dashboard** — milestone dashboard includes `business_rules` section from rules-summary.json cache with individual rule statuses (rule_name, procedure, element, category, status, evidence_file, evidence_line, notes, description), plus aggregated metrics (coverage_percentage, implementation_rate, by_status, by_category)
 - **Six verification statuses** — rules can be: pending, implemented, adapted, missing, deferred (stub dependencies), not_applicable (modern stack handles differently)
 
 ## [2.4.3] - 2026-02-12
