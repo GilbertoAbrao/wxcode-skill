@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.2] - 2026-02-12
+
+### Fixed
+- **Business rules persist merged into Phase 1.86** — `populate_milestone_rules` now runs as Step 6 of Phase 1.86 (dependency tree) instead of a separate Phase 1.87; prevents context compaction from losing the instruction when there's a long gap between AskUserQuestion and user response
+
 ## [2.5.1] - 2026-02-12
 
 ### Changed
@@ -16,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **wxcode-rules-verifier agent** — new agent that verifies business rules extracted from legacy code were preserved in converted code, checking implementation fidelity (logic preservation) rule-by-rule with evidence tracking
-- **Business rules tracking in new-milestone** — Phase 1.87 persists IMPLEMENT_LIST/STUB_LIST procedures and associated business rules to MongoDB via `populate_milestone_rules` MCP tool
+- **Business rules tracking in new-milestone** — Phase 1.86 Step 6 persists IMPLEMENT_LIST/STUB_LIST procedures and associated business rules to MongoDB via `populate_milestone_rules` MCP tool
 - **Per-phase rules verification in execute-phase** — Step 7.5 spawns wxcode-rules-verifier after phase goal verification (advisory, not blocking) with RULES-CHECK.md report
 - **MCP-based rules audit in audit-milestone** — Step 2.5 uses `get_rules_verification_summary` MCP tool for comprehensive coverage/implementation rate metrics instead of SUMMARY.md grep
 - **Business rules in dashboard** — milestone dashboard includes `business_rules` section from rules-summary.json cache with individual rule statuses (rule_name, procedure, element, category, status, evidence_file, evidence_line, notes, description), plus aggregated metrics (coverage_percentage, implementation_rate, by_status, by_category)

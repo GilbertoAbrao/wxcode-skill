@@ -713,18 +713,11 @@ Display confirmation:
   - Import: ${converted_count} procedures (already converted)
 ```
 
----
+### Step 6: Persist business rules to MongoDB
 
-## Phase 1.87: Persist Procedures and Business Rules (Conversion Projects Only)
+**Do this IMMEDIATELY after Step 5** — same phase, no gap.
 
-**Skip if not a conversion project** (no `.planning/CONVERSION.md`).
-**Skip if Phase 1.86 was skipped** (no dependency tree, no IMPLEMENT_LIST).
-
-**Purpose:** Persist the IMPLEMENT_LIST/STUB_LIST and associated business rules to MongoDB via MCP. This enables rule-by-rule verification tracking throughout the milestone lifecycle.
-
-### Step 1: Build implement_list and stub_list dicts
-
-From Phase 1.86 output, build the lists with required fields:
+Build implement_list and stub_list dicts from Step 5 output:
 
 ```python
 # For each procedure in IMPLEMENT_LIST:
@@ -766,8 +759,7 @@ mcp__wxcode-kb__get_procedures(element_name=ELEM, project_name=PROJECT_NAME)
 ```
 Filter: those with `event_` in the name are control events. Add them to implement_list with `is_control_event=true` and `depth=0`.
 
-### Step 2: Call populate_milestone_rules
-
+Call MCP to persist:
 ```
 mcp__wxcode-kb__populate_milestone_rules(
     milestone_id=MONGODB_MILESTONE_ID,
@@ -777,8 +769,7 @@ mcp__wxcode-kb__populate_milestone_rules(
 )
 ```
 
-### Step 3: Display confirmation
-
+Display result:
 ```
 ✓ Business rules tracking initialized
   - Procedures tracked: ${procedures_created}
@@ -1524,7 +1515,7 @@ Run: wxcode:discuss-phase [N] — gather context and clarify approach
 - [ ] **(Conversion projects)** Dependency tree built recursively (D1→D2→D3) with signatures
 - [ ] **(Conversion projects)** User selected dependency depth (D0/D1/D2/D3) via AskUserQuestion
 - [ ] **(Conversion projects)** MILESTONE-CONTEXT.md updated with Dependency Strategy (IMPLEMENT_LIST + STUB_LIST)
-- [ ] **(Conversion projects)** `mcp__wxcode-kb__populate_milestone_rules` called with IMPLEMENT_LIST + STUB_LIST (Phase 1.87)
+- [ ] **(Conversion projects)** `mcp__wxcode-kb__populate_milestone_rules` called with IMPLEMENT_LIST + STUB_LIST (Phase 1.86 Step 6)
 - [ ] **(Conversion projects)** Business rules tracking initialized in MongoDB (procedures + rule verifications)
 - [ ] **(Multi-element)** Roadmapper instructed on cross-element vs per-element phase organization
 - [ ] PROJECT.md updated (stable info only, no volatile milestone state)
