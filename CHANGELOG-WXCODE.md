@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.3] - 2026-02-12
+
+### Added
+- **execute-phase regenerates dashboard between waves** — after each wave completes and SUMMARYs are verified, dashboard is regenerated via `generate-dashboard.py` to reflect real-time progress during execution
+- **execute-phase regenerates dashboard after phase completion** — Step 10.5 ensures dashboards are up-to-date when phase finishes (before offering next steps)
+
 ## [2.4.2] - 2026-02-12
 
 ### Fixed

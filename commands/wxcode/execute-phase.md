@@ -184,6 +184,10 @@ Slash commands in output get parsed as command invocations. Always use plain tex
    - Spawn `wxcode-executor` for each plan in wave (parallel Task calls)
    - Wait for completion (Task blocks)
    - Verify SUMMARYs created
+   - Regenerate dashboard (progress tracking between waves):
+     ```bash
+     python3 ~/.claude/wxcode-skill/bin/generate-dashboard.py --all --project-dir .
+     ```
    - Proceed to next wave
 
 5. **Aggregate results**
@@ -239,6 +243,12 @@ Slash commands in output get parsed as command invocations. Always use plain tex
     - Stage: `git add .planning/ROADMAP.md .planning/STATE.md`
     - Stage REQUIREMENTS.md if updated: `git add .planning/REQUIREMENTS.md`
     - Commit: `docs({phase}): complete {phase-name} phase`
+
+10.5. **Update dashboards**
+    Regenerate dashboards to reflect completed phase:
+    ```bash
+    python3 ~/.claude/wxcode-skill/bin/generate-dashboard.py --all --project-dir .
+    ```
 
 11. **Offer next steps**
     - Route to next action (see `<offer_next>`)
