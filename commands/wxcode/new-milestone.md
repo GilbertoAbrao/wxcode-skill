@@ -1,7 +1,7 @@
 ---
 name: wxcode:new-milestone
 description: Start a new milestone cycle — update PROJECT.md and route to requirements
-argument-hint: "--element=PAGE_Login --output-project=xxx OR --elements=A,B,C --output-project=xxx"
+argument-hint: "--elements=A,B,C --output-project=xxx [--autopilot|--interactive]"
 allowed-tools:
   - Read
   - Write
@@ -72,11 +72,15 @@ For **conversion projects** (UI-triggered):
 - `--elements=PAGE_Login,PAGE_Dashboard`: Comma-separated list of elements (multi-element milestone)
 - `--output-project=xxx`: MongoDB OutputProject ID (required)
 - `--name=auth-pages`: Custom milestone display name (optional, for multi-element)
+- `--autopilot`: Autonomous mode — auto-resolves all decisions, chains to `/wxcode:autopilot` at the end
+- `--interactive`: Explicit interactive mode — skips mode selection question
 
 **Rules:** Use `--element` OR `--elements`, not both. If neither provided, error.
+`--autopilot` and `--interactive` are mutually exclusive. If neither is passed, the user is asked (conversion projects only).
 
 Example (single): `/wxcode:new-milestone --element=PAGE_Login --output-project=507f1f77...`
 Example (multi): `/wxcode:new-milestone --elements=PAGE_Login,PAGE_Dashboard --name=auth-pages --output-project=507f1f77...`
+Example (autopilot): `/wxcode:new-milestone --elements=PAGE_Login,PAGE_Dashboard --output-project=507f1f77... --autopilot`
 
 For **greenfield projects** (CLI):
 - Milestone name as positional argument (optional - will prompt if not provided)
@@ -173,6 +177,8 @@ Parse from $ARGUMENTS:
 --elements=PAGE_Login,PAGE_Dash  → comma-separated list
 --output-project=xxx             → OUTPUT_PROJECT_ID
 --name=auth-pages                → MILESTONE_DISPLAY_NAME (optional)
+--autopilot                      → AUTOPILOT_MODE=true (autonomous conversion, no interaction)
+--interactive                    → INTERACTIVE_MODE=true (explicit interactive, skip mode question)
 ```
 
 **Derive:**
@@ -202,6 +208,28 @@ Example (multi):
   /wxcode:new-milestone --elements=PAGE_Login,PAGE_Dashboard --output-project=507f1f77...
 ```
 **STOP.**
+
+### Step 1.5: Mode selection (Autopilot vs Interactive)
+
+**If `--autopilot` was passed:** AUTOPILOT_MODE=true. Log: "Autopilot mode enabled — all decisions will be auto-resolved". Skip to Step 2.
+
+**If `--interactive` was passed:** AUTOPILOT_MODE=false. Skip to Step 2.
+
+**If neither `--autopilot` nor `--interactive`:**
+
+Use AskUserQuestion:
+```
+header: "Mode"
+question: "Como deseja conduzir este milestone de conversão?"
+options:
+  - label: "Autopilot (Recommended)"
+    description: "Planeja, executa e completa todas as fases automaticamente. Para em caso de erro."
+  - label: "Interactive"
+    description: "Você decide cada passo: research, requirements, roadmap approval, checkpoints."
+```
+
+**If "Autopilot":** AUTOPILOT_MODE=true. Log: "Autopilot mode selected"
+**If "Interactive":** AUTOPILOT_MODE=false. Log: "Interactive mode selected"
 
 ### Step 2: Determine version automatically
 
@@ -645,6 +673,16 @@ Summary:
 
 ### Step 4: User selects depth
 
+**If AUTOPILOT_MODE:**
+Auto-select D1 (direct dependencies) as default depth. This is configurable via `autopilot.dependency_depth` in config.json.
+```bash
+AUTOPILOT_DEPTH=$(cat .planning/config.json 2>/dev/null | grep -o '"dependency_depth"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"' || echo "D1")
+```
+Log: "Autopilot: dependency depth auto-selected ${AUTOPILOT_DEPTH}"
+Skip AskUserQuestion. Use the auto-selected depth and continue to Step 5.
+
+**If NOT AUTOPILOT_MODE:**
+
 Use AskUserQuestion:
 
 ```
@@ -920,6 +958,13 @@ Store resolved models for use in Task calls below.
 
 ## Phase 7: Research Decision
 
+**If AUTOPILOT_MODE:**
+Skip research entirely. MCP KB provides all context for conversion projects.
+Log: "Autopilot: research skipped (MCP is source of truth)"
+Continue to Phase 8.
+
+**If NOT AUTOPILOT_MODE:**
+
 Use AskUserQuestion:
 - header: "Research"
 - question: "Research the domain ecosystem for new features before defining requirements?"
@@ -1168,6 +1213,40 @@ Display stage banner:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
+**If AUTOPILOT_MODE:**
+
+Auto-derive requirements from element analysis without user interaction:
+- Each element's procedures (from MILESTONE-CONTEXT.md) become functional requirements
+- Each element's controls (from MCP) become UI requirements
+- Business rules from MCP (Phase 1.85) become behavior requirements
+- IMPLEMENT_LIST procedures (from Phase 1.86) become conversion requirements
+- STUB_LIST procedures (from Phase 1.86) become stub generation requirements
+
+Generate REQUIREMENTS.md with auto-derived requirements. Use REQ-ID format `CONV-{NN}` for conversion requirements.
+
+Skip all AskUserQuestion calls in this phase.
+Log: "Autopilot: requirements auto-derived from {N} elements, {M} procedures, {K} business rules"
+
+Commit requirements (same pattern as non-autopilot):
+```bash
+COMMIT_PLANNING_DOCS=$(cat .planning/config.json 2>/dev/null | grep -o '"commit_docs"[[:space:]]*:[[:space:]]*[^,}]*' | grep -o 'true\|false' || echo "true")
+git check-ignore -q .planning 2>/dev/null && COMMIT_PLANNING_DOCS=false
+```
+If committing:
+```bash
+git add .planning/REQUIREMENTS.md
+git commit -m "$(cat <<'EOF'
+docs: define milestone v[X.Y] requirements (autopilot)
+
+Auto-derived from element analysis and MCP
+EOF
+)"
+```
+
+Continue to Phase 9.
+
+**If NOT AUTOPILOT_MODE:**
+
 **Load context:**
 
 Read PROJECT.md and extract:
@@ -1396,6 +1475,13 @@ Success criteria:
 
 **CRITICAL: Ask for approval before committing:**
 
+**If AUTOPILOT_MODE:**
+Auto-approve roadmapper's first output. Skip AskUserQuestion.
+Log: "Autopilot: roadmap auto-approved ({N} phases)"
+Continue to commit.
+
+**If NOT AUTOPILOT_MODE:**
+
 Use AskUserQuestion:
 - header: "Roadmap"
 - question: "Does this roadmap structure work for you?"
@@ -1459,6 +1545,58 @@ Invoke `/wxcode:dashboard --all` to:
 This ensures the UI reflects the new milestone state.
 
 ## Phase 11: Done
+
+**If AUTOPILOT_MODE:**
+
+Read ROADMAP.md to count total phases. Build AUTOPILOT-STATE.md from template:
+
+```
+Read template: ~/.claude/wxcode-skill/templates/autopilot-state.md
+Replace placeholders:
+  {TOTAL_PHASES} → count from ROADMAP.md
+  {ELEMENT_LIST} → ELEMENT_LIST as JSON array strings
+  {OUTPUT_PROJECT_ID} → OUTPUT_PROJECT_ID
+  {MONGODB_MILESTONE_ID} → MONGODB_MILESTONE_ID
+  {MILESTONE_FOLDER_NAME} → MILESTONE_FOLDER_NAME
+  {WXCODE_VERSION} → WXCODE_VERSION
+  {PROJECT_NAME} → PROJECT_NAME
+  {TIMESTAMP} → current ISO timestamp
+  {PHASE_ROWS} → generate table rows (one per phase, all "pending")
+```
+
+Write to `.planning/AUTOPILOT-STATE.md`.
+
+Commit state file:
+```bash
+COMMIT_PLANNING_DOCS=$(cat .planning/config.json 2>/dev/null | grep -o '"commit_docs"[[:space:]]*:[[:space:]]*[^,}]*' | grep -o 'true\|false' || echo "true")
+git check-ignore -q .planning 2>/dev/null && COMMIT_PLANNING_DOCS=false
+```
+If committing:
+```bash
+git add .planning/AUTOPILOT-STATE.md
+git commit -m "docs: initialize autopilot state for ${WXCODE_VERSION}"
+```
+
+Display:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ WXCODE ▶ AUTOPILOT INITIALIZED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Milestone ${WXCODE_VERSION} created with {N} phases.
+Elements: ${ELEMENT_LIST}
+Autopilot will now plan, execute, and complete all phases.
+
+Run: wxcode:autopilot
+```
+
+```
+<!-- WXCODE:NEXT_ACTION:{"command":"autopilot","args":"","description":"Start autonomous conversion","priority":"required"} -->
+```
+
+**STOP here** — do NOT show the normal "Next Up" section below.
+
+**If NOT AUTOPILOT_MODE:**
 
 Present completion with next steps:
 
@@ -1533,6 +1671,15 @@ Run: wxcode:discuss-phase [N] — gather context and clarify approach
 - [ ] User knows next step is `/wxcode:discuss-phase [N]`
 
 **Atomic commits:** Each phase commits its artifacts immediately. If context is lost, artifacts persist.
+
+- [ ] **(Autopilot)** `--autopilot` flag detected and AUTOPILOT_MODE set
+- [ ] **(Autopilot)** Dependency depth auto-selected (D1 default, configurable)
+- [ ] **(Autopilot)** Research skipped (MCP is source of truth)
+- [ ] **(Autopilot)** Requirements auto-derived from elements/MCP
+- [ ] **(Autopilot)** Roadmap auto-approved (first attempt)
+- [ ] **(Autopilot)** AUTOPILOT-STATE.md created with correct frontmatter and progress table
+- [ ] **(Autopilot)** NEXT_ACTION emits `autopilot` command (not `plan-phase`)
+- [ ] **(Autopilot)** Normal "Next Up" section NOT shown
 
 - [ ] `/wxcode:dashboard --all` invoked (Phase 10)
 - [ ] Project dashboard updated: `.planning/dashboard.json`

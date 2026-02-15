@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.0] - 2026-02-15
+
+### Added
+- **Autopilot mode for conversion milestones** — run `/wxcode:new-milestone --autopilot --elements=A,B,C --output-project=xxx` and the system handles the entire cycle autonomously: plan, execute, verify all phases, audit, and complete milestone
+  - New `--autopilot` flag on `new-milestone` auto-resolves all interactive decisions: dependency depth (D1 default), research (skipped — MCP is source of truth), requirements (auto-derived from elements/MCP), and roadmap approval (auto-approved)
+  - New `/wxcode:autopilot` command — lean orchestrator that loops through phases, spawning subagents for planning, execution, and verification without user interaction
+  - AUTOPILOT-STATE.md tracks progress and enables resume: `/wxcode:autopilot --resume` continues from where it stopped
+  - Stop & Notify protocol: on irrecoverable errors (3x plan failures, human_needed verification, critical audit gaps), saves state and stops with clear instructions to resume
+  - Auto-accepts tech debt in audit, auto-pushes git tags, auto-marks elements as converted via MCP
+  - Configurable via `autopilot` section in config.json: `dependency_depth`, `max_retries_per_phase`, `skip_research`, `force_autonomous`, `auto_push_tag`
+  - New template: `autopilot-state.md` for state file structure
+  - Mode selection question: conversion milestones without explicit `--autopilot` or `--interactive` flag get asked which mode to use; greenfield projects skip the question entirely
+
 ## [2.5.5] - 2026-02-12
 
 ### Fixed

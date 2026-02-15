@@ -31,5 +31,12 @@
   "safety": {
     "always_confirm_destructive": true,
     "always_confirm_external_services": true
+  },
+  "autopilot": {
+    "dependency_depth": "D1",
+    "max_retries_per_phase": 3,
+    "skip_research": true,
+    "force_autonomous": true,
+    "auto_push_tag": true
   }
 }
